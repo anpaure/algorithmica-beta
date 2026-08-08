@@ -184,6 +184,7 @@ Planned table of contents:
 (11.13. String Searching)
  11.14. Sorting
  11.15. Matrix Multiplication
+ 11.16. Knapsack with Bitsets
 12. Data Structure Case Studies
  12.1. Binary Search
  12.2. Static B-Trees
