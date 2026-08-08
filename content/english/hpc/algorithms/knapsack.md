@@ -14,7 +14,7 @@ for (int x : cost)
 
 This looks suspiciously easier than the dynamic program it replaces. In this case the short code is not hiding a complicated library algorithm: the shift and the OR *are* the algorithm. In this section, we will derive it, write a runtime-sized version from scratch, and optimize it until the compiler processes more than a hundred states at a time.
 
-On the machine used for the benchmarks below, the final implementation is 9–13 times faster than an already auto-vectorized byte dynamic program. More importantly, it uses one-eighth as much memory and exposes the actual limits of the computation.
+On the machine used for the benchmarks below, the final implementation is 8.5–13.2 times faster than an already auto-vectorized byte dynamic program. More importantly, it uses one-eighth as much memory and exposes the actual limits of the computation.
 
 ## The Problem
 
@@ -148,7 +148,7 @@ for (int i = 0; i < n; i++)
     add_item(bits.data(), W, cost[i]);
 ```
 
-This is already the dynamic equivalent of `b |= b << x`, but it scans the whole destination range from word `q` through word `W / 64`, regardless of which source words can be nonzero. In the kernel stress test described below, this version took 7.244 ms while the byte dynamic program took only 1.309 ms. Packing the states had made the program slower because it also made us scan millions of impossible states.
+This is already the dynamic equivalent of `b |= b << x`, but it scans the whole destination range from word `q` through word `W / 64`, regardless of which source words can be nonzero. In the kernel stress test described below, this version took 7.56 ms while the frontier-bounded byte dynamic program took only 1.34 ms. Packing the states had made the program slower because it also made us scan millions of impossible states.
 
 ## Do Not Scan Known Zeroes
 
@@ -213,6 +213,8 @@ Two other reductions are almost free:
 
 If all costs have a common divisor $g$, divide every cost by $g$ and replace $W$ with $\lfloor W/g\rfloor$. All reachable sums are multiples of $g$, so the smaller problem has exactly the same answer after multiplying it by $g$. This can shrink both the running time and memory by a large factor on structured inputs.
 
+These three reductions belong to an optimum-only solver wrapped around the kernel. The measured harness deliberately does not enable the total-sum return, exact-fill stop, or GCD scaling: every timed variant constructs the complete reachable set, so the kernel comparisons all perform the same task.
+
 ## Finding the Answer
 
 After all updates, scan the words from high to low. Once a nonzero word is found, `clz` gives the position of its highest set bit:
@@ -238,26 +240,36 @@ The inner loop now performs two shifted reads, a few Boolean operations, and one
 
 For the benchmark build, `-Rpass=loop-vectorize` reports a vectorization width of 16 for the byte loop and a width of 2 for the 64-bit loop on the 128-bit SIMD hardware of the test machine. Cross-compiling the same loops for AVX2 produces four 64-bit lanes using variable packed shifts such as `vpsllvq` and `vpsrlvq`.
 
-This is why we will not add a page of intrinsics. A manual AVX2 implementation would restate the same source loads and shifts while adding scalar boundary code, and it would not reduce memory traffic. The plain loop already communicates the operation well enough for the compiler.
+This is why we will not add a page of intrinsics. Intrinsics would not reduce the two source reads and destination update required by each word, and the plain loop already communicates the operation well enough for this compiler. A different compiler or instruction set still needs its own measurement.
 
 It also explains why the real speedup is much smaller than 64. The scalar baseline is not actually processing one byte at a time: the compiler updates 16 byte states per vector instruction. With vectorization disabled, the bounded word kernel is about 45x faster in the same benchmark, but disabling a valid optimization is not a useful baseline.
 
 ## Benchmark
 
-The [complete validation and benchmark program](../../../code/knapsack.cpp) is available alongside the article. The following measurements were taken on an Apple M4 Max using Apple Clang 17 with `-O3 -mcpu=native`. Inputs are generated from a fixed seed and allocation is outside the timed region, while zero-initialization is included. Each process discards two warm-up runs and takes 9 timed samples for the 100,000- and 5,000,000-capacity cases and 7 for the others. The table reports the componentwise median of five independent process runs. All three implementations produce the complete set of reachable sums rather than stopping early at an exact fill.
+The [complete validation and benchmark program](../../../code/knapsack.cpp) is available alongside the article. The checked-in [`bench-csv` result](../../../code/knapsack_m4_results.txt) is rendered by the [Matplotlib plot script](../../../code/plot_knapsack.py). The following measurements were taken on an Apple M4 Max using Apple Clang 17 with `-O3 -mcpu=native`. Inputs are generated from fixed seeds and allocation is outside the timed region, while zero-initialization is included. Each process discards two warm-up runs and takes 9 timed samples for the 100,000- and 5,000,000-capacity cases and 7 for the others. The table reports the componentwise median of five independent process runs. All four implementations produce the complete set of reachable sums rather than stopping early at an exact fill.
 
-The scalar implementation uses the same `hi` bound as the final bitset version. “Full words” is the first `uint64_t` implementation, which ignores the live frontier and scans the full destination range, and “bounded words” is the final implementation.
+“Full byte” is the literal scalar code shown at the start of the article. “Bounded byte” adds only the `hi` frontier, making it the fair scalar comparison for the final bitset. “Full words” is the first `uint64_t` implementation, and “bounded words” is the final implementation. The last column divides bounded-byte time by bounded-word time.
 
-| $n$ | $W$ | Cost distribution | Byte DP | Full words | Bounded words | Speedup |
-|----:|----:|:------------------|--------:|-----------:|--------------:|--------:|
-| 1,000 | 100,000 | uniform $[1,1000]$ | 1.652 ms | 0.202 ms | 0.184 ms | 9.0x |
-| 2,000 | 1,000,000 | uniform $[1,1000]$ | 20.973 ms | 4.010 ms | 2.073 ms | 10.1x |
-| 2,000 | 1,000,000 | uniform $[1,10^6]$ | 26.149 ms | 2.065 ms | 2.064 ms | 12.7x |
-| 500 | 5,000,000 | uniform $[1,1000]$; kernel stress test | 1.309 ms | 7.244 ms | 0.136 ms | 9.6x |
+| $n$ | $W$ | Cost distribution | Full byte | Bounded byte | Full words | Bounded words | Speedup |
+|----:|----:|:------------------|----------:|-------------:|-----------:|--------------:|--------:|
+| 1,000 | 100,000 | uniform $[1,1000]$ | 1.97 ms | 1.75 ms | 0.231 ms | 0.206 ms | 8.5x |
+| 2,000 | 1,000,000 | uniform $[1,1000]$ | 46.27 ms | 22.84 ms | 4.10 ms | 2.13 ms | 10.7x |
+| 2,000 | 1,000,000 | uniform $[1,10^6]$ | 28.24 ms | 28.24 ms | 2.13 ms | 2.14 ms | 13.2x |
+| 500 | 5,000,000 | uniform $[1,1000]$; kernel stress test | 57.71 ms | 1.34 ms | 7.56 ms | 0.133 ms | 10.1x |
 
-The last row isolates the kernels by deliberately disabling the total-sum shortcut. The sum of all 500 costs is only 255,908, so an optimum-only solver should simply return that number without running any dynamic program. If the complete set of reachable sums is required, the full bitset loop repeatedly scans almost five million impossible states. It is **5.5x slower** than the byte dynamic program despite doing 64 states per word, while the bounded loop only visits the live prefix.
+![](../img/knapsack-stages.svg)
 
-For wide weights, both word implementations take essentially the same time because the live frontier reaches the capacity almost immediately. The remaining kernel becomes a sequence of cache-friendly passes. As $W$ grows beyond the caches, it eventually becomes [memory-bandwidth bound](/hpc/cpu-cache/bandwidth/), and additional arithmetic parallelism helps less and less.
+The last row isolates the kernels by deliberately disabling the total-sum shortcut. The sum of all 500 costs is only about 253 thousand, so an optimum-only solver should simply return that number without running any dynamic program. If the complete set of reachable sums is required, the full loops repeatedly scan almost five million impossible states. Full words are **5.6x slower** than bounded bytes despite packing 64 states per word, while applying the frontier bound to both representations makes packed words 10.1x faster.
+
+To isolate this effect, we fixed $W=10^6$ and $n=512$, used equal positive costs, and swept the total usable weight from roughly $0.01W$ through $3W$. Full words remain near 1.1 ms because they always scan the allocation. Bounded words grow from 0.0085 ms to 0.92 ms as the live prefix expands:
+
+![](../img/knapsack-frontier.svg)
+
+For wide weights, both word implementations take essentially the same time because the live frontier reaches the capacity almost immediately. We swept $W$ from $2^{10}$ through $2^{24}$ with 64 wide weights and measured the two fair bounded kernels. A byte state occupies $W+1$ bytes, while a packed state occupies roughly $(W+1)/8$ bytes; the cache-capacity boundaries therefore occur at different values of $W$.
+
+![](../img/knapsack-size.svg)
+
+Both curves grow approximately linearly with capacity. The byte vector crosses the 128 KiB L1 data-cache size near $W=2^{17}$ and the 16 MiB L2 size near $W=2^{24}$; the word vector reaches the same L1 footprint near $W=2^{20}$. The packed loop remains roughly an order of magnitude faster, but once the working set is streamed from larger caches, reducing arithmetic does not yield anything close to the nominal 64 states per word.
 
 The exact ratios are not universal. Small costs, wide costs, repeated costs, a common divisor, and the position of the first exact fill all change how many words are visited. Knapsack benchmarks need to state their input distribution; quoting one context-free speedup is particularly misleading here.
 

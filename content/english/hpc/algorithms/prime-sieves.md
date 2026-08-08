@@ -3,155 +3,150 @@ title: Prime Number Sieves
 weight: 2
 ---
 
-If we need to check whether one large number is prime, we use a primality test. If we need *all* primes up to some limit $n$, testing every number separately is a terrible idea: we would rediscover the same small divisors over and over again.
+If we need to check whether one large number is prime, we use a primality test. If we need every prime up to some limit $n$, testing every number separately rediscovers the same small divisors over and over again.
 
-The sieve of Eratosthenes does it the other way around. It starts by assuming that every number is prime and then crosses out the multiples of every prime it finds:
+The sieve of Eratosthenes reverses the work. It assumes the candidates are prime, then crosses out multiples of every prime it discovers. The asymptotic complexity is already close to linear; this case study is about making the marker stores land in the right part of the memory hierarchy.
+
+## What We Measure
+
+Every kernel returns only
+
+$$
+\pi(n)=|\{p\le n:p\text{ is prime}\}|.
+$$
+
+It does not materialize or print the primes. Workspace allocation is outside timing, while clearing markers, generating base primes for segmented variants, marking composites, and counting the surviving candidates are included. The algorithms use one byte per represented candidate, so bit packing is not part of this experiment.
+
+Measurements were taken on one performance core of an Apple M4 Max with Apple Clang 17 and `-O3 -mcpu=native`. The machine has 128-byte cache lines, a 128 KiB L1 data cache, and a 16 MiB shared-per-cluster L2. Each sweep point is the median of five runs after one warmup. The phase row is the componentwise median of seven instrumented traversals after two warmups; its integer activity counts come from a separate deterministic arithmetic pass. The [complete test and benchmark program](../../../code/prime_sieves.cpp) emits the [raw CSV](../../../code/prime_sieves_m4_results.txt) used by the [Matplotlib plot script](../../../code/plot_prime_sieves.py) for all three figures.
+
+## A Byte for Every Integer
+
+The direct sieve is short:
 
 ```c++
-vector<char> sieve(int n) {
-    // Assume n >= 2.
-    vector<char> is_prime(size_t(n) + 1, true);
-    is_prime[0] = is_prime[1] = false;
+uint64_t count_primes(uint32_t n) {
+    vector<uint8_t> composite(size_t(n) + 1);
 
-    for (int p = 2; p <= n / p; p++)
-        if (is_prime[p])
-            for (long long k = 1LL * p * p; k <= n; k += p)
-                is_prime[k] = false;
+    for (uint32_t p = 2; p <= n / p; p++)
+        if (!composite[p])
+            for (uint64_t k = uint64_t(p) * p; k <= n; k += p)
+                composite[k] = 1;
 
-    return is_prime;
+    uint64_t count = 0;
+    for (uint32_t x = 2; x <= n; x++)
+        count += !composite[x];
+    return count;
 }
 ```
 
-We start the inner loop at $p^2$ rather than $2p$, because every smaller multiple of $p$ has already been crossed out by another prime. We also stop looking for new divisors after $\sqrt n$: every composite number not exceeding $n$ has at least one prime factor not exceeding $\sqrt n$.
+Starting at $p^2$ is safe because every smaller composite multiple of $p$ has a smaller prime factor. The condition `p <= n / p` avoids overflowing the loop bound.
 
-The slightly strange condition `p <= n / p` means the same thing as `p * p <= n`, but does not overflow before the comparison.
-
-## How Much Work Does It Do?
-
-For every prime $p$, the sieve writes to roughly $n/p$ locations. The total number of writes is therefore
+For each prime $p$, we perform roughly $n/p$ marker stores. Their total is
 
 $$
 n\sum_{p\le n}\frac1p=O(n\log\log n).
 $$
 
-This bound is almost linear, but it does not tell us how fast the program runs. For a large sieve, the expensive part is moving through the marker array. The division in the outer loop is executed only $O(\sqrt n)$ times; the millions of scattered stores in the inner loops matter much more.
+At $n=2^{27}$, this implementation takes 395.484 ms. Its 128 MiB marker array is much larger than cache, and small primes repeatedly stream across it with different strides.
 
-There are two easy improvements we should make before trying anything sophisticated.
+## Throwing Away the Evens
 
-## Removing the Even Numbers
-
-After handling 2 separately, we only need to store odd candidates. Let slot $i$ represent the number $2i+1$. For an odd prime $p$, its odd multiples are
+After accounting for prime 2, no even candidate needs a marker. Slot $i$ represents the odd number $2i+1$, and the odd multiples of an odd prime are
 
 $$
 p^2,\ p^2+2p,\ p^2+4p,\ldots
 $$
 
-and their indices in the compressed array differ by $p$:
+Their compressed indices differ by $p$:
 
 ```c++
-vector<int> primes(int n) {
-    vector<int> result;
+for (uint32_t p = 3; p <= n / p; p += 2)
+    if (!composite[p / 2])
+        for (uint64_t k = uint64_t(p) * p; k <= n; k += 2 * p)
+            composite[k / 2] = 1;
+```
 
-    if (n < 2)
-        return result;
+This one representation change halves both the marker footprint and the densest marking work. At $2^{27}$ it reduces the time from 395.484 ms to 153.840 ms, a 2.57-fold speedup—slightly more than the factor of two suggested by capacity alone.
 
-    vector<char> composite(n / 2 + 1, false);
-    result.push_back(2);
+More elaborate wheels can omit multiples of 3, 5, and so on, while a bitmap can reduce capacity by another factor of eight. Both also make indexing and individual updates more expensive. They are useful alternatives, but they were not implemented or measured here.
 
-    for (long long p = 3; p <= n; p += 2) {
-        if (composite[p / 2])
-            continue;
+## Keeping the Markers in Cache
 
-        result.push_back((int) p);
+The odd marker array still occupies 64 MiB at our largest input. Instead of revisiting all of it for each small prime, we sieve a short interval completely before moving on.
 
-        if (p <= n / p)
-            for (long long k = 1LL * p * p; k <= n; k += 2 * p)
-                composite[k / 2] = true;
+First generate the odd primes through $\lfloor\sqrt n\rfloor$. For a segment $[L,R)$, find the first odd multiple of each base prime and mark within one reusable array:
+
+```c++
+for (uint64_t low = 3; low <= n; low += 2 * S) {
+    uint64_t high = min<uint64_t>(uint64_t(n) + 1, low + 2 * S);
+    size_t slots = (high - low + 1) / 2;
+    fill(composite.begin(), composite.begin() + slots, 0);
+
+    for (uint64_t p : base_primes) {
+        if (p * p >= high)
+            break;
+
+        uint64_t first = max(p * p, (low + p - 1) / p * p);
+        if (first % 2 == 0)
+            first += p;
+
+        for (uint64_t k = first; k < high; k += 2 * p)
+            composite[(k - low) / 2] = 1;
     }
 
-    return result;
+    for (size_t i = 0; i < slots; i++)
+        answer += !composite[i];
 }
 ```
 
-This cuts the array in half and removes the densest crossing-out pass. More generally, we can omit multiples of $2$, $3$, $5$, and so on using a *wheel*, but the indexing becomes progressively less pleasant. Wheels are useful, although the first factor of two is by far the cheapest one.
+`S` counts odd candidates and bytes, so one segment covers a numerical interval of length $2S$. The `max` with $p^2$ prevents the segment containing $p$ from crossing out the prime itself.
 
-### Bytes or bits?
+With $S=2^{17}$, segmentation takes 51.671 ms at $n=2^{27}$, another 2.98-fold improvement over the odd full-array sieve. It is not free at small sizes: at $n=2^{18}$, the odd array already fits in 128 KiB and takes 0.062 ms, while segmentation takes 0.075 ms. The extra base sieve and segment setup cause a 21% regression before locality becomes a problem.
 
-`vector<char>` spends one byte per candidate. A packed bitmap spends one bit, so eight times more candidates fit in the same cache. On the other hand, changing one bit requires loading a word, masking it, and writing it back, while changing a byte is just a store.
+The full size sweep makes the transition visible. The cache lines in the figure refer to the uncompressed baseline marker; the segmented marker remains fixed at 128 KiB.
 
-This is a common memory optimization trade-off: the denser representation executes more instructions but transfers fewer cache lines. A byte sieve is often preferable while both versions fit in cache; a bitmap becomes more attractive when only the packed version fits. There is no need to guess — benchmark both around the cache-size boundaries of the target machine.
+![Prime-counting throughput by upper bound](../img/prime-sieves-size.svg)
 
-## Segmented Sieving
+The baseline loses most of its throughput after its marker leaves L2. The segmented curve declines much more slowly because increasing $n$ changes the number of cache-resident blocks rather than the active marker size.
 
-If $n$ is large, even one bit per odd number eventually falls out of cache. The standard fix is to split the range into blocks and sieve them independently.
+## Selecting the Segment Size
 
-First, we find the primes up to $\sqrt n$. Then, for each interval $[L,R)$, we use these *base primes* to cross out composites in a small temporary array:
+“Fits in cache” is not a complete tuning rule. Tiny segments repeat loop setup and scan the base-prime list too often; large segments bring back the cache misses. We swept every power of two from 1 KiB through 16 MiB on the same $n=2^{27}$ workload.
+
+![Segment-size sweep](../img/prime-sieves-segment.svg)
+
+The best measured point is 128 KiB: 49.114 ms, or 2.73 billion integers of the sieved range per second. A 1 KiB segment needs 174.143 ms because it performs far too many short segment passes. Increasing the marker once beyond L1D to 256 KiB raises the time to 59.940 ms. At 16 MiB it takes 72.962 ms. The optimum landing exactly on the nominal L1 capacity should not be generalized blindly—the base primes and other live state also compete for that cache—but it gives us the right value for this machine.
+
+## Removing the Start Divisions
+
+The direct segmented loop divides once for every base prime that can mark each block. At $n=2^{27}$ and $S=2^{17}$, the 512 segments produce 497,411 such prime visits and therefore 497,411 start divisions. Consecutive segments let us replace them with state: after marking a prime, retain the first multiple beyond the current segment and resume there in the next one.
 
 ```c++
-vector<int> segmented_primes(int n) {
-    vector<int> result;
+vector<uint64_t> next(base_primes.size());
+for (size_t i = 0; i < base_primes.size(); i++)
+    next[i] = uint64_t(base_primes[i]) * base_primes[i];
 
-    if (n < 2)
-        return result;
-
-    result.push_back(2);
-
-    int root = sqrt(n);
-    while ((root + 1LL) * (root + 1) <= n) root++;
-    while (1LL * root * root > n) root--;
-    vector<int> base = primes(root);
-
-    const int S = 1 << 15; // number of odd candidates in one block
-    vector<char> composite(S);
-
-    for (long long low = 3; low <= n; low += 2LL * S) {
-        long long high = min(low + 2LL * S, n + 1LL);
-        int count = (high - low + 1) / 2;
-        fill(composite.begin(), composite.begin() + count, false);
-
-        for (int p : base) {
-            if (p == 2)
-                continue;
-
-            long long first = max(1LL * p * p,
-                                  (low + p - 1) / p * p);
-            if (first % 2 == 0)
-                first += p;
-
-            for (long long k = first; k < high; k += 2LL * p)
-                composite[(k - low) / 2] = true;
-        }
-
-        for (int i = 0; i < count; i++)
-            if (!composite[i])
-                result.push_back(low + 2LL * i);
-    }
-
-    return result;
-}
+// In each segment:
+uint64_t k = next[i];
+for (; k < high; k += 2 * p)
+    composite[(k - low) / 2] = 1;
+next[i] = k;
 ```
 
-The segment contains only odd numbers, so it covers twice as large a numerical interval as its byte size suggests. The `max` in the starting position is important: without $p^2$, the segment containing $p$ would cross out the prime itself.
+This removes all 497,411 start divisions, but the time only falls from 51.671 to 49.528 ms: a 4.1% improvement. A phase profile explains why. In separate phase-timed runs whose hot loops contain no counters, base-prime generation takes 0.007 ms, clearing segments 0.764 ms, marking 39.194 ms, and counting 8.451 ms. The arithmetic pass counts 130,353,348 byte stores. Division was visible, but it was never the dominant cost.
 
-The block size should be chosen so that the marker array and the frequently used part of the base-prime array fit in cache. Making blocks tiny increases loop setup and the number of divisions used to find the first multiple. Making them huge brings back the cache problem we were trying to solve.
+The complete progression at the largest input is:
 
-Small primes write regularly and are easy for the prefetcher. Large primes usually hit a block only a few times, so calculating their starting positions can cost more than crossing them out. Very large sieves keep the next position for each prime or place future hits into buckets, but segmentation is the main optimization: it turns repeated RAM traffic into repeated cache traffic without changing the asymptotic algorithm.
+![Prime-sieve optimization stages](../img/prime-sieves-stages.svg)
 
-## What About the Linear Sieve?
+The first two changes attack memory traffic and locality and produce most of the 7.99-fold final speedup. Carrying offsets is still correct and measurable, but it is deliberately the smallest bar-to-bar step in the diary.
 
-There is another algorithm that marks every composite exactly once and therefore works in $O(n)$ time. It keeps the smallest prime divisor of every number and a growing list of primes.
+## Boundaries and Alternatives
 
-Its asymptotic bound is better, but for plain prime enumeration it usually performs more bookkeeping and stores a full integer per number instead of a bit or byte. The linear sieve is valuable when we also need all smallest prime factors; it is not automatically a faster Eratosthenes sieve.
+The segment loop still visits base primes from the beginning for every block. More advanced sieves bucket future hits of large primes instead of scanning them repeatedly. Packed bitmaps trade extra masking instructions for eight times less marker storage. A wheel changes the mapping again. None of these is a free extension of the measured byte kernel, so none is included in its performance claim.
 
-## Benchmarking
+The linear sieve is another different contract. It marks each composite once and can provide the smallest prime factor of every integer, but stores and updates much more metadata. Its $O(n)$ bound does not imply that it beats this $O(n\log\log n)$ byte sieve for prime counting.
 
-There are several different operations people call “running a sieve”:
+The harness checks the known values through $\pi(10^6)=78{,}498$, every boundary through 200, and 200 fixed-seed random limits below 200,000. For every limit it compares the full, odd, division-start, and carried-offset variants across segment sizes from one byte to 4096 bytes. The suite also passes with AddressSanitizer and UndefinedBehaviorSanitizer.
 
-- building the marker array;
-- counting the primes;
-- collecting them into another array;
-- printing them.
-
-These should be timed separately. Printing decimal integers can easily dominate the sieve itself. Also record the candidate representation, segment size, whether base-prime generation is included, and the compiler and machine used.
-
-Test the boundaries around prime squares and segment endings, and compare small results with trial division. The most interesting performance graph sweeps $n$ across the cache hierarchy: that is where the byte, bitmap, and segmented variants stop looking like the same algorithm.
+The final lesson is not merely “use segmentation.” Removing evens changes the amount of work, segmentation changes where the work happens, and retained offsets remove an instruction that profiling shows to be secondary. The asymptotic algorithm never changed; the memory traffic did.

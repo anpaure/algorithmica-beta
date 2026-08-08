@@ -3,58 +3,33 @@ title: Fast Fourier Transform
 weight: 6
 ---
 
-The fast Fourier transform is one of the most important algorithms of the twentieth century. It is used in signal processing, physics, image compression, and many other places where mentioning all the applications would take longer than explaining the algorithm.
+The fast Fourier transform is one of the most important algorithms of the twentieth century. The formula is elegant; the implementation is mostly an argument about permutations, temporary arrays, and how we obtain the same roots of unity millions of times.
 
-We will approach it from a slightly unusual direction: as a fast way to multiply polynomials.
+We will derive it as a fast way to multiply polynomials, then optimize one precise kernel: an in-place forward transform of $n$ `complex<double>` values, where $n$ is a nonzero power of two.
 
-## Multiplication by Evaluation
+## Evaluation Instead of Multiplication
 
-A polynomial of degree less than $n$ is uniquely determined by its values at any $n$ distinct points. If two polynomials are already represented by their values at the same points, multiplying them is easy:
+A polynomial of degree less than $n$ is uniquely determined by its values at $n$ distinct points. In value representation, multiplication is pointwise:
 
 ```c++
 for (int i = 0; i < n; i++)
     C[i] = A[i] * B[i];
 ```
 
-Afterwards, interpolation recovers the coefficients of the product. The whole plan is therefore:
-
-1. evaluate both polynomials at sufficiently many points;
-2. multiply the values pairwise;
-3. interpolate the result.
-
-For arbitrary points, evaluation and interpolation are too expensive. The trick is to choose points with enough symmetry that both operations can be performed in $O(n\log n)$ time.
-
-## Roots of Unity
-
-The $n$ complex roots of unity are
+The complex $n$-th roots of unity give evaluation points with the symmetry we need:
 
 $$
-1,\ \omega_n,\ \omega_n^2,\ldots,\omega_n^{n-1},
-\qquad
-\omega_n=e^{-2\pi i/n}.
-$$
-
-The *discrete Fourier transform* evaluates the coefficient sequence $a_0,\ldots,a_{n-1}$ at these points:
-
-$$
+\omega_n=e^{-2\pi i/n},\qquad
 A_k=\sum_{j=0}^{n-1}a_j\omega_n^{jk}.
 $$
 
-The inverse transform has almost exactly the same form:
+The inverse changes the sign of the exponent and divides by $n$:
 
 $$
 a_j=\frac1n\sum_{k=0}^{n-1}A_k\omega_n^{-jk}.
 $$
 
-So one routine can perform both operations: reverse the sign of the angle for the inverse transform and divide every result by $n$ at the end.
-
-Computing the definition directly takes $n^2$ operations. The useful property of our evaluation points is
-
-$$
-\omega_n^2=\omega_{n/2}.
-$$
-
-Split the coefficients into those with even and odd indices. If $E_k$ and $O_k$ are the transforms of these two halves, then
+Because $\omega_n^2=\omega_{n/2}$, the even and odd coefficients form two half-size transforms. If they produce $E_k$ and $O_k$, then
 
 $$
 \begin{aligned}
@@ -63,25 +38,29 @@ A_{k+n/2}&=E_k-\omega_n^kO_k.
 \end{aligned}
 $$
 
-The pair of additions around one multiplication is called a *butterfly*. We recursively perform two transforms of size $n/2$ and then $n/2$ butterflies, giving
+This pair is a *butterfly*. Two recursive transforms and $n/2$ butterflies give
 
 $$
 T(n)=2T(n/2)+O(n)=O(n\log n).
 $$
 
-## A Direct Recursive Version
+## Benchmark Contract
 
-The derivation translates almost word for word into code:
+The inputs in this article have independently generated real and imaginary parts uniform in $[-1,1]$, from a fixed `mt19937_64` seed. Each measurement performs one forward transform. Restoring the input and constructing the optional root and reversal tables are outside timing; the bit-reversal permutation and all butterflies are inside. This is therefore the repeated-transform kernel of a planned FFT, not a one-shot convolution benchmark.
+
+Measurements were made on one performance core of an Apple M4 Max with Apple Clang 17 and `-O3 -mcpu=native`; `-ffast-math` is not used. For the $2^{18}$-sample optimization ladder, we launched five fresh processes and took the median of their results; each process itself reports the median of seven transforms after two warmups. Size sweeps use five runs after one warmup. The [complete test and benchmark program](../../../code/fft_case.cpp) contains all four kernels. Its [full sweep output](../../../code/fft_m4_results.txt), [five process-level stage runs](../../../code/fft_m4_stage_results.txt), and [Matplotlib generator](../../../code/plot_fft.py) reproduce every figure.
+
+## The Literal Recursion
+
+The derivation translates directly into code:
 
 ```c++
-using ftype = complex<double>;
-
-void fft_recursive(vector<ftype> &a, ftype root) {
+void fft_recursive(vector<complex<double>> &a, complex<double> root) {
     int n = a.size();
     if (n == 1)
         return;
 
-    vector<ftype> even(n / 2), odd(n / 2);
+    vector<complex<double>> even(n / 2), odd(n / 2);
     for (int i = 0; i < n / 2; i++) {
         even[i] = a[2 * i];
         odd[i] = a[2 * i + 1];
@@ -90,128 +69,123 @@ void fft_recursive(vector<ftype> &a, ftype root) {
     fft_recursive(even, root * root);
     fft_recursive(odd, root * root);
 
-    ftype w = 1;
+    complex<double> w = 1;
     for (int i = 0; i < n / 2; i++) {
-        ftype t = w * odd[i];
-        a[i] = even[i] + t;
-        a[i + n / 2] = even[i] - t;
+        auto value = w * odd[i];
+        a[i] = even[i] + value;
+        a[i + n / 2] = even[i] - value;
         w *= root;
     }
 }
 ```
 
-For a forward transform, the initial root is `polar(1.0, -2 * pi / n)`. For an inverse transform, we use the positive angle and divide the output by $n$.
+This is our measured baseline, not our final implementation. It allocates two vectors at every non-leaf node and copies every sample once per recursion level. At $n=2^{18}$, it takes 22.989 ms.
 
-This version is short and useful as a reference, but it allocates two vectors at every recursion node and copies the entire input on every level. The arithmetic is $O(n\log n)$, and so is the amount of copying, except the copying has a much less interesting constant.
+The arithmetic is $O(n\log n)$, but so is the copying. Big-O notation has correctly hidden the part we need to remove.
 
-## Removing Recursion and Allocations
+## Turning the Recursion Inside Out
 
-Follow one input element through the recursive splitting. First its lowest index bit decides whether it goes into the even or odd half, then the next bit does the same, and so on. At the bottom, the element originally at index `i` ends up at the index obtained by reversing the bits of `i`.
+Follow an input index through the even/odd splits. Its lowest bit chooses the first half, then the next bit chooses the next half, and so on. The leaf order is the order obtained by reversing the index bits.
 
-We can perform this *bit-reversal permutation* once and then apply the butterflies bottom-up:
+We can perform this permutation once and execute the butterfly levels bottom-up:
 
 ```c++
-const double pi = acos(-1.0);
-
-void fft(vector<ftype> &a, bool inverse = false) {
-    int n = a.size(); // nonzero power of two
-
-    for (int i = 1, j = 0; i < n; i++) {
-        int bit = n >> 1;
-        while (j & bit) {
-            j ^= bit;
-            bit >>= 1;
-        }
+for (int i = 1, j = 0; i < n; i++) {
+    int bit = n >> 1;
+    while (j & bit) {
         j ^= bit;
-
-        if (i < j)
-            swap(a[i], a[j]);
+        bit >>= 1;
     }
+    j ^= bit;
+    if (i < j)
+        swap(a[i], a[j]);
+}
 
-    for (int len = 2; len <= n; len *= 2) {
-        double angle = 2 * pi / len * (inverse ? 1 : -1);
-        ftype step = polar(1.0, angle);
-
-        for (int first = 0; first < n; first += len) {
-            ftype w = 1;
-            for (int i = 0; i < len / 2; i++) {
-                ftype u = a[first + i];
-                ftype v = w * a[first + i + len / 2];
-                a[first + i] = u + v;
-                a[first + i + len / 2] = u - v;
-                w *= step;
-            }
+for (int length = 2; length <= n; length *= 2) {
+    complex<double> step = polar(1.0, -2 * pi / length);
+    for (int first = 0; first < n; first += length) {
+        complex<double> w = 1;
+        for (int i = 0; i < length / 2; i++) {
+            auto left = a[first + i];
+            auto right = w * a[first + i + length / 2];
+            a[first + i] = left + right;
+            a[first + i + length / 2] = left - right;
+            w *= step;
         }
     }
-
-    if (inverse)
-        for (ftype &x : a)
-            x /= n;
 }
 ```
 
-The routine assumes that the size is a nonzero power of two. This is the natural contract for a compact radix-2 implementation; checking it in a benchmark's inner path would not make the transform any more general.
+No allocation remains in the transform, and each stage scans contiguous blocks. At $2^{18}$ samples the time falls to 5.918 ms, a 3.88-fold speedup. This is our largest single improvement.
 
-The order of operations is now explicit. First we combine adjacent one-element transforms, then blocks of four, then eight, until the entire array becomes one transform. No allocation happens inside the routine, and each stage scans contiguous blocks.
+## Removing a Multiplication Chain
 
-## Polynomial Multiplication
+The iterative kernel still obtains each twiddle as `w *= step`. That costs almost one extra complex multiplication per butterfly and creates a dependency chain: the next root cannot exist until the previous multiplication finishes. It also accumulates roundoff along each block.
 
-If polynomials have $n$ and $m$ coefficients, their product has $n+m-1$. We pad both arrays with zeroes to a power of two at least that large, transform them, multiply pointwise, and apply the inverse transform:
+For repeated transforms of the same length, we can construct a root table once:
 
 ```c++
-vector<long long> multiply(const vector<int> &a,
-                           const vector<int> &b) {
-    if (a.empty() || b.empty())
-        return {};
+for (int k = 0; k < n / 2; k++)
+    roots[k] = polar(1.0, -2 * pi * k / n);
 
-    int size = a.size() + b.size() - 1;
-    int n = 1;
-    while (n < size)
-        n *= 2;
-
-    vector<ftype> x(n), y(n);
-    for (int i = 0; i < a.size(); i++) x[i] = a[i];
-    for (int i = 0; i < b.size(); i++) y[i] = b[i];
-
-    fft(x);
-    fft(y);
-
-    for (int i = 0; i < n; i++)
-        x[i] *= y[i];
-
-    fft(x, true);
-
-    vector<long long> result(size);
-    for (int i = 0; i < size; i++)
-        result[i] = llround(x[i].real());
-
-    return result;
+for (int length = 2; length <= n; length *= 2) {
+    int stride = n / length;
+    for (int first = 0; first < n; first += length)
+        for (int i = 0; i < length / 2; i++) {
+            auto right = roots[i * stride] * a[first + i + length / 2];
+            // The same two butterfly additions.
+        }
 }
 ```
 
-Padding is not an optional implementation detail. Without it, the transform computes *cyclic* convolution and coefficients that run past the end wrap around to the beginning.
+At $2^{18}$ samples this changes 5.918 ms to 3.249 ms, another 1.82-fold improvement. Across the same five fresh processes, the median phase-timed run spends 0.905 ms in bit reversal and 2.446 ms in butterflies: the irregular permutation is about 27% of their sum, while the repeated arithmetic still dominates.
 
-Rounding is valid only while floating-point error stays below one half. For small integer coefficients and moderate lengths, `double` usually leaves a comfortable margin, but “usually” is not an arithmetic guarantee. Splitting coefficients into smaller pieces reduces the error at the cost of more transforms. When an exact modular answer is sufficient, the [number-theoretic transform](../ntt/) removes roundoff entirely.
+One radix-2 stage contains $n/2$ butterflies, and there are $\log_2 n$ stages. Counting a complex multiplication as six real operations and the two complex add/subtract results as four gives ten real floating-point operations per butterfly, or approximately
 
-## Where the Time Goes
+$$
+5n\log_2n
+$$
 
-At each stage there are $n/2$ independent butterflies. The additions are cheap; complex multiplication, moving the data, and producing the twiddle factors are the main work.
+for the root-table kernel. At $n=2^{18}$, 3.249 ms therefore corresponds to an effective 7.26 GFLOP/s. This is an algorithmic operation-rate calculation, not a hardware-counter measurement of retired floating-point instructions.
 
-The code computes one sine and cosine per stage and obtains the rest of the roots by repeatedly multiplying by `step`. Calling `sin` and `cos` inside every butterfly would be much slower. Precomputing all roots can be faster when many transforms of the same size are reused, but the table also consumes cache bandwidth. Large FFT libraries therefore create a *plan* for a particular size instead of committing to one strategy forever.
+The same count exposes the data movement. Each stage logically reads and writes the 4 MiB transform once, for 144 MiB across 18 stages, and performs another 36 MiB of root-table loads. Completing those butterflies in 2.446 ms corresponds to roughly 77 GB/s of logical traffic through the cache hierarchy. It is not a DRAM-bandwidth figure—the array and roots are repeatedly reused from cache—but it explains why reducing arithmetic does not make the stage free.
 
-The butterfly has plenty of SIMD parallelism, although `complex<double>` stores real and imaginary parts interleaved. One can process several butterflies with the same layout, or keep the real and imaginary components in separate arrays. Higher radices combine several stages and save some twiddle multiplications, at the cost of a larger and more specialized kernel.
+The root table contains $n/2$ complex numbers and occupies $8n$ bytes. The transform array itself occupies $16n$ bytes. The cache markers in the following plot refer only to the input array; a planned transform has the additional table footprint.
 
-Bit reversal is only $O(n)$ and disappears from the asymptotic expression, but its accesses are irregular. It matters for small transforms and one-shot calls. Stockham variants replace the explicit permutation with regular out-of-place passes; whether that wins depends on the cost of the extra buffer.
+![FFT time by transform size](../img/fft-size.svg)
 
-## Numerical Error and Benchmarking
+The final kernel remains about six to seven times faster than the allocating recursion throughout the large-size range. Both curves bend as the transform and its repeatedly accessed tables leave cache, but the algorithmic work remains $n\log n$.
 
-Every butterfly rounds its result, and the recurrence `w *= step` also drifts slightly away from the unit circle. Useful correctness checks are:
+## A Reversal Table That Did Not Win
 
-- transform followed by inverse transform;
-- comparison with the $O(n^2)$ definition for small arrays;
-- convolution compared with the quadratic algorithm;
-- the size of the imaginary residue when a real answer is expected.
+Since roots benefited from precomputation, precomputing every bit-reversed index seems natural. The arithmetic that updates `j` disappears; each iteration instead loads `reversed[i]` and performs the same irregular swap.
 
-Use an error relative to the scale of the input rather than one absolute epsilon for every test. Compiler options such as `-ffast-math` may change reassociation, contraction, and exceptional-value behavior, so they are part of both the performance and numerical contract.
+The fresh five-process audit does not establish a large-size improvement. At $2^{18}$, the process medians are 3.249 ms with dynamic reversal and 3.344 ms with the table—rough parity at this level of run-to-run variation. The per-process ranges overlap: 3.163–3.325 ms and 3.213–3.395 ms respectively. The earlier single-series regression claim was too strong a conclusion from benchmark noise, and the size sweep does not show a sustained win in either direction. We retain the simpler dynamic update because precomputation has not demonstrated a benefit, not because these timings prove a particular microarchitectural cause.
 
-When benchmarking, distinguish a planned repeated transform from a one-shot convolution that includes allocation, padding, and root setup. Also state the direction, size, precision, in-place or out-of-place layout, and whether the input is real or complex. FFT performance is mostly the art of matching the same butterfly to different memory hierarchies; the formula is the easy part.
+The whole progression is shown below. Planning remains excluded from every bar; the whiskers span the five independently launched process medians.
+
+![FFT optimization stages](../img/fft-stages.svg)
+
+## Numerical Error Is Part of the Result
+
+The direct root table changes more than speed. Repeated `w *= step` slowly moves the twiddle away from the unit circle, whereas each table entry is computed directly. We measured a forward transform followed by the corresponding inverse and recorded
+
+$$
+\max_i |\hat a_i-a_i|.
+$$
+
+![FFT forward-inverse error](../img/fft-error.svg)
+
+At $n=2^{20}$, recurrent twiddles produce a maximum error of $5.24\cdot10^{-11}$; direct roots produce $1.94\cdot10^{-15}$. The latter stays close to machine precision across the sweep. These values belong to the fixed random input and compiler settings, not a general worst-case error bound, but the causal difference is clear: the optimization removed a long floating-point recurrence.
+
+The test mode also compares all four forward transforms with the $O(n^2)$ definition through size 64 and checks forward/inverse round trips through $2^{16}$. It passes with AddressSanitizer and UndefinedBehaviorSanitizer.
+
+## Returning to Polynomial Multiplication
+
+Polynomials with $r$ and $s$ coefficients require at least $r+s-1$ samples. We pad to the next power of two, transform both inputs, multiply pointwise, and apply the inverse transform. Padding is essential: without it, coefficients beyond the transform length wrap around and produce cyclic convolution.
+
+Rounding the final real parts to integers is valid only while the accumulated error is below one half. Coefficient splitting can reduce the error at the cost of more transforms. If an exact modular result is suitable, the [number-theoretic transform](../ntt/) replaces floating-point roots with roots in a finite field.
+
+This article does not claim one-shot convolution time, real-input specialization, or comparison with a third-party FFT library. Plan construction, two forward transforms, pointwise multiplication, inverse scaling, padding, and allocation would all belong to that different contract. Nor does the final kernel implement Stockham ordering, higher radices, or a split real/imaginary layout.
+
+Within the measured contract, the result is precise: removing recursive storage gives 3.88 times, direct twiddles give another 1.82 times and improve numerical accuracy, while the apparently obvious reversal table remains in rough parity and has not justified its extra planning state.

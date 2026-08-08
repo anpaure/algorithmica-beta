@@ -7,223 +7,163 @@ In 1960, Andrey Kolmogorov organized a seminar where he conjectured that multipl
 
 One week later, a 23-year-old student named Anatoly Karatsuba found a faster algorithm.
 
-Apart from being a nice story, Karatsuba multiplication is a useful performance case study. The asymptotically faster method is not faster for small numbers, and most of the work needed to make it practical is not in the algebra but in representation, memory allocation, and choosing the right base case.
+The algebra fits on a napkin. Making it fast takes rather more work: a direct translation allocates thousands of temporary arrays, recursion to single digits loses badly, and the machine-dependent crossover matters more than the asymptotic bound at ordinary sizes.
 
-## Representing Large Integers
+## The Experiment
 
-We can store a nonnegative integer as an array of digits in some base $B$:
+We need a narrow contract before measuring anything. An operand in this case study is a nonnegative, little-endian polynomial of exactly $n$ base-$10^4$ digits, where $n$ is a power of two and both operands have the same length. Benchmark digits are uniform in $[0,9999]$, with a nonzero most-significant digit. The timed kernel produces the $2n$ *uncarried convolution coefficients* in signed 64-bit integers. Decimal conversion, padding, and the final carry pass are deliberately excluded.
+
+The largest benchmark has $n=8192$ and uses a base-case cutoff of 32. At the deepest middle-product node, a coefficient is bounded by
 
 $$
-x=x_0+x_1B+x_2B^2+\cdots+x_{n-1}B^{n-1}.
+\frac{n^2}{32}(B-1)^2 < 2.1\cdot 10^{14},
 $$
 
-The least significant digit goes first because carries then move forward through memory. A decimal-friendly choice is $B=10^4$: every array element contains four decimal digits, and printing only requires padding all but the last group with zeros.
+so this workload fits safely in `int64_t`. This is a property of the stated range, not a general promise for arbitrary limb counts.
 
-The usual multiplication algorithm is just a convolution of the digit arrays:
+All measurements were made on one performance core of an Apple M4 Max with Apple Clang 17 and `-O3 -mcpu=native`. Inputs, output, and the reusable scratch array are allocated before timing. Output zeroing is included. The intentionally allocating implementation includes all of its recursive allocations. Headline values are medians of seven runs after two warmups, except at $n=8192$, where five runs are used. For sub-microsecond cases, each timed sample performs
+
+$$
+\max(1,\lfloor 2^{22}/n^2\rfloor)
+$$
+
+products and reports the time per product. The same non-inlined base-case kernel is shared by all variants, preventing the compiler from silently specializing one version differently. The [complete test and benchmark program](../../../code/big_integers.cpp) contains the fixed seeds and the CSV mode. Its [raw output](../../../code/big_integers_m4_results.txt) is rendered by the [Matplotlib plot script](../../../code/plot_big_integers.py).
+
+## Long Multiplication
+
+Writing
+
+$$
+x=x_0+x_1B+x_2B^2+\cdots+x_{n-1}B^{n-1}
+$$
+
+turns multiplication into a convolution. We postpone carrying so the hot loop contains only multiply-adds:
 
 ```c++
-const int base = 10000;
-
-vector<long long> schoolbook(const vector<long long> &a,
-                             const vector<long long> &b) {
-    vector<long long> c(a.size() + b.size());
-
-    for (int i = 0; i < a.size(); i++)
-        for (int j = 0; j < b.size(); j++)
+void schoolbook(const long long *a, const long long *b,
+                long long *c, int n) {
+    fill(c, c + 2 * n, 0);
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
             c[i + j] += a[i] * b[j];
-
-    return c;
 }
 ```
 
-We postpone carrying until after the multiplication. This keeps the hot loop to one multiply and one add, and lets the compiler [unroll and vectorize](/hpc/simd/auto-vectorization) parts of it. The accumulator type must be wide enough: for $n$ base-$B$ digits, a coefficient can be as large as roughly $n(B-1)^2$.
+This performs exactly $n^2$ digit products. It is quadratic, but contiguous, compact, and almost free of setup. At 64 digits it takes 0.921 microseconds. Any recursive method has to beat this kernel after paying for its additions and calls.
 
-The algorithm performs $nm$ digit products for operands of lengths $n$ and $m$. It is quadratic for equally sized inputs, but it has excellent locality and very little overhead. We will keep it — just not for every input size.
+## Three Multiplications Instead of Four
 
-## Karatsuba's Trick
-
-Assume for now that both arrays have the same even length $n=2k$. Split the corresponding numbers in half:
+Split equally sized even-length operands in half:
 
 $$
 x=x_0+B^kx_1,\qquad y=y_0+B^ky_1.
 $$
 
-Expanding the product in the obvious way needs four half-size multiplications:
-
-$$
-xy=x_0y_0+B^k(x_0y_1+x_1y_0)+B^{2k}x_1y_1.
-$$
-
-The middle term is the annoying one. Karatsuba observed that it can be recovered from one additional product:
+The direct expansion needs four half-size products. Karatsuba recovers both cross-products from one:
 
 $$
 (x_0+x_1)(y_0+y_1)-x_0y_0-x_1y_1=x_0y_1+x_1y_0.
 $$
 
-So we only need three recursive multiplications instead of four. If additions take linear time, the recurrence becomes
+Therefore
 
 $$
-T(n)=3T(n/2)+O(n),
+xy=x_0y_0+B^k\left((x_0+x_1)(y_0+y_1)-x_0y_0-x_1y_1\right)
+   +B^{2k}x_1y_1,
 $$
 
-which solves to
+and the recurrence
 
 $$
-T(n)=O(n^{\log_2 3})\approx O(n^{1.585}).
+T(n)=3T(n/2)+O(n)
 $$
 
-Here is a direct implementation for polynomial coefficients. The input length must be a power of two; we will fix that in the wrapper.
+gives $T(n)=O(n^{\log_2 3})\approx O(n^{1.585})$.
+
+A literal implementation slices `a0`, `a1`, `b0`, and `b1`, builds two sums, recursively returns three products, and allocates a result at every node. It is pleasingly close to the formula and an excellent correctness reference. It is not an excellent memory allocator benchmark.
+
+At 64 digits, this version takes 1.084 microseconds and is 18% *slower* than schoolbook. It only reaches parity around 128 digits. The asymptotic saving exists, but the first implementation manages to hide it under object construction and copying.
+
+The allocation counter makes the bottleneck concrete. Multiplying two 4096-digit operands with cutoff 32 asks for 9,838 vectors containing 798,848 elements in total. That is 6.10 MiB of cumulative `int64_t` storage requests for a result containing only 8192 coefficients. The allocator can recycle memory, so this is not the peak footprint; it is the amount of allocation and initialization work requested by the source.
+
+## One Workspace
+
+The three recursive branches run sequentially, so they need not own their temporary arrays simultaneously. We write the low and high products directly into their final ranges and reserve part of one scratch array for the two sums and middle product:
 
 ```c++
-const int cutoff = 32;
-
-vector<long long> karatsuba(const vector<long long> &a,
-                            const vector<long long> &b) {
-    int n = a.size();
-
-    if (n <= cutoff)
-        return schoolbook(a, b);
-
-    int k = n / 2;
-    vector<long long> a0(a.begin(), a.begin() + k);
-    vector<long long> a1(a.begin() + k, a.end());
-    vector<long long> b0(b.begin(), b.begin() + k);
-    vector<long long> b1(b.begin() + k, b.end());
-    vector<long long> as(k), bs(k);
-
-    for (int i = 0; i < k; i++) {
-        as[i] = a0[i] + a1[i];
-        bs[i] = b0[i] + b1[i];
-    }
-
-    vector<long long> low  = karatsuba(a0, b0);
-    vector<long long> high = karatsuba(a1, b1);
-    vector<long long> mid  = karatsuba(as, bs);
-
-    vector<long long> c(2 * n);
-    for (int i = 0; i < n; i++) {
-        c[i]     += low[i];
-        c[k + i] += mid[i] - low[i] - high[i];
-        c[n + i] += high[i];
-    }
-
-    return c;
-}
-```
-
-This is almost a literal translation of the formula. It also makes the main practical problem painfully visible: every recursive call slices four arrays and allocates several more.
-
-## Turning Coefficients Back Into Digits
-
-Before calling `karatsuba`, we pad both operands with zeroes to the same power-of-two length. Afterwards, we propagate the carries once:
-
-```c++
-vector<int> multiply(vector<int> a, vector<int> b) {
-    if (a.empty() || b.empty())
-        return {};
-
-    int n = 1;
-    while (n < max(a.size(), b.size()))
-        n *= 2;
-
-    vector<long long> x(n), y(n);
-    copy(a.begin(), a.end(), x.begin());
-    copy(b.begin(), b.end(), y.begin());
-
-    vector<long long> c = karatsuba(x, y);
-
-    for (int i = 0; i + 1 < c.size(); i++) {
-        c[i + 1] += c[i] / base;
-        c[i] %= base;
-    }
-
-    while (c.size() > 1 && c.back() == 0)
-        c.pop_back();
-
-    return vector<int>(c.begin(), c.end());
-}
-```
-
-This code assumes that every input digit is in $[0,B)$ and that all intermediate polynomial coefficients fit in `long long`. These are representation constraints, not properties of Karatsuba itself. A real big-integer implementation selects the limb width together with a sufficiently wide accumulator — often 32-bit binary limbs with 64- or 128-bit products.
-
-Padding to a power of two can almost double the input length. This is acceptable for a compact implementation, but large libraries use uneven splits and several multiplication algorithms so they do not spend most of their time multiplying zeroes.
-
-## The Crossover
-
-Recursing down to one digit is a classic asymptotic mistake. Karatsuba saves multiplications, but it adds array passes, function calls, temporary storage, and subtractions. For small inputs, the quadratic loop wins by a lot.
-
-This is why the code switches to schoolbook multiplication at `cutoff`. The value 32 is only a starting point. The best threshold depends on the digit base, the schoolbook kernel, allocation strategy, compiler, and processor, and should be found by benchmarking a sweep of operand sizes rather than one conveniently large example.
-
-Strongly unbalanced operands are another bad case. Splitting a very long number against a short one creates mostly empty recursive halves. It is usually better to use schoolbook multiplication or split the longer operand into blocks when the lengths are far apart.
-
-## Removing the Allocations
-
-The simple recursive version is useful for checking the algebra, but it should not be the final benchmark. All temporary arrays needed by one recursion branch can share a workspace, because the other branches are evaluated sequentially.
-
-The following version writes its $2n$ output coefficients to `c` and requires `scratch` to contain at least $4n$ elements. As before, $n$ is a power of two, both input arrays have length $n$, and the four buffers do not overlap:
-
-```c++
-void schoolbook(const long long *a, const long long *b,
-                long long *c, int n) {
-    for (int i = 0; i < 2 * n; i++)
-        c[i] = 0;
-
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
-            c[i + j] += a[i] * b[j];
-}
-
 void karatsuba(const long long *a, const long long *b,
-               long long *c, long long *scratch, int n) {
+               long long *c, long long *scratch,
+               int n, int cutoff) {
     if (n <= cutoff) {
         schoolbook(a, b, c, n);
         return;
     }
 
     int k = n / 2;
+    karatsuba(a,     b,     c,     scratch, k, cutoff);
+    karatsuba(a + k, b + k, c + n, scratch, k, cutoff);
 
-    // Store the low and high products directly in their final ranges.
-    karatsuba(a,     b,     c,     scratch, k);
-    karatsuba(a + k, b + k, c + n, scratch, k);
-
-    // The first 2n workspace elements belong to this recursion level.
     long long *as = scratch;
     long long *bs = as + k;
-    long long *mid = bs + k;
-    long long *next = mid + n;
+    long long *middle = bs + k;
+    long long *next = middle + n;
 
     for (int i = 0; i < k; i++) {
         as[i] = a[i] + a[k + i];
         bs[i] = b[i] + b[k + i];
     }
-
-    karatsuba(as, bs, mid, next, k);
+    karatsuba(as, bs, middle, next, k, cutoff);
 
     for (int i = 0; i < n; i++)
-        mid[i] -= c[i] + c[n + i];
+        middle[i] -= c[i] + c[n + i];
     for (int i = 0; i < n; i++)
-        c[k + i] += mid[i];
+        c[k + i] += middle[i];
 }
 ```
 
-The low and high recursive calls reuse the same workspace. After they finish, the current call reserves $2n$ elements for the two half-size sums and the $n$-element middle product, leaving $2n=4(n/2)$ elements for its recursive call. This proves by induction that $4n$ scratch elements are sufficient.
+At one level, `as`, `bs`, and `middle` consume $2n$ scratch elements. Their recursive call has length $n/2$ and, inductively, needs another $4(n/2)=2n$. Thus $4n$ elements suffice for the whole recursion. The low and high calls finish before this level uses its temporaries and may reuse the same region.
 
-In the `multiply` wrapper, the allocating recursive call can now be replaced with two allocations made once at the top level:
+At 4096 digits and cutoff 32, the allocating version takes 0.985 ms while the workspace version takes 0.572 ms. Removing the recursive vectors is a 1.72-fold improvement. This change does not alter the recurrence, base case, or arithmetic; it removes allocation, copying, and repeated initialization alone.
+
+## Finding the Base Case
+
+Recursing down to one digit is the other classic asymptotic mistake. Each Karatsuba level saves multiplications but adds two sum passes, two combine passes, and three calls. We swept the cutoff on the same 4096-digit operands. The plot reports slowdown relative to the fastest measured cutoff; lower is better.
+
+![Karatsuba base-case cutoff sweep](../img/big-integers-cutoff.svg)
+
+A cutoff of one is 4.78 times slower than the best result. Moving the cutoff from 16 to 32 still helps slightly, while moving it to 64 loses 21%. Beyond that, too much work returns to the quadratic kernel. For this compiler, representation, and processor, 32 is the measured choice—not a constant inherited from the algorithm.
+
+## The Crossover Curve
+
+With the workspace and cutoff fixed, we sweep balanced operands from 16 to 8192 digits. Each line uses the same inputs and includes output initialization.
+
+![Schoolbook and Karatsuba multiplication time](../img/big-integers-size.svg)
+
+Some representative headline medians are:
+
+| Digits per operand | schoolbook | allocating Karatsuba | workspace Karatsuba |
+|---:|---:|---:|---:|
+| 32 | **0.242 µs** | 0.269 µs | 0.242 µs |
+| 128 | 3.638 µs | 3.609 µs | **2.271 µs** |
+| 512 | 59.477 µs | 35.042 µs | **21.089 µs** |
+| 2048 | 0.921 ms | 0.327 ms | **0.189 ms** |
+| 8192 | 15.144 ms | 3.112 ms | **1.757 ms** |
+
+At the largest size, the final kernel is 8.62 times faster than schoolbook and 1.77 times faster than the allocation-heavy translation. The gap grows with $n$, as the exponents predict, but the constant factors decide when that growth becomes useful.
+
+## Carrying and Representation Limits
+
+For nonnegative coefficients, carrying is a final linear pass:
 
 ```c++
-vector<long long> c(2 * n);
-vector<long long> scratch(4 * n);
-karatsuba(x.data(), y.data(), c.data(), scratch.data(), n);
+for (int i = 0; i + 1 < c.size(); i++) {
+    c[i + 1] += c[i] / base;
+    c[i] %= base;
+}
 ```
 
-This removes allocator traffic and also avoids copying the low and high halves: they are already contiguous subarrays of `a` and `b`.
+Real big integers need more policy than this benchmark. Unequal lengths must be padded or split without wasting almost half the work; signs need normalization; binary limbs are usually more convenient than decimal ones; and the limb width, accumulator width, and maximum recursion depth must be selected together to avoid overflow. Padding both operands to one power of two is particularly bad for strongly unbalanced multiplication. Carrying also becomes subtler when an implementation allows negative intermediate coefficients.
 
-The remaining linear loops — forming `a0 + a1`, forming `b0 + b1`, and combining the three products — are independent elementwise operations and are good candidates for SIMD. The schoolbook loop is harder: each product contributes to a shifted output range, and carry propagation is a dependency chain. Optimizing this base case often moves the Karatsuba crossover *up*, because the allegedly slow algorithm has just become faster.
+The checked-in harness differentially tests every power-of-two size through 512 digits, including zero, all-9999 inputs, and 40 fixed-seed random pairs per size. It compares both Karatsuba implementations and seven workspace cutoffs against schoolbook, then checks that carrying leaves every digit in $[0,B)$. The same suite passes with AddressSanitizer and UndefinedBehaviorSanitizer.
 
-Other useful special cases include squaring, where the cross-products are symmetric, and multiplication by one limb. At still larger sizes, Toom–Cook and FFT-based methods continue the same hierarchy. There is no single “big integer multiplication algorithm”; there is a dispatcher between kernels that win in different size ranges.
-
-## Testing and Benchmarking
-
-Compare the result against an established arbitrary-precision library, not only against the same code with a different cutoff. Important inputs include zero, one, digits equal to `base - 1`, sizes just below and above powers of two, unequal lengths, and sizes around the crossover.
-
-For benchmarks, separate decimal parsing and printing from multiplication. Report both operand lengths, their balance, the digit base, cutoff, and whether temporary memory is reused. The useful plot shows schoolbook and Karatsuba over a wide range of sizes: the crossing point is the result, not a magic constant to be copied into every program.
+At larger sizes, Toom–Cook and FFT-based multiplication continue the hierarchy. The important lesson arrives earlier: Karatsuba's three-product identity is only the beginning. The practical algorithm is the identity plus a shared workspace, a measured base case, and an explicit representation contract.

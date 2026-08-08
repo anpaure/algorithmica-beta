@@ -1,0 +1,16 @@
+suite,variant,ns_per_value
+uniform32,div10-copy,8.53638
+uniform32,pairs-copy,6.41008
+uniform32,pairs-direct,5.64194
+uniform32,groups4-direct,3.10048
+uniform32,std-to-chars,3.19831
+uniform-digits,div10-copy,11.5606
+uniform-digits,pairs-copy,9.90601
+uniform-digits,pairs-direct,6.61099
+uniform-digits,groups4-direct,7.08989
+uniform-digits,std-to-chars,7.49779
+counters,div10-copy,5.43829
+counters,pairs-copy,3.80671
+counters,pairs-direct,2.95679
+counters,groups4-direct,1.54189
+counters,std-to-chars,1.74661

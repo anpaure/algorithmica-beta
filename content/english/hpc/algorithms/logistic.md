@@ -24,7 +24,8 @@ This is pretty much all that a performance engineer needs to know about machine 
 
 ```c++
 float w[10][28*28];
-// 784 x 10
+// ten rows of 784 weights
+
 int predict(const float *a) {
     float s[10] = {0};
 
@@ -32,8 +33,7 @@ int predict(const float *a) {
         for (int i = 0; i < 28*28; i++)
             s[k] += a[i] * w[k][i];
 
-    // there is no problem with calculating exponent of small numbers,
-    // but exponent of large numbers may overflow
+    // subtracting the maximum keeps every exponent argument non-positive
     float mx = *std::max_element(s, s + 10);
     float sumexp = 0;
     for (int i = 0; i < 10; i++) {
@@ -42,7 +42,6 @@ int predict(const float *a) {
     }
 
     int argmax = 0;
-    
     for (int i = 0; i < 10; i++) {
         s[i] /= sumexp;
         if (s[i] > s[argmax])
@@ -57,243 +56,156 @@ This isn't exactly worth optimizing, because that's just ~10k operations anyway,
 
 This can also be used in a hot spot. For example, computer chess programs use similar models to determine the value of a position (the probability of winning). By the way, this is how the "1-3-3-5-9" heuristic arises: you can train a logistic regression on a large dataset of chess positions that are turned into piece count differences, and that's what weights are going to look like. Score in other games works in a similar way.
 
-The first thing we can notice is that we don't actually need to implement softmax, because we can notice that the largest logit (this is how pre-softmax numbers are called) will be largest after the softmax, so we only need to take argmax after the matrix multiplication.
+Nobody in their sane mind uses C++ for training ML models. We will only time inference.
 
-This is not just an approximation. The exponential function is strictly increasing, and division by the same positive number does not change the order of the elements:
+## The Experiment
+
+The picture above is illustrative; the benchmark does **not** use MNIST, and we will not report accuracy on it. The [complete program](../../../code/logistic_bench.cpp) deterministically creates a synthetic model with 784 features and 10 classes, together with $2^{13}$ synthetic inputs. Weights are uniform in $[-0.25,0.25]$, inputs are uniform in $[-1,1]$, there is no bias, and all random seeds are fixed. Its [five-process median output](../../../code/logistic_m4_results.txt) is rendered by the [Matplotlib plot script](../../../code/plot_logistic.py). Non-AArch64 builds omit the three NEON variants instead of timing the scalar kernel under SIMD labels.
+
+This is a kernel benchmark with reproducible data, not a claim about a trained model. Its quality metric is the fraction of predictions that disagree with the floating-point argmax. Disagreement is not accuracy: either implementation may agree or disagree with a real label.
+
+Measurements were taken on an Apple M4 Max with Apple Clang 17.0.0 using `-O3 -mcpu=native`. Each process performs two warm-up runs and nine timed runs, and the table reports the componentwise median of five processes. Model construction, quantization, and packing are outside the timed region; every implementation predicts the entire dataset and folds the class indices into an observable checksum.
+
+The full floating-point implementation takes **3162 ns per sample**.
+
+## Removing Softmax
+
+The first thing we can notice is that we don't actually need to implement softmax when the caller only wants a class. The largest logit—this is what the pre-softmax numbers are called—will still be the largest after softmax, because the exponential function is strictly increasing and division by the same positive number does not change the order:
 
 $$
 \underset{k}{\operatorname{argmax}}\; \frac{e^{z_k}}{\sum_i e^{z_i}}
-= \underset{k}{\operatorname{argmax}}\; z_k
+= \underset{k}{\operatorname{argmax}}\; z_k.
 $$
 
-We have also omitted the bias vector from the model. It can either be added to the logits after the matrix multiplication or folded into the matrix by appending a constant $1$ to every input vector.
+This is an exact transformation, not an approximation. Probabilities, cross-entropy, and calibration are different interfaces and still need a numerically stable softmax.
 
-### Probabilities and Loss
+Removing exponentiation, normalization, and their two short loops only improves the benchmark to **3042 ns**, or 3.8%. The matrix-vector product performs 7840 multiply-adds and is the actual bottleneck; optimizing ten exponentials was a good idea aimed at the wrong part of this particular workload.
 
-Sometimes we need the probabilities themselves: for example, to reject uncertain predictions or to calculate the loss during training. Directly exponentiating the logits is not safe. A perfectly ordinary logit such as $1000$ already makes a single-precision exponent overflow.
+## Quantization
 
-Softmax is invariant under adding the same number to every logit:
+Machine-learning models are often robust enough to tolerate reduced precision, but this is an empirical property, not a theorem. Quantization errors need not cancel. We will change the arithmetic and then measure how many predictions change.
 
-$$
-\frac{e^{z_k-c}}{\sum_i e^{z_i-c}}
-= \frac{e^{z_k} / e^c}{\sum_i e^{z_i} / e^c}
-= \frac{e^{z_k}}{\sum_i e^{z_i}}
-$$
+Using lower precision has two potential advantages:
 
-We can therefore choose $c = \max_i z_i$. The largest exponent is then exactly one, all others are between zero and one, and the denominator is between $1$ and $m$.
+1. It takes less memory traffic to fetch the data.
+2. SIMD instructions pack more values into each register.
 
-For the correct class $y$, the cross-entropy loss is
+We use symmetric per-tensor scales shared by all classes:
 
 $$
-L = -\log p_y
-  = c - z_y + \log \sum_i e^{z_i-c}
-$$
-
-Since the derivative of $\log \sum_i e^{z_i}$ with respect to $z_k$ is exactly $p_k$, its gradient with respect to a logit is
-
-$$
-\frac{\partial L}{\partial z_k} = p_k - [k=y].
-$$
-
-Consequently, if $z_k = b_k + \sum_i w_{ki} x_i$, then
-
-$$
-\frac{\partial L}{\partial w_{ki}} = (p_k - [k=y])x_i,
+q_i = \operatorname{round}(127x_i),
 \qquad
-\frac{\partial L}{\partial b_k} = p_k - [k=y].
+r_{ki} = \operatorname{round}(508w_{ki}).
 $$
 
-After finding the maximum, the stable loss and the entire logit gradient can be calculated in two more passes. The function below overwrites the logits with that gradient:
+Values are clipped to the signed-byte range. The positive common scale may be discarded for argmax, so the quantized score is simply
+
+$$
+\hat z_k = \sum_i q_i r_{ki}.
+$$
+
+The model and each input shrink from four bytes per element to one. The accumulator must remain wide: in the worst case,
+
+$$
+784 \cdot 127^2 = 12{,}645{,}136 < 2^{31}.
+$$
+
+More directly, the checked harness uses `static_assert(784 * 127 * 127 < INT32_MAX)` and a 32-bit sum. The scalar kernel is uncomplicated:
 
 ```c++
-float softmax_gradient(float *z, int m, int y) {
-    float shift = z[0];
-    for (int k = 1; k < m; k++)
-        shift = std::max(shift, z[k]);
-
-    float target = z[y];
-    float sum = 0;
-    for (int k = 0; k < m; k++) {
-        z[k] = std::exp(z[k] - shift);
-        sum += z[k];
-    }
-
-    float loss = shift - target + std::log(sum);
-    for (int k = 0; k < m; k++)
-        z[k] = z[k] / sum - (k == y);
-
-    return loss;
+int32_t dot(const int8_t *a, const int8_t *b) {
+    int32_t sum = 0;
+    for (int i = 0; i < 784; i++)
+        sum += int32_t(a[i]) * int32_t(b[i]);
+    return sum;
 }
 ```
 
-Binary logistic regression is the $m=2$ special case. If one of the logits is fixed at zero and the other is $z$, the probability of the second class is the sigmoid
+This version takes **207 ns per sample**, already 15.2 times faster than the original. On the synthetic dataset, its predictions disagree with floating point on **0.598%** of samples. That number only describes this fixed random construction; a real model needs calibration on representative data and an accuracy evaluation after quantization.
+
+There are $784 \times 10 = 7{,}840$ multiply-accumulates per prediction. Under the conventional two-operations-per-MAC accounting, that is 15,680 useful multiply/add operations. The 3042 ns floating-point argmax therefore sustains about
 
 $$
-\sigma(z) = \frac{1}{1+e^{-z}}.
+\frac{15{,}680}{3042\ \mathrm{ns}} \approx 5.15\ \mathrm{GFLOPS}.
 $$
 
-Its usual formula overflows for a large negative $z$. Evaluating a different but equivalent expression on that half of the number line fixes it:
+The corresponding rate for the final 133 ns int8 kernel is about **118 billion integer multiply/add operations per second**. This is GOPS under the same useful-operation convention, not FLOPS and not a hardware-counter reading.
+
+The float model occupies 31,360 bytes and the int8 model 7,840 bytes; both fit comfortably in the M4 performance core's 128 KiB L1 data cache. Each input similarly shrinks from 3136 to 784 bytes. Reduced traffic helps, but cache capacity alone does not explain a 23.8x result here—the instruction sequence and available independent accumulators dominate.
+
+## What the Compiler Already Did
+
+The source above says “scalar,” but the generated machine code does not. Apple Clang consumes 32 bytes from each input per iteration, multiplies the low and high byte halves with `smull` and `smull2`, and maintains eight independent vector accumulators:
+
+```nasm
+loop:
+    ldp     q16, q17, [x8, #-16]
+    ldp     q18, q19, [x9, #-16]
+    smull.8h  v20, v18, v16
+    smull2.8h v16, v18, v16
+    smull.8h  v18, v19, v17
+    smull2.8h v17, v19, v17
+    saddw.4s  v0, v0, v20
+    // seven other independent accumulators
+    b.ne    loop
+```
+
+This is why a direct transcription into intrinsics is not automatically faster. Our first NEON version uses one 32-bit accumulator and pairwise-accumulates sixteen byte products into it:
 
 ```c++
-float sigmoid(float z) {
-    if (z >= 0)
-        return 1 / (1 + std::exp(-z));
-    float e = std::exp(z);
-    return e / (1 + e);
+int32x4_t sum = vdupq_n_s32(0);
+
+for (int i = 0; i < 784; i += 16) {
+    int8x16_t x = vld1q_s8(a + i);
+    int8x16_t y = vld1q_s8(b + i);
+    sum = vpadalq_s16(sum, vmull_s8(vget_low_s8(x), vget_low_s8(y)));
+    sum = vpadalq_s16(sum, vmull_high_s8(x, y));
 }
 ```
 
-For a binary label $y \in \{0, 1\}$, cross-entropy simplifies to $\log(1+e^z)-yz$. Factoring out the larger of $0$ and $z$ gives the stable loss and its derivative:
+It regresses to **290 ns**. Each iteration depends on the previous value of `sum`, while the compiler-generated loop had enough independent work to hide that latency.
 
-$$
-L = \max(z, 0) - yz + \log(1 + e^{-|z|}),
-\qquad
-\frac{\partial L}{\partial z} = \sigma(z) - y.
-$$
+## Independent Accumulators
 
-Nobody in their sane mind uses C++ for training ML models.
+We can repair the manual kernel by processing four 16-byte blocks in parallel, maintaining `sum0`, `sum1`, `sum2`, and `sum3`, and combining them only after the loop. This is the same [instruction-level parallelism](/hpc/pipelining/) technique used in ordinary reductions.
 
-### Quantization
+The four-accumulator version takes **133 ns per sample**: 23.8 times faster than the floating-point baseline and 1.56 times faster than the already auto-vectorized scalar int8 code. In operation-rate terms, the dependency-breaking change raises the measured int8 kernel from about 75.6 to 118 GOPS.
 
-Machine learning is one of the cases where we need neither range nor precision. The whole point of machine learning is to learn functions that are robust to small perturbations in data. The input data is noisy, so why shouldn't our computations be? Plus, errors should cancel each other. We can also force the matrix parameters to be in a certain range.
+![](../img/logistic-stages.svg)
 
-Using lower precision has two advantages:
+The graph also includes one failed batching experiment. We packed four inputs feature-major, loaded four independent feature values into a vector, and reused each weight across the four lanes. This removes horizontal reductions and reuses weights, but it widens every byte to 32 bits and executes an ordinary vector multiplication for every feature and class. Even with packing excluded, it takes **350 ns per sample**. Weight reuse does not compensate for throwing away the dense byte-dot-product kernel at a batch of only four.
 
-1. It takes less time to fetch data.
-2. We can use SIMD instructions that pack more values together.
+For larger batches, this becomes a matrix-matrix multiplication problem. A production implementation should compare against a tuned GEMM or platform ML library and include packing in end-to-end latency. The batch-four experiment only establishes that this particular layout and kernel lose.
 
-To quantize the model, we choose positive scale factors $s_x$ and $s_w$ and store nearby integers
+## Precision Is a Parameter
 
-$$
-q_i \approx \frac{x_i}{s_x},
-\qquad
-r_{ki} \approx \frac{w_{ki}}{s_w}.
-$$
+The int8 disagreement rate is not a universal constant. Keeping the same floating-point model and inputs, the harness repeats symmetric quantization with signed limits corresponding to 4 through 8 bits:
 
-The real-valued logit is then approximated by
+![](../img/logistic-disagreement.svg)
 
-$$
-z_k \approx s_x s_w \sum_i q_i r_{ki}.
-$$
+| Signed precision | Prediction disagreement |
+|--:|--:|
+| 4 bits | 8.47% |
+| 5 bits | 4.05% |
+| 6 bits | 2.26% |
+| 7 bits | 1.14% |
+| 8 bits | 0.598% |
 
-If the same scales are used for all classes, the positive factor $s_xs_w$ can be discarded when we only need argmax. With a separate weight scale for each class, the integer sums have to be rescaled before comparing them.
+This smooth curve is useful precisely because no label accuracy is attached to it. It shows that the arithmetic change is observable and must be part of the benchmark contract.
 
-The rounded values also have to be clipped to the signed-byte range. A bias is stored in the 32-bit accumulator's scale, $s_xs_w$, and added to the integer sum before comparison.
+## Final Comparison
 
-```c++
-int8_t w[10][28*28];
+| Implementation | ns / sample | Speedup | Prediction semantics |
+|:--|--:|--:|:--|
+| float plus stable softmax | 3162 | 1.00x | probabilities, then argmax |
+| float argmax only | 3042 | 1.04x | identical class |
+| scalar-source int8 | 207 | 15.2x | 0.598% disagreement |
+| one-accumulator NEON int8 | 290 | 10.9x | same int8 result |
+| four-accumulator NEON int8 | **133** | **23.8x** | same int8 result |
+| four-sample packed int8 | 350 | 9.0x | same int8 result |
 
-int predict(const int8_t *a) {
-    int best = INT_MIN, argmax = 0;
+The important transition is not “float instruction to integer instruction.” It is float model to quantized model, followed by a kernel that exposes enough independent work. The first transition changes predictions and needs a quality measurement; the second is exact with respect to the quantized integers and needs machine-code inspection.
 
-    for (int k = 0; k < 10; k++) {
-        int s = 0;
-        for (int i = 0; i < 28*28; i++)
-            s += a[i] * w[k][i];
-        if (s > best)
-            best = s, argmax = k;
-    }
+The test mode verifies that stable softmax and float argmax select the same class, that scalar and both NEON dot products agree for every synthetic test sample, and that the packed batch produces exactly the same class sequence as scalar int8. It also runs under AddressSanitizer and UndefinedBehaviorSanitizer.
 
-    return argmax;
-}
-```
-
-The accumulator has to be wider than the inputs. A product of two signed bytes fits into a signed 16-bit integer, but a sum of 784 such products does not fit into a `short`. More generally, before picking the accumulator type, we need to check that $n \cdot \max |q_i r_{ki}|$ fits into it.
-
-Quantization itself is part of fitting the model, not just an integer cast applied afterwards. The scales should be chosen using representative data, and the final classification accuracy should be measured again after quantization. The arithmetic kernel can be exact while the quantized model is not.
-
-### Packed Dot Products
-
-The inner loop is now a dot product of signed bytes. AVX2 does not have a general signed byte multiplication instruction, but we can widen 16 bytes to 16-bit integers, multiply them, and use [`madd`](/hpc/simd/intrinsics) to add adjacent products into 32-bit accumulators:
-
-```c++
-int dot(const int8_t *a, const int8_t *b, int n) {
-    __m256i sum = _mm256_setzero_si256();
-    __m256i ones = _mm256_set1_epi16(1);
-    int i = 0;
-
-    for (; i + 15 < n; i += 16) {
-        __m128i a8 = _mm_loadu_si128((const __m128i*) (a + i));
-        __m128i b8 = _mm_loadu_si128((const __m128i*) (b + i));
-        __m256i a16 = _mm256_cvtepi8_epi16(a8);
-        __m256i b16 = _mm256_cvtepi8_epi16(b8);
-        __m256i product = _mm256_mullo_epi16(a16, b16);
-        sum = _mm256_add_epi32(sum, _mm256_madd_epi16(product, ones));
-    }
-
-    alignas(32) int lane[8];
-    _mm256_store_si256((__m256i*) lane, sum);
-
-    int result = 0;
-    for (int j = 0; j < 8; j++)
-        result += lane[j];
-    for (; i < n; i++)
-        result += a[i] * b[i];
-
-    return result;
-}
-```
-
-The multiplication is exact: after sign extension, every byte product fits into a signed 16-bit lane, and `_mm256_madd_epi16` produces eight 32-bit pair sums. The only remaining overflow condition is the same one we already had for the scalar accumulator.
-
-This kernel processes 16 products per iteration, but that does not imply a 16-fold speedup. It also has to widen the operands and reduce the vector accumulator, and its performance depends on whether the model is already in cache. The useful fact is that its storage format, arithmetic, and overflow behavior are now explicit.
-
-### Batching and Layout
-
-For one input, scoring is a matrix-vector product. It performs roughly $2mn$ floating-point operations while reading $4mn$ bytes of weights, so its arithmetic intensity is only about one half operation per byte. This makes a large model much easier to bottleneck on memory than on multiplication.
-
-If we have $B$ inputs ready at once, we can score them as a matrix-matrix product:
-
-$$
-Z_{kb} = \sum_i W_{ki} X_{ib}.
-$$
-
-The weights can now be reused for all $B$ inputs. Assuming ideal reuse from the cache, the arithmetic intensity is
-
-$$
-\frac{2mnB}{4(mn+nB+mB)},
-$$
-
-which initially grows almost linearly with the batch size.
-
-The natural layout for an application is usually `x[b][i]`: all features of one sample are stored together. It is the wrong layout for vectorizing across a batch because the eight values of feature $i$ are far apart. We instead pack a block of eight inputs as `x[i][b]`. Eight independent predictions then become the eight SIMD lanes, and there is no horizontal reduction:
-
-```c++
-// x[i * 8 + b] is feature i of sample b
-// s[k * 8 + b] is the resulting score for class k
-void score8(const int8_t *w, const int8_t *x, int *s, int n, int m) {
-    for (int k = 0; k < m; k++) {
-        __m256i sum = _mm256_setzero_si256();
-
-        for (int i = 0; i < n; i++) {
-            __m128i bytes = _mm_loadl_epi64((const __m128i*) (x + 8 * i));
-            __m256i value = _mm256_cvtepi8_epi32(bytes);
-            __m256i weight = _mm256_set1_epi32(w[k * n + i]);
-            sum = _mm256_add_epi32(sum, _mm256_mullo_epi32(value, weight));
-        }
-
-        _mm256_storeu_si256((__m256i*) (s + 8 * k), sum);
-    }
-}
-```
-
-Each weight is broadcast once and used by all eight predictions. After this function, we find the maximum over $s[k \cdot 8 + b]$ for each $b$ separately. Softmax is still unnecessary unless the caller requested probabilities.
-
-For a larger batch, we process its samples in blocks of eight. For a much larger model, both the class and feature dimensions should also be blocked so that the active pieces of weights and inputs stay in cache. At that point this is exactly the [matrix multiplication](/hpc/algorithms/matmul) problem, and the same register-reuse and cache-blocking techniques apply.
-
-Training has the same structure. For a batch, let
-
-$$
-D_{kb} = p_{kb} - [k=y_b].
-$$
-
-The weight gradient is another matrix product,
-
-$$
-\frac{\partial L}{\partial W_{ki}}
-= \sum_b D_{kb} X_{ib},
-$$
-
-so it should also be accumulated in batches rather than as a long sequence of rank-one updates.
-
-There are therefore three distinct inference kernels worth keeping: a floating-point version for the original model, a packed dot product for low-latency quantized inference, and a matrix-multiplication version for batches. Which one is faster depends on the model size, the batch size, and the target instruction set; the numerical transformations above only tell us which optimizations are legal, not their benchmark results.
+This implementation deliberately omits biases, per-channel scales, zero points, trained parameters, and packing time. Adding any of them changes both the arithmetic and the comparison rules. Those are necessary features of a production quantized model, not details to hide behind the 23.8x number.

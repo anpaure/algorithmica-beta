@@ -1,0 +1,13 @@
+kind,variant,value
+performance,float-softmax,3161.95
+performance,float-argmax,3041.74
+performance,scalar-int8,207.489
+performance,neon-int8,290.283
+performance,neon4-int8,132.99
+performance,batch4-int8,349.706
+quality,int8-disagreement-percent,0.598145
+disagreement,4,8.47168
+disagreement,5,4.05273
+disagreement,6,2.2583
+disagreement,7,1.13525
+disagreement,8,0.598145
