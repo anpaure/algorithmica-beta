@@ -35,6 +35,10 @@ body menu.scrolled .chapter-title {
     width: 100%;
   }
 
+  body main article {
+    overflow-x: hidden;
+  }
+
   body main .highlight,
   body main .katex-display,
   body main pre,
