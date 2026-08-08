@@ -1,106 +1,14 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Data Structures Case Studies on Algorithmica β</title>
-    <link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/</link>
-    <description>Recent content in Data Structures Case Studies on Algorithmica β</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/data-structures/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Binary Search</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/</guid>
-      <description>While improving the speed of user-facing applications is the end goal of performance engineering, people don&amp;rsquo;t really get excited over 5-10% improvements in some databases. Yes, this is what software engineers are paid for, but these types of optimizations tend to be too intricate and system-specific to be readily generalized to other software.
-Instead, the most fascinating showcases of performance engineering are multifold optimizations of textbook algorithms: the kinds that everybody knows and deemed so simple that it would never even occur to try to optimize them in the first place.</description>
-    </item>
-    
-    <item>
-      <title>Static B-Trees</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/</guid>
-      <description>This section is a follow-up to the previous one, where we optimized binary search by the means of removing branching and improving the memory layout. Here, we will also be searching in sorted arrays, but this time we are not limited to fetching and comparing only one element at a time.
-In this section, we generalize the techniques we developed for binary search to static B-trees and accelerate them further using SIMD instructions.</description>
-    </item>
-    
-    <item>
-      <title>Search Trees</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/</guid>
-      <description>In the previous article, we designed and implemented static B-trees to speed up binary searching in sorted arrays. In its last section, we briefly discussed how to make them dynamic back while retaining the performance gains from SIMD and validated our predictions by adding and following explicit pointers in the internal nodes of the S+ tree.
-In this article, we follow up on that proposition and design a minimally functional search tree for integer keys, achieving up to 18x/8x speedup over std::set and up to 7x/2x speedup over absl::btree for lower_bound and insert queries, respectively — with yet ample room for improvement.</description>
-    </item>
-    
-    <item>
-      <title>Segment Trees</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/</guid>
-      <description>The lessons learned from optimizing binary search can be applied to a broad range of data structures.
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Data Structures Case Studies on Algorithmica β</title><link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/</link><description>Recent content in Data Structures Case Studies on Algorithmica β</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/data-structures/index.xml" rel="self" type="application/rss+xml"/><item><title>Binary Search</title><link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/</guid><description>While improving the speed of user-facing applications is the end goal of performance engineering, people don&amp;rsquo;t really get excited over 5-10% improvements in some databases. Yes, this is what software engineers are paid for, but these types of optimizations tend to be too intricate and system-specific to be readily generalized to other software.
+Instead, the most fascinating showcases of performance engineering are multifold optimizations of textbook algorithms: the kinds that everybody knows and deemed so simple that it would never even occur to try to optimize them in the first place.</description></item><item><title>Static B-Trees</title><link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/</guid><description>This section is a follow-up to the previous one, where we optimized binary search by the means of removing branching and improving the memory layout. Here, we will also be searching in sorted arrays, but this time we are not limited to fetching and comparing only one element at a time.
+In this section, we generalize the techniques we developed for binary search to static B-trees and accelerate them further using SIMD instructions.</description></item><item><title>Search Trees</title><link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/</guid><description>In the previous article, we designed and implemented static B-trees to speed up binary searching in sorted arrays. In its last section, we briefly discussed how to make them dynamic back while retaining the performance gains from SIMD and validated our predictions by adding and following explicit pointers in the internal nodes of the S+ tree.
+In this article, we follow up on that proposition and design a minimally functional search tree for integer keys, achieving up to 18x/8x speedup over std::set and up to 7x/2x speedup over absl::btree for lower_bound and insert queries, respectively — with yet ample room for improvement.</description></item><item><title>Segment Trees</title><link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/</guid><description>The lessons learned from optimizing binary search can be applied to a broad range of data structures.
 In this article, instead of trying to optimize something from the STL again, we focus on segment trees, the structures that may be unfamiliar to most normal programmers and perhaps even most computer science researchers1, but that are used very extensively in programming competitions for their speed and simplicity of implementation.
-(If you already know the context, jump straight to the last section for the novelty: the wide segment tree that works 4 to 12 times faster than the Fenwick tree.</description>
-    </item>
-    
-    <item>
-      <title>Tries</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/</guid>
-      <description>A comparison-based search structure gets information about the key by comparing it with other keys. A trie does something simpler: it reads the key one character at a time and uses each character to choose the next node.
-For a set of strings, this makes the running time proportional to the length of the query rather than to the number of stored strings. But the textbook implementation also performs one dependent memory access per character, which is not a particularly good way to use a modern CPU.</description>
-    </item>
-    
-    <item>
-      <title>Range Minimum Query</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/</guid>
-      <description>The range minimum query problem asks us to preprocess an array $a$ so that we can quickly find
+(If you already know the context, jump straight to the last section for the novelty: the wide segment tree that works 4 to 12 times faster than the Fenwick tree.</description></item><item><title>Tries</title><link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/</guid><description>A trie reads a key one character at a time and uses each character to choose the next node. Its running time depends on key length rather than the number of stored strings. This sounds ideal until we remember that each character also creates a dependent memory access: we cannot locate the next node before the current one arrives.
+This case study optimizes a static lowercase trie. Packing sparse nodes cuts memory by more than ten times but can make lookup slower.</description></item><item><title>Range Minimum Query</title><link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/</guid><description>The range minimum query problem asks us to preprocess an array $a$ so that we can quickly find
 $$ \min(a_l,a_{l+1},\ldots,a_{r-1}) $$
-for any non-empty half-open range $[l,r)$.
-If the array changes, we can use a segment tree and answer both updates and queries in $O(\log n)$. Here we will consider the static problem. Giving up updates lets us make each query both simpler and faster.
- #Sparse TablesFor every $k$, precompute the minimum of all ranges of length $2^k$:</description>
-    </item>
-    
-    <item>
-      <title>Hash Tables</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/</guid>
-      <description>#Hash Tables  #ChainingThe standard chaining design stores a collection of linked lists or growable arrays, one for each bucket. Colliding keys remain in the same bucket and are distinguished by comparing the complete key.
-  #Open AddressingOpen addressing instead keeps a fixed array of cells and uses a probe function $f_i(x)$ to decide where to look on the $i$-th step. A collision advances to another cell in the same array rather than following a separately allocated node.</description>
-    </item>
-    
-    <item>
-      <title>Bitmaps</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/</guid>
-      <description>Suppose we need to store a subset of the integers $0,1,\ldots,N-1$. A hash table stores the elements that are present; a bitmap stores one bit for every possible element:
-$$ b_i=[i\in S]. $$
-This representation uses $N$ bits regardless of the size of $S$, so it is only practical when the universe is not too large. In exchange, it has no hashes, pointers, or metadata, and every set operation processes 64 elements with one instruction.</description>
-    </item>
-    
-    <item>
-      <title>Probabilistic Filters</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/</guid>
-      <description>Suppose that checking whether an object exists requires a disk read or a request to another machine. Most queries are misses, so we would like to reject them without performing the expensive lookup.
-A probabilistic filter stores an approximate representation of a set and answers one of two things:
- the element is definitely not present; the element is probably present.  It has somewhat the inverse behavior of a cache.</description>
-    </item>
-    
-  </channel>
-</rss>
+for a nonempty half-open range $[l,r)$. If the array changes, a segment tree is appropriate. Here the array is immutable, and we only return the minimum value.
+Static RMQ presents an unusually clean space-time trade-off. A sparse-table representation answers a query with two loads but occupies 84 bytes per four-byte input element at $n=2^{20}$.</description></item><item><title>Hash Tables</title><link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/</guid><description>A hash table is supposed to take constant time. This is true in the same way that fetching one value from memory takes constant time: the notation is correct, but it conceals almost everything that determines the running time.
+#Hash TablesA hash function maps each key to a bucket. What happens when several keys choose the same bucket is the first important layout decision.
+#ChainingThe standard chaining design stores a collection of linked lists or growable arrays, one for each bucket.</description></item><item><title>Bitmaps</title><link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/</guid><description>A bitmap stores one bit for every possible integer. It can test membership without hashing, combine 64 membership bits with one word operation, and enumerate set bits with ctz. Its weakness is equally simple: it pays for the universe rather than the set.
+Real sets are often neither globally dense nor uniformly sparse. In this case study, we split 32-bit integers into 16-bit chunks and choose a representation separately for each chunk.</description></item><item><title>Probabilistic Filters</title><link>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/</guid><description>Suppose an authoritative membership lookup requires a disk read, a large hash-table probe, or a request to another machine. Most queries are misses. A probabilistic filter stores a cheaper approximation and answers one of two things:
+the key is definitely absent; the key is probably present, so we still have to consult the authority. The useful answer is “no.” A false positive wastes an authoritative lookup; a false negative would be a correctness bug.</description></item></channel></rss>

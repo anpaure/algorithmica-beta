@@ -1,1069 +1,187 @@
-<!doctype html>
-<html lang='en-us'><head><meta charset="utf-8">
-  <link rel="icon" href="https://anpaure.github.io/algorithmica-beta/favicon.ico">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/beta.css">
-  
-
-  
-  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/style.min.390d1fc41f8875c678a6c714096f8f46585799e0a4ca94c968af52bc5f8e93d9.css" integrity="sha256-OQ0fxB&#43;IdcZ4pscUCW&#43;PRlhXmeCkypTJaK9SvF&#43;Ok9k=">
-  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/syntax.css" id="syntax-theme">
-
-  <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
-  <script src="https://tikzjax.com/v1/tikzjax.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
-  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js"></script>
-  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js"></script>
-  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js"></script>
-
-  
-  <link rel="stylesheet" id="theme">
-
-  <script>
-    function toggleSidebar() {
-      console.log("Toggling sidebar visibility")
-      var sidebar = document.getElementById('sidebar')
-      var wrapper = document.getElementById('wrapper')
-      if (sidebar.classList.contains('sidebar-toggled') || window.getComputedStyle(sidebar).display == 'block') { 
-        sidebar.classList.toggle('sidebar-hidden')
-        wrapper.classList.toggle('sidebar-hidden')
-      }
-      sidebar.classList.add('sidebar-toggled')
-      wrapper.classList.add('sidebar-toggled')
-    }
-
-    function switchTheme(theme) {
-      console.log("Changing theme:", theme)
-      document.getElementById('theme').href = (theme == 'dark' ? "https:\/\/anpaure.github.io\/algorithmica-beta\/dark.min.3ad3d1be62e1d88e56b599b0103dbd3daf3203f1ed2a2d0f737454856c25036d.css" : "")
-      document.getElementById('syntax-theme').href = (theme == 'dark' ? 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax-dark.css' : 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax.css')
-      localStorage.setItem('theme', theme)
-    }
-
-    async function toggleSearch() {
-      console.log("Toggling search")
-      
-      var searchDiv = document.getElementById('search')
-      if (window.getComputedStyle(searchDiv).display == 'none') {
-        searchDiv.style.display = 'block'
-        window.scrollTo({ top: 0 });
-        document.getElementById('search-bar').focus()
-      } else {
-        searchDiv.style.display = 'none'  
-      }
-
-      if (!index) {
-        console.log("Fetching index")
-        const response = await fetch('https:\/\/anpaure.github.io\/algorithmica-beta\/searchindex.json')
-        const pages = await response.json()
-        index = lunr(function() {
-          this.use(lunr.multiLanguage('en', 'ru'))
-          this.field('title', {
-            boost: 5
-          })
-          this.field('content', {
-            boost: 1
-          })
-          pages.forEach(function(doc) {
-            this.add(doc)
-            articles.push(doc)
-          }, this)
-        })
-        console.log("Ready to search")
-      }
-    }
-
-    var articles = []
-    var index = undefined
-
-    function search() {
-      var query = document.getElementById('search-bar').value
-      var resultsDiv = document.getElementById('search-results')
-      var countDiv = document.getElementById('search-count')
-      
-      if (query == '') {
-        resultsDiv.innerHTML = ''
-        countDiv.innerHTML = ''
-        return
-      }
-      
-      var results = index.search(query)
-
-      countDiv.innerHTML = 'Found <b>' + results.length + '</b> pages'
-
-      let resultList = ''
-
-      for (const n in results) {
-        const item = articles[results[n].ref]
-        resultList += '<li><a href="' + item.path + '">' + item.title + '</a> <p>'
-        const text = item.content
-
-        const contextLimit = 80
-
-        if (text.includes(query)) {
-          const start = text.indexOf(query)
-          if (start > contextLimit)
-            resultList += '…'
-          resultList += text.substring(start - contextLimit, start)
-                      + '<b>' + query + '</b>' + text.substring(start + query.length, start + query.length + contextLimit)
-
-        } else {
-          resultList += text.substring(0, contextLimit * 2)
-        }
-        resultList += '…</p></li>'
-      }
-
-      resultsDiv.innerHTML = resultList
-    }
-
-    if (localStorage.getItem('theme') == 'dark') {
-      switchTheme('dark')
-    }
-
-    window.addEventListener('load', function() {
-      var el = document.getElementById("active-element")
-      
-      if (el) {
-        el.scrollIntoView({block: "center"})
-      }
-      
-
-    })
-
-    window.addEventListener('scroll', function() {
-      var menu = document.getElementById('menu')
-      if (window.scrollY < 120) {
-        
-        menu.classList.remove('scrolled')
-      } else {
-        
-        menu.classList.add('scrolled')
-      }
-    })
-
-    window.addEventListener('keydown', function(e) {
-      if (e.altKey) { return }
-      if (document.activeElement.tagName == 'INPUT') { return }
-      if (e.key == 'ArrowLeft') {
-        document.getElementById('prev-article').click()
-      } else if (e.key == 'ArrowRight') {
-        document.getElementById('next-article').click()
-      }
-    })
-  </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
-  onload="renderMathInElement(document.body, {
-    delimiters: [
-      {left: '$$', right: '$$', display: true},
-      {left: '$', right: '$', display: false}
-    ]
-  })"></script>
-
-  
-  <title>Number-Theoretic Transform - Algorithmica β</title>
-</head>
-<body><nav id='sidebar' >
-  
-  
-  <div class='title'>
-    <a href='https://anpaure.github.io/algorithmica-beta/'>Algorithmica β</a>
-    
-      
-        
-        <span class='slash'>/</span>
-        <a href='https://anpaure.github.io/algorithmica-beta/hpc/' class='divisionAbbr'
-           >
-          HPC
-        </a>
-      
-    
-  </div>
-  <ul>
-    
-      
-        
-        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/preface/'
-          
-          >Preface</a></li>
-        
-      
-        
-          <li class='part'>Performance Engineering</li>
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/'
-          
-          >Complexity Models</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/'
-                
-                >Modern Hardware</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/'
-                
-                >Programming Languages</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/'
-                
-                >Models of Computation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/'
-                
-                >When to Optimize</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/'
-          
-          >Computer Architecture</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/'
-                
-                >Instruction Set Architectures</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/'
-                
-                >Assembly Language</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/'
-                
-                >Loops and Conditionals</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/'
-                
-                >Functions and Recursion</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/'
-                
-                >Indirect Branching</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/'
-                
-                >Machine Code Layout</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/'
-                
-                >Interrupts and System Calls</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/'
-                
-                >Virtualization</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/'
-          
-          >Instruction-Level Parallelism</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/'
-                
-                >Pipeline Hazards</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/'
-                
-                >The Cost of Branching</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/'
-                
-                >Branchless Programming</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/'
-                
-                >Instruction Tables</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/'
-                
-                >Instruction Scheduling</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/'
-                
-                >Throughput Computing</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/'
-                
-                >Theoretical Performance Limits</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/'
-          
-          >Compilation</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/'
-                
-                >Stages of Compilation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/'
-                
-                >Flags and Targets</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/'
-                
-                >Situational Optimizations</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/'
-                
-                >Contract Programming</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/'
-                
-                >Non-Zero-Cost Abstractions</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/'
-                
-                >Precomputation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/'
-                
-                >Arithmetic Optimizations</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/'
-                
-                >What Compilers Can and Can&#39;t Do</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/'
-          
-          >Profiling</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/'
-                
-                >Instrumentation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/'
-                
-                >Statistical Profiling</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/'
-                
-                >Program Simulation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/'
-                
-                >Machine Code Analyzers</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/'
-                
-                >Benchmarking</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/'
-                
-                >Getting Accurate Results</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/'
-          
-          >Arithmetic</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/'
-                
-                >Floating-Point Numbers</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/'
-                
-                >IEEE 754 Floats</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/'
-                
-                >Rounding Errors</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/'
-                
-                >Newton&#39;s Method</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/'
-                
-                >Fast Inverse Square Root</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/'
-                
-                >Integer Numbers</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/'
-                
-                >Integer Division</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/'
-                
-                >Bit Manipulation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/'
-                
-                >Data Compression</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/'
-          
-          >Number Theory</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/'
-                
-                >Modular Arithmetic</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/'
-                
-                >Binary Exponentiation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/'
-                
-                >Extended Euclidean Algorithm</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/'
-                
-                >Montgomery Multiplication</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/'
-                
-                >Finite Fields</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/'
-                
-                >Error Correction</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/'
-                
-                >Cryptography</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/'
-                
-                >Hashing</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/'
-                
-                >Random Number Generation</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/'
-          
-          >External Memory</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/'
-                
-                >Memory Hierarchy</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/'
-                
-                >Virtual Memory</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/'
-                
-                >External Memory Model</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/'
-                
-                >External Sorting</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/'
-                
-                >List Ranking</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/'
-                
-                >Eviction Policies</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/'
-                
-                >Cache-Oblivious Algorithms</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/'
-                
-                >Spatial and Temporal Locality</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/'
-                
-                >B-Trees</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/'
-                
-                >Sublinear Algorithms</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/'
-                
-                >Memory Management</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/'
-          
-          >RAM &amp; CPU Caches</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/'
-                
-                >Memory Bandwidth</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/'
-                
-                >Memory Latency</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/'
-                
-                >Cache Lines</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/'
-                
-                >Memory Sharing</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/'
-                
-                >Memory-Level Parallelism</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/'
-                
-                >Prefetching</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/'
-                
-                >Alignment and Packing</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/'
-                
-                >Pointer Alternatives</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/'
-                
-                >Cache Associativity</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/'
-                
-                >Memory Paging</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/'
-                
-                >AoS and SoA</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/'
-          
-          >SIMD Parallelism</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/'
-                
-                >Intrinsics and Vector Types</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/'
-                
-                >Moving Data</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/'
-                
-                >Reductions</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/'
-                
-                >Masking and Blending</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/'
-                
-                >In-Register Shuffles</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/'
-                
-                >Auto-Vectorization and SPMD</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/'
-          
-          >Algorithms Case Studies</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/'
-                
-                >Binary GCD</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/'
-                
-                >Prime Number Sieves</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/'
-                
-                >Integer Factorization</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/'
-                
-                >Optimizing Logistic Regression</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/'
-                
-                >Big Integers and Karatsuba Multiplication</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/'
-                
-                >Fast Fourier Transform</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/'
-                id='active-element'
-                >Number-Theoretic Transform</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/'
-                
-                >Argmin with SIMD</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/'
-                
-                >Prefix Sum with SIMD</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/'
-                
-                >Reading Decimal Integers</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/'
-                
-                >Writing Decimal Integers</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/'
-                
-                >Reading and Writing Floating-Point Numbers</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/'
-                
-                >String Searching</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/'
-                
-                >Sorting</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/'
-                
-                >Matrix Multiplication</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/knapsack/'
-                
-                >Knapsack with Bitsets</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/'
-          
-          >Data Structures Case Studies</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/'
-                
-                >Binary Search</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/'
-                
-                >Static B-Trees</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/'
-                
-                >Search Trees</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/'
-                
-                >Segment Trees</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/'
-                
-                >Tries</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/'
-                
-                >Range Minimum Query</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/'
-                
-                >Hash Tables</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/'
-                
-                >Bitmaps</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/'
-                
-                >Probabilistic Filters</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/summary/'
-          
-          >Summary</a></li>
-        
-      
-        
-          <li class='part'>Appendix</li>
-        
-        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/stats/'
-          
-          >Probability Theory Refresher</a></li>
-        
-      
-    
-  </ul>
-</nav>
-<div id='wrapper' ><menu id='menu'>
-  
-  
-  
-  
-  <div class='left'>
-    <a>
-      <img src='https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg'
-           onclick='toggleSidebar()'
-           title='open table of contents'>
-    </a>
-    <a>
-      <img src='https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg'
-           style='position: relative; top: -1px'
-           onclick='switchTheme(localStorage.getItem("theme") == "dark" ? "light" : "dark")'
-           title='dark theme'>
-    </a>
-    <a>
-      <img src='https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg'
-           onclick='toggleSearch()'
-           title='search'>
-    </a>
-  </div>
-  <div class='title'>
-    
-      <span class='beta-brand'>Algorithmica β</span>
-      <span class='chapter-title'>Number-Theoretic Transform</span>
-    
-  </div>
-  <div class='right'>
-    <a onClick='window.print()'>
-      <img src='https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg' title='print'>
-    </a>
-    <a href='https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2falgorithms%2fntt.md'>
-      <img src='https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg'
-           title='edit'
-           style='width: 18px; position: relative; right: -2px; top: -1px'>
-    </a>
-    <a href='https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/algorithms/ntt.md' class='github-main'>
-      <img src='https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg' title='view on github'>
-    </a>
-  </div>
-</menu>
-<main>
-        <div id="search">
-    <input id="search-bar" type="search" placeholder='Search this book…' oninput="search()">
-    <div id="search-count"></div>
-    <div id="search-results">
-    </div>
-</div>
-<header>
-  
-  <h1>Number-Theoretic Transform</h1>
-  
-    <div class='info'></div>
-  
-</header>
-<article>
-  
-
-
-  
-    
-    
-      
-        <p>The <a href="../fft/">fast Fourier transform</a> only needs a few properties of complex numbers. We need an element $\omega$ whose powers cycle after exactly $n$ steps, we need to be able to add and multiply these powers, and we need to divide by $n$ for the inverse transform.</p>
-<p>There are other number systems with the same properties. In particular, we can run the FFT butterfly using integers modulo a carefully chosen prime. The resulting algorithm is called the <em>number-theoretic transform</em> (NTT).</p>
-<p>It is useful because all operations are exact. The price is that not every modulus supports every transform length, and the answer is a residue rather than an unrestricted integer.</p>
-<span class='anchor' id="modular-roots-of-unity"></span>
-<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#modular-roots-of-unity">#</a>Modular Roots of Unity</h2><p>For a prime $q$, the nonzero residues modulo $q$ form a multiplicative group of size $q-1$. If $g$ is a primitive root, then</p>
-
-      
-    
-  
-
-  
-    $$
-    
+<!doctype html><html lang=en-us><head><meta charset=utf-8><link rel=icon href=https://anpaure.github.io/algorithmica-beta/favicon.ico><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/beta.css><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/style.min.390d1fc41f8875c678a6c714096f8f46585799e0a4ca94c968af52bc5f8e93d9.css integrity="sha256-OQ0fxB+IdcZ4pscUCW+PRlhXmeCkypTJaK9SvF+Ok9k="><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/syntax.css id=syntax-theme><link rel=stylesheet type=text/css href=https://tikzjax.com/v1/fonts.css><script src=https://tikzjax.com/v1/tikzjax.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js></script>
+<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js></script>
+<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js></script>
+<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js></script>
+<link rel=stylesheet id=theme><script>function toggleSidebar(){console.log("Toggling sidebar visibility");var e=document.getElementById("sidebar"),t=document.getElementById("wrapper");(e.classList.contains("sidebar-toggled")||window.getComputedStyle(e).display=="block")&&(e.classList.toggle("sidebar-hidden"),t.classList.toggle("sidebar-hidden")),e.classList.add("sidebar-toggled"),t.classList.add("sidebar-toggled")}function switchTheme(e){console.log("Changing theme:",e),document.getElementById("theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/dark.min.3ad3d1be62e1d88e56b599b0103dbd3daf3203f1ed2a2d0f737454856c25036d.css":"",document.getElementById("syntax-theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/syntax-dark.css":"https://anpaure.github.io/algorithmica-beta/syntax.css",localStorage.setItem("theme",e)}async function toggleSearch(){console.log("Toggling search");var e=document.getElementById("search");if(window.getComputedStyle(e).display=="none"?(e.style.display="block",window.scrollTo({top:0}),document.getElementById("search-bar").focus()):e.style.display="none",!index){console.log("Fetching index");const e=await fetch("https://anpaure.github.io/algorithmica-beta/searchindex.json"),t=await e.json();index=lunr(function(){this.use(lunr.multiLanguage("en","ru")),this.field("title",{boost:5}),this.field("content",{boost:1}),t.forEach(function(e){this.add(e),articles.push(e)},this)}),console.log("Ready to search")}}var articles=[],index=void 0;function search(){var e=document.getElementById("search-bar").value,n,s=document.getElementById("search-results"),o=document.getElementById("search-count");if(e==''){s.innerHTML='',o.innerHTML='';return}n=index.search(e),o.innerHTML="Found <b>"+n.length+"</b> pages";let t='';for(const a in n){const i=articles[n[a].ref];t+='<li><a href="'+i.path+'">'+i.title+"</a> <p>";const s=i.content,o=80;if(s.includes(e)){const n=s.indexOf(e);n>o&&(t+="…"),t+=s.substring(n-o,n)+"<b>"+e+"</b>"+s.substring(n+e.length,n+e.length+o)}else t+=s.substring(0,o*2);t+="…</p></li>"}s.innerHTML=t}localStorage.getItem("theme")=="dark"&&switchTheme("dark"),window.addEventListener("load",function(){var e=document.getElementById("active-element");e&&e.scrollIntoView({block:"center"})}),window.addEventListener("scroll",function(){var e=document.getElementById("menu");window.scrollY<120?e.classList.remove("scrolled"):e.classList.add("scrolled")}),window.addEventListener("keydown",function(e){if(e.altKey)return;if(document.activeElement.tagName=="INPUT")return;e.key=="ArrowLeft"?document.getElementById("prev-article").click():e.key=="ArrowRight"&&document.getElementById("next-article").click()})</script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><title>Number-Theoretic Transform - Algorithmica β</title></head><body><nav id=sidebar><div class=title><a href=https://anpaure.github.io/algorithmica-beta/>Algorithmica β</a>
+<span class=slash>/</span>
+<a href=https://anpaure.github.io/algorithmica-beta/hpc/ class=divisionAbbr>HPC</a></div><ul><li class=ignore-indexing><a href=https://anpaure.github.io/algorithmica-beta/hpc/preface/>Preface</a></li><li class=part>Performance Engineering</li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/>Complexity Models</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/>Modern Hardware</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/>Programming Languages</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/>Models of Computation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/>When to Optimize</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/>Computer Architecture</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/>Instruction Set Architectures</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/>Assembly Language</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/>Loops and Conditionals</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/>Functions and Recursion</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/>Indirect Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/>Machine Code Layout</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/>Interrupts and System Calls</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/>Virtualization</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/>Instruction-Level Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/>Pipeline Hazards</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/>The Cost of Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/>Branchless Programming</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/>Instruction Tables</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/>Instruction Scheduling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/>Throughput Computing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/>Theoretical Performance Limits</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/>Compilation</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/>Stages of Compilation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/>Flags and Targets</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/>Situational Optimizations</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/>Contract Programming</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/>Non-Zero-Cost Abstractions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/>Precomputation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/>Arithmetic Optimizations</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/>What Compilers Can and Can't Do</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/>Profiling</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/>Instrumentation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/>Statistical Profiling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/>Program Simulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/>Machine Code Analyzers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/>Benchmarking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/>Getting Accurate Results</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/>Arithmetic</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/>Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/>IEEE 754 Floats</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/>Rounding Errors</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/>Newton's Method</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/>Fast Inverse Square Root</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/>Integer Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/>Integer Division</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/>Bit Manipulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/>Data Compression</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/>Number Theory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/>Modular Arithmetic</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/>Binary Exponentiation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/>Extended Euclidean Algorithm</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/>Montgomery Multiplication</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/>Finite Fields</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/>Error Correction</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/>Cryptography</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/>Hashing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/>Random Number Generation</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/>External Memory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/>Memory Hierarchy</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/>Virtual Memory</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/>External Memory Model</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/>External Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/>List Ranking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/>Eviction Policies</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/>Cache-Oblivious Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/>Spatial and Temporal Locality</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/>B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/>Sublinear Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/>Memory Management</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/>RAM & CPU Caches</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/>Memory Bandwidth</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/>Memory Latency</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/>Cache Lines</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/>Memory Sharing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/>Memory-Level Parallelism</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/>Prefetching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/>Alignment and Packing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/>Pointer Alternatives</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/>Cache Associativity</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/>Memory Paging</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/>AoS and SoA</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/>SIMD Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/>Intrinsics and Vector Types</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/>Moving Data</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/>Reductions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/>Masking and Blending</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/>In-Register Shuffles</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/>Auto-Vectorization and SPMD</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/>Algorithms Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/>Binary GCD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/>Prime Number Sieves</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/>Integer Factorization</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/>Optimizing Logistic Regression</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/>Big Integers and Karatsuba Multiplication</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/>Fast Fourier Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/ id=active-element>Number-Theoretic Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/>Argmin with SIMD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/>Prefix Sum with SIMD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/>Reading Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/>Writing Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/>Reading and Writing Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/>String Searching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/>Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/>Matrix Multiplication</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/knapsack/>Knapsack with Bitsets</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/>Data Structures Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/>Binary Search</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/>Static B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/>Search Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/>Segment Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/>Tries</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/>Range Minimum Query</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/>Hash Tables</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/>Bitmaps</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/>Probabilistic Filters</a></li></ol><li class=ignore-indexing><a href=https://anpaure.github.io/algorithmica-beta/hpc/summary/>Summary</a></li><li class=part>Appendix</li><li class=ignore-indexing><a href=https://anpaure.github.io/algorithmica-beta/hpc/stats/>Probability Theory Refresher</a></li></ul></nav><div id=wrapper><menu id=menu><div class=left><a><img src=https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg onclick=toggleSidebar() title="open table of contents"></a>
+<a><img src=https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg style=position:relative;top:-1px onclick='switchTheme(localStorage.getItem("theme")=="dark"?"light":"dark")' title="dark theme"></a>
+<a><img src=https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg onclick=toggleSearch() title=search></a></div><div class=title><span class=beta-brand>Algorithmica β</span>
+<span class=chapter-title>Number-Theoretic Transform</span></div><div class=right><a onclick=window.print()><img src=https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg title=print></a>
+<a href=https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2falgorithms%2fntt.md><img src=https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg title=edit style=width:18px;position:relative;right:-2px;top:-1px></a>
+<a href=https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/algorithms/ntt.md class=github-main><img src=https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg title="view on github"></a></div></menu><main><div id=search><input id=search-bar type=search placeholder="Search this book…" oninput=search()><div id=search-count></div><div id=search-results></div></div><header><h1>Number-Theoretic Transform</h1><div class=info></div></header><article><p>The fast Fourier transform is usually introduced over the complex numbers, but the butterfly itself does not care about angles. It needs addition, multiplication, an $n$-th root of unity, and a way to divide by $n$ at the end. We can supply all of these operations with integers modulo a prime.</p><p>The result is the <em>number-theoretic transform</em> (NTT). It computes polynomial convolutions without floating-point error, and its inner loop contains enough modular arithmetic to make a good optimization case study.</p><p>We will begin with the textbook iterative transform, measure it, remove one bottleneck at a time, and end with a forward transform that is 6.1 times faster on the benchmark problem. One attempted optimization will make it slower. That failure is important: modular arithmetic that looks expensive in C++ is not necessarily expensive in machine code.</p><span class=anchor id=the-algebraic-contract></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#the-algebraic-contract>#</a>The Algebraic Contract</h2><p>Let $q$ be prime. The nonzero residues modulo $q$ form a multiplicative group of order $q-1$, so if $g$ is a primitive root and $n$ divides $q-1$, then</p>$$
 \omega_n=g^{(q-1)/n}\pmod q
-
-    $$
-  
-
-  
-    
-    
-      
-        <p>has order $n$ whenever $n$ divides $q-1$. This is our modular counterpart of $e^{-2\pi i/n}$.</p>
-<p>A commonly used prime is</p>
-
-      
-    
-  
-
-  
-    $$
-    
-q=998244353=119\cdot2^{23}&#43;1.
-
-    $$
-  
-
-  
-    
-    
-      
-        <p>The number 3 is a primitive root modulo $q$, so this modulus supports every power-of-two transform length up to $2^{23}$. It does <em>not</em> support length $2^{24}$; primality alone is not enough.</p>
-<p>We will need binary exponentiation for roots and modular inverses:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">int</span> <span class="n">mod</span> <span class="o">=</span> <span class="mi">998244353</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">int</span> <span class="n">primitive_root</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">power</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="o">*</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="n">a</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="n">a</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="n">n</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>Since the modulus is prime, Fermat&rsquo;s theorem gives $x^{-1}=x^{q-2}\pmod q$ for every nonzero $x$.</p>
-<span class='anchor' id="reusing-the-fft"></span>
-<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#reusing-the-fft">#</a>Reusing the FFT</h2><p>The structure is exactly the same as the iterative radix-2 FFT: bit-reverse the input and then run stages of butterflies. Only complex multiplication and addition are replaced with modular arithmetic.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">ntt</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">inverse</span> <span class="o">=</span> <span class="nb">false</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="c1">// power of two, n &lt;= 2^23
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">bit</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="p">(</span><span class="n">j</span> <span class="o">&amp;</span> <span class="n">bit</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="n">j</span> <span class="o">^=</span> <span class="n">bit</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="n">bit</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span><span class="line"><span class="cl">        <span class="n">j</span> <span class="o">^=</span> <span class="n">bit</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">            <span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]);</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">len</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">len</span> <span class="o">*=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">step</span> <span class="o">=</span> <span class="n">power</span><span class="p">(</span><span class="n">primitive_root</span><span class="p">,</span> <span class="p">(</span><span class="n">mod</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">len</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">inverse</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">            <span class="n">step</span> <span class="o">=</span> <span class="n">power</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">mod</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">first</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">first</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">first</span> <span class="o">+=</span> <span class="n">len</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="kt">int</span> <span class="n">w</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">                <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">first</span> <span class="o">+</span> <span class="n">i</span><span class="p">];</span>
-</span></span><span class="line"><span class="cl">                <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">first</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="n">len</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="n">w</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">                <span class="n">a</span><span class="p">[</span><span class="n">first</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span> <span class="o">+</span> <span class="n">v</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">first</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">mod</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                    <span class="n">a</span><span class="p">[</span><span class="n">first</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">mod</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">                <span class="n">a</span><span class="p">[</span><span class="n">first</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="n">len</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span> <span class="o">-</span> <span class="n">v</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">first</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="n">len</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                    <span class="n">a</span><span class="p">[</span><span class="n">first</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="n">len</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">mod</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">                <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="n">step</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="p">}</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">inverse</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">inv_n</span> <span class="o">=</span> <span class="n">power</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">mod</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="o">&amp;</span><span class="nl">x</span> <span class="p">:</span> <span class="n">a</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="n">inv_n</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>The input coefficients are assumed to be in $[0,q)$, and the length is assumed to be a power of two not exceeding $2^{23}$. Under these conditions, every stage length divides $q-1$, so the requested root exists.</p>
-<p>Notice that butterfly addition and subtraction need at most one correction. Both inputs are already reduced, so their sum is below $2q$ and their difference is above $-q$. Keeping this invariant saves a general remainder operation on two of the three arithmetic paths.</p>
-<span class='anchor' id="modular-convolution"></span>
-<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#modular-convolution">#</a>Modular Convolution</h2><p>The convolution wrapper is also almost identical to the floating-point version:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">multiply_mod</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">||</span> <span class="n">b</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
-</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="p">{};</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">+</span> <span class="n">b</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="n">n</span> <span class="o">*=</span> <span class="mi">2</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="n">a</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="n">b</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="n">ntt</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="n">ntt</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="n">ntt</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="n">a</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>This returns the polynomial product <em>modulo</em> <code>998244353</code>. It is exact in that ring, which is not the same as being the exact ordinary integer product.</p>
-<p>Suppose the input coefficients are nonnegative and bounded by $A$ and $B$. Each output coefficient is a sum of at most $\min(n,m)$ products, so</p>
-
-      
-    
-  
-
-  
-    $$
-    
-c_k\le \min(n,m)AB.
-
-    $$
-  
-
-  
-    
-    
-      
-        <p>If this bound is smaller than $q$, the modular residue uniquely identifies the ordinary coefficient. Otherwise, the true value may have wrapped around the modulus. For larger coefficients, use several NTT-friendly primes and reconstruct the answer with the Chinese remainder theorem. The product of the moduli has to exceed the range of possible answers, and every chosen prime must support the padded transform length.</p>
-<p>For signed coefficients, residues above $q/2$ can be interpreted as negative only when the absolute coefficient bound is below $q/2$. This is the NTT equivalent of the FFT&rsquo;s error bound: exact arithmetic still needs a range proof.</p>
-<span class='anchor' id="optimizing-modular-butterflies"></span>
-<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#optimizing-modular-butterflies">#</a>Optimizing Modular Butterflies</h2><p>Compared with a complex FFT, the NTT replaces floating-point operations with integer multiplication and modular reduction. Its memory access pattern — including bit reversal — is otherwise the same.</p>
-<p>The <code>% mod</code> operations look like divisions, but <code>mod</code> is a compile-time constant. Optimizing compilers replace division by a constant with multiplication by a precomputed reciprocal and a few corrections. Explicit <a href="https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division">Barrett or Montgomery reduction</a> becomes useful when the modulus is not visible to the compiler, when reductions are being delayed, or when writing a SIMD kernel.</p>
-<p>Roots can be precomputed once for each stage or, for repeated transforms, as a complete table. This removes exponentiation and some dependency chains at the cost of extra memory reads. As with the FFT, the right trade-off depends on transform size and reuse.</p>
-<p>SIMD is slightly awkward because a 32-bit modular product needs the 64-bit halves of several lane products, and vector instruction sets do not always provide the exact widening operation we want. It is often easier to process several independent butterflies or transforms together than to force one recurrence into all lanes. Delaying reductions can help, but only after proving that the enlarged range cannot overflow.</p>
-<span class='anchor' id="checking-the-preconditions"></span>
-<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#checking-the-preconditions">#</a>Checking the Preconditions</h2><p>The most useful correctness test is an exact round trip:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">inverse(ntt(a)) == a
-</span></span></code></pre></div><p>Also compare <code>multiply_mod</code> with the quadratic convolution on random small arrays. Test lengths 1 and powers of two around every application boundary, coefficients 0 and <code>mod - 1</code>, and the largest supported length.</p>
-<p>For each stage root $w$ of order $n&gt;1$, the two important identities are</p>
-
-      
-    
-  
-
-  
-    $$
-    
-w^n=1,\qquad w^{n/2}\ne1\pmod q.
-
-    $$
-  
-
-  
-    
-    
-      
-        <p>The first identity alone is not enough: an element of a smaller order also satisfies it and produces a perfectly deterministic wrong transform.</p>
-<p>Benchmark transforms separately from convolution, allocation, and Chinese-remainder reconstruction. Record the modulus, length, coefficient range, root-table strategy, and reduction method. An NTT is not “an FFT without errors”; it is the same butterfly operating under a stricter algebraic contract.</p>
-
-      
-    
-  
-
-
-
-        </article>
-        <div class='nextprev'>
-  
-    
-      
-      
-
-      
-      
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-
-      
-        <div class='left'>
-        
-          <a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/' id='prev-article'>← Fast Fourier Transform</a>
-        
-        </div>
-        <div class='right'>
-        
-          <a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/' id='next-article'>Argmin with SIMD →</a>
-        
-        </div>
-      
-    
-  
-</div>
-
-      </main>
-      <footer>
-  Copyright 2021–2022 Sergey Slotin
-  <br>
-   
-</footer>
-
-    </div>
-  </body>
-</html>
+$$<p>has order $n$. Its powers play the same role as the equally spaced points on the complex unit circle.</p><p>We will use</p>$$
+q=998244353=119\cdot2^{23}+1,\qquad g=3.
+$$<p>This choice gives us a primitive root for every power-of-two length up to $2^{23}$. It does not give us one for $2^{24}$. Primality alone is not enough; the transform length has to divide $q-1$.</p><p>The transform in this article therefore has a strict contract:</p><ol><li>$n$ is a nonzero power of two and $n\le2^{23}$;</li><li>every input coefficient is already in $[0,q)$;</li><li>the result is interpreted modulo $q$.</li></ol><p>The <a href=../../../code/ntt_case.cpp>complete program</a> checks these conditions at its public boundary. It also checks that the supplied plan has the same length as the input. The benchmark performs those checks once before timing and then calls the unchecked kernel:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>void</span> <span class=nf>forward_transform</span><span class=p>(</span><span class=n>vector</span><span class=o>&lt;</span><span class=kt>uint32_t</span><span class=o>&gt;&amp;</span> <span class=n>a</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                       <span class=n>Algorithm</span> <span class=n>algorithm</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                       <span class=k>const</span> <span class=n>Plan</span><span class=o>&amp;</span> <span class=n>plan</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>check_input</span><span class=p>(</span><span class=n>a</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>plan</span><span class=p>.</span><span class=n>n</span> <span class=o>!=</span> <span class=n>a</span><span class=p>.</span><span class=n>size</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>        <span class=k>throw</span> <span class=n>invalid_argument</span><span class=p>(</span><span class=s>&#34;plan length mismatch&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>forward_kernel</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>algorithm</span><span class=p>,</span> <span class=n>plan</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>The modular butterfly is</p>$$
+(u,v)\mapsto(u+\omega v,\ u-\omega v)\pmod q.
+$$<p>If $u,v&lt;q$, the sum is below $2q$ and the difference is above $-q$. Addition and subtraction therefore need at most one correction each:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>uint32_t</span> <span class=nf>add_mod</span><span class=p>(</span><span class=kt>uint32_t</span> <span class=n>a</span><span class=p>,</span> <span class=kt>uint32_t</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=n>s</span> <span class=o>=</span> <span class=n>a</span> <span class=o>+</span> <span class=n>b</span><span class=p>;</span>       <span class=c1>// s &lt; 2q &lt; 2^31
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>return</span> <span class=n>s</span> <span class=o>&gt;=</span> <span class=n>q</span> <span class=o>?</span> <span class=n>s</span> <span class=o>-</span> <span class=nl>q</span> <span class=p>:</span> <span class=n>s</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>uint32_t</span> <span class=nf>sub_mod</span><span class=p>(</span><span class=kt>uint32_t</span> <span class=n>a</span><span class=p>,</span> <span class=kt>uint32_t</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>a</span> <span class=o>&gt;=</span> <span class=n>b</span> <span class=o>?</span> <span class=n>a</span> <span class=o>-</span> <span class=nl>b</span> <span class=p>:</span> <span class=n>a</span> <span class=o>+</span> <span class=n>q</span> <span class=o>-</span> <span class=n>b</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>We only need a general reduction for multiplication.</p><span class=anchor id=a-textbook-transform></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#a-textbook-transform>#</a>A Textbook Transform</h2><p>Binary exponentiation supplies the stage roots and the inverse of $n$:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>uint32_t</span> <span class=nf>power</span><span class=p>(</span><span class=kt>uint32_t</span> <span class=n>a</span><span class=p>,</span> <span class=kt>uint32_t</span> <span class=n>k</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=n>r</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>k</span> <span class=o>!=</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>k</span> <span class=o>&amp;</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>r</span> <span class=o>=</span> <span class=kt>uint64_t</span><span class=p>(</span><span class=n>r</span><span class=p>)</span> <span class=o>*</span> <span class=n>a</span> <span class=o>%</span> <span class=n>q</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>a</span> <span class=o>=</span> <span class=kt>uint64_t</span><span class=p>(</span><span class=n>a</span><span class=p>)</span> <span class=o>*</span> <span class=n>a</span> <span class=o>%</span> <span class=n>q</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>k</span> <span class=o>&gt;&gt;=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>r</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>An iterative decimation-in-time transform first puts the input into bit-reversed order and then runs stages of length $2,4,8,\ldots,n$:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>void</span> <span class=nf>ntt</span><span class=p>(</span><span class=n>vector</span><span class=o>&lt;</span><span class=kt>uint32_t</span><span class=o>&gt;&amp;</span> <span class=n>a</span><span class=p>,</span> <span class=kt>bool</span> <span class=n>inverse</span> <span class=o>=</span> <span class=nb>false</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>n</span> <span class=o>=</span> <span class=n>a</span><span class=p>.</span><span class=n>size</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>assert</span><span class=p>(</span><span class=n>n</span> <span class=o>&amp;&amp;</span> <span class=p>(</span><span class=n>n</span> <span class=o>&amp;</span> <span class=p>(</span><span class=n>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>))</span> <span class=o>==</span> <span class=mi>0</span> <span class=o>&amp;&amp;</span> <span class=n>n</span> <span class=o>&lt;=</span> <span class=p>(</span><span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=mi>23</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span> <span class=n>j</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>bit</span> <span class=o>=</span> <span class=n>n</span> <span class=o>&gt;&gt;</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>while</span> <span class=p>(</span><span class=n>j</span> <span class=o>&amp;</span> <span class=n>bit</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>j</span> <span class=o>^=</span> <span class=n>bit</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>bit</span> <span class=o>&gt;&gt;=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=n>j</span> <span class=o>^=</span> <span class=n>bit</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>i</span> <span class=o>&lt;</span> <span class=n>j</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>swap</span><span class=p>(</span><span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>],</span> <span class=n>a</span><span class=p>[</span><span class=n>j</span><span class=p>]);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>len</span> <span class=o>=</span> <span class=mi>2</span><span class=p>;</span> <span class=n>len</span> <span class=o>&lt;=</span> <span class=n>n</span><span class=p>;</span> <span class=n>len</span> <span class=o>*=</span> <span class=mi>2</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>uint32_t</span> <span class=n>step</span> <span class=o>=</span> <span class=n>power</span><span class=p>(</span><span class=mi>3</span><span class=p>,</span> <span class=p>(</span><span class=n>q</span> <span class=o>-</span> <span class=mi>1</span><span class=p>)</span> <span class=o>/</span> <span class=n>len</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>inverse</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>step</span> <span class=o>=</span> <span class=n>power</span><span class=p>(</span><span class=n>step</span><span class=p>,</span> <span class=n>q</span> <span class=o>-</span> <span class=mi>2</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>first</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>first</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>first</span> <span class=o>+=</span> <span class=n>len</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>uint32_t</span> <span class=n>w</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>;</span> <span class=n>j</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>uint32_t</span> <span class=n>u</span> <span class=o>=</span> <span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>                <span class=kt>uint32_t</span> <span class=n>v</span> <span class=o>=</span> <span class=kt>uint64_t</span><span class=p>(</span><span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span> <span class=o>+</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>])</span> <span class=o>*</span> <span class=n>w</span> <span class=o>%</span> <span class=n>q</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>                <span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span><span class=p>]</span> <span class=o>=</span> <span class=n>add_mod</span><span class=p>(</span><span class=n>u</span><span class=p>,</span> <span class=n>v</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span> <span class=o>+</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>]</span> <span class=o>=</span> <span class=n>sub_mod</span><span class=p>(</span><span class=n>u</span><span class=p>,</span> <span class=n>v</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=n>w</span> <span class=o>=</span> <span class=kt>uint64_t</span><span class=p>(</span><span class=n>w</span><span class=p>)</span> <span class=o>*</span> <span class=n>step</span> <span class=o>%</span> <span class=n>q</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>inverse</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>uint32_t</span> <span class=n>inv_n</span> <span class=o>=</span> <span class=n>power</span><span class=p>(</span><span class=n>n</span><span class=p>,</span> <span class=n>q</span> <span class=o>-</span> <span class=mi>2</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>uint32_t</span><span class=o>&amp;</span> <span class=nl>x</span> <span class=p>:</span> <span class=n>a</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>x</span> <span class=o>=</span> <span class=kt>uint64_t</span><span class=p>(</span><span class=n>x</span><span class=p>)</span> <span class=o>*</span> <span class=n>inv_n</span> <span class=o>%</span> <span class=n>q</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>There are $n\log_2n/2$ butterflies. A forward transform of length $2^{18}$ has 2,359,296 of them.</p><span class=anchor id=benchmarking-contract></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#benchmarking-contract>#</a>Benchmarking Contract</h3><p>All measurements below were made by a single-threaded process on an Apple M4 Max with Apple Clang 17.0.0 and</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>-std=c++20 -O3 -mcpu=native
+</span></span></code></pre></div><p>Inputs are fixed-seed uniformly distributed residues in $[0,q)$. Plan construction, allocation, input generation, and copying are outside the timed region. Each process reports the median of seven samples; a sample targets about 30 million butterflies, capped at 2,000 transforms and floored at three. The plotted point is the componentwise median of five independent processes. One warm transform precedes the samples. The output is consumed after every sample. The harness does not request CPU affinity, which macOS does not expose as a stable public interface.</p><p>The plots time a <em>forward transform</em>. Inverse normalization and the pointwise products needed by a convolution are not included. This separation matters because otherwise a faster transform could be hidden by allocation or by the caller.</p><p>At $n=2^{18}$, the textbook implementation takes 6.248 ms, or 2.648 ns per butterfly. That is 378 million butterflies per second.</p><p>There are no floating-point operations here, so a GFLOPS number would describe nothing. A modular butterfly is the useful unit. The baseline performs two modular products per butterfly: one for $\omega v$ and another to advance $\omega$.</p><span class=anchor id=finding-the-first-bottleneck></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#finding-the-first-bottleneck>#</a>Finding the First Bottleneck</h2><p>The remainder operator is an obvious suspect. The inner loop contains two expressions of the form</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>uint64_t</span><span class=p>(</span><span class=n>a</span><span class=p>)</span> <span class=o>*</span> <span class=n>b</span> <span class=o>%</span> <span class=mi>998244353</span><span class=p>;</span>
+</span></span></code></pre></div><p>but the generated code contains no integer division. Because the modulus is a compile-time constant, Clang replaces the remainder with multiplication by a reciprocal:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-asm data-lang=asm><span class=line><span class=cl><span class=nf>umull</span>   <span class=no>x8</span><span class=p>,</span> <span class=no>w1</span><span class=p>,</span> <span class=no>w0</span>
+</span></span><span class=line><span class=cl><span class=nf>umulh</span>   <span class=no>x9</span><span class=p>,</span> <span class=no>x8</span><span class=p>,</span> <span class=no>magic</span>
+</span></span><span class=line><span class=cl><span class=nf>lsr</span>     <span class=no>x9</span><span class=p>,</span> <span class=no>x9</span><span class=p>,</span> <span class=c>#29
+</span></span></span><span class=line><span class=cl><span class=c></span><span class=no>msub</span>    <span class=no>w0</span><span class=p>,</span> <span class=no>w9</span><span class=p>,</span> <span class=no>q</span><span class=p>,</span> <span class=no>w8</span>
+</span></span></code></pre></div><p>The constants are hoisted out of the transform loop. This is still several instructions, but the more damaging line is the second product:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>w</span> <span class=o>=</span> <span class=kt>uint64_t</span><span class=p>(</span><span class=n>w</span><span class=p>)</span> <span class=o>*</span> <span class=n>step</span> <span class=o>%</span> <span class=n>q</span><span class=p>;</span>
+</span></span></code></pre></div><p>Every value of <code>w</code> depends on the previous one. The processor cannot begin the next update until it has finished the current reduction. Worse, this recurrence exists only because we rediscover the same powers of the same roots on every transform.</p><p>This is the first bottleneck to remove.</p><span class=anchor id=planning-the-transform></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#planning-the-transform>#</a>Planning the Transform</h2><p>For repeated transforms of the same length, we build a plan once. Roots for a stage of length <code>len</code> occupy the range <code>[len / 2, len)</code>. The plan allocates $n$ slots, leaves slot zero unused, and fills the other $n-1$ slots:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>len</span> <span class=o>=</span> <span class=mi>2</span><span class=p>;</span> <span class=n>len</span> <span class=o>&lt;=</span> <span class=n>n</span><span class=p>;</span> <span class=n>len</span> <span class=o>*=</span> <span class=mi>2</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=n>step</span> <span class=o>=</span> <span class=n>power</span><span class=p>(</span><span class=mi>3</span><span class=p>,</span> <span class=p>(</span><span class=n>q</span> <span class=o>-</span> <span class=mi>1</span><span class=p>)</span> <span class=o>/</span> <span class=n>len</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=n>w</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>;</span> <span class=n>j</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>root</span><span class=p>[</span><span class=n>len</span> <span class=o>/</span> <span class=mi>2</span> <span class=o>+</span> <span class=n>j</span><span class=p>]</span> <span class=o>=</span> <span class=n>w</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>w</span> <span class=o>=</span> <span class=kt>uint64_t</span><span class=p>(</span><span class=n>w</span><span class=p>)</span> <span class=o>*</span> <span class=n>step</span> <span class=o>%</span> <span class=n>q</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>To isolate this experiment, we do <strong>not</strong> change the permutation. Both the textbook transform and the planned transform compute the bit-reversed indices online with the same loop. Only root generation and the loop-carried <code>w</code> update disappear. The butterfly loop becomes</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>len</span> <span class=o>=</span> <span class=mi>2</span><span class=p>;</span> <span class=n>len</span> <span class=o>&lt;=</span> <span class=n>n</span><span class=p>;</span> <span class=n>len</span> <span class=o>*=</span> <span class=mi>2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>first</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>first</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>first</span> <span class=o>+=</span> <span class=n>len</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>;</span> <span class=n>j</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>uint32_t</span> <span class=n>u</span> <span class=o>=</span> <span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>            <span class=kt>uint32_t</span> <span class=n>v</span> <span class=o>=</span> <span class=kt>uint64_t</span><span class=p>(</span><span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span> <span class=o>+</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>                       <span class=o>*</span> <span class=n>root</span><span class=p>[</span><span class=n>len</span> <span class=o>/</span> <span class=mi>2</span> <span class=o>+</span> <span class=n>j</span><span class=p>]</span> <span class=o>%</span> <span class=n>q</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span><span class=p>]</span> <span class=o>=</span> <span class=n>add_mod</span><span class=p>(</span><span class=n>u</span><span class=p>,</span> <span class=n>v</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span> <span class=o>+</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>]</span> <span class=o>=</span> <span class=n>sub_mod</span><span class=p>(</span><span class=n>u</span><span class=p>,</span> <span class=n>v</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span></code></pre></div><p>The loop now has one modular product per butterfly instead of two, and consecutive butterflies are independent. We traded computation for one sequential root-table load.</p><p>At $n=2^{18}$, this change reduces the time from 6.248 ms to 1.645 ms: a 3.80x speedup. Throughput rises from 378 million to 1.434 billion butterflies per second.</p><p>The exponentiations were never the important part. There are only $\log_2n$ of them. The win comes from removing $n\log_2n/2$ recurrent root updates.</p><p>Planning is not free. The benchmark deliberately excludes it because the intended workload reuses a length for multiple transforms: one convolution already performs two forward transforms and one inverse transform. A one-shot transform of a tiny vector may be better off with a smaller plan or no plan at all.</p><span class=anchor id=a-reduction-that-loses></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#a-reduction-that-loses>#</a>A Reduction That Loses</h2><p>We still perform one <code>% q</code> per butterfly. A standard way to avoid it when one operand is fixed is Shoup multiplication. For every root $w$, precompute</p>$$
+\widehat w=\left\lfloor\frac{w2^{32}}q\right\rfloor.
+$$<p>For $0\le x,w&lt;q&lt;2^{31}$, estimate the quotient and correct once:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>struct</span> <span class=nc>Twiddle</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=n>value</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=n>shoup</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>uint32_t</span> <span class=nf>multiply</span><span class=p>(</span><span class=kt>uint32_t</span> <span class=n>x</span><span class=p>,</span> <span class=n>Twiddle</span> <span class=n>w</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint64_t</span> <span class=n>quotient</span> <span class=o>=</span> <span class=kt>uint64_t</span><span class=p>(</span><span class=n>x</span><span class=p>)</span> <span class=o>*</span> <span class=n>w</span><span class=p>.</span><span class=n>shoup</span> <span class=o>&gt;&gt;</span> <span class=mi>32</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint64_t</span> <span class=n>remainder</span> <span class=o>=</span> <span class=kt>uint64_t</span><span class=p>(</span><span class=n>x</span><span class=p>)</span> <span class=o>*</span> <span class=n>w</span><span class=p>.</span><span class=n>value</span> <span class=o>-</span> <span class=n>quotient</span> <span class=o>*</span> <span class=n>q</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>remainder</span> <span class=o>&gt;=</span> <span class=n>q</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>remainder</span> <span class=o>-=</span> <span class=n>q</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>remainder</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>The estimate is either the true quotient or one smaller, so <code>remainder</code> is in $[0,2q)$ and one correction is sufficient. The test program compares one million random Shoup products with the definition using <code>% q</code>.</p><p>This looks like an optimization. On this processor it is not one.</p><p><figure><img src=../img/ntt-reduction.svg><figcaption>Constant remainder versus Shoup reduction</figcaption></figure></p><p>At $n=2^{18}$, replacing the compiler&rsquo;s constant remainder with Shoup multiplication increases the time from 1.645 ms to 2.040 ms. The planned transform is now only 3.06 times faster than the baseline.</p><p>The reason is visible in the generated instruction sequences. The constant remainder becomes a low product followed by <code>umulh</code>, a shift, and <code>msub</code>. The Shoup probe computes its quotient product, then follows it with <code>mul</code>, <code>umaddl</code>, a comparison, and <code>csel</code>. That is a longer dependent chain on this core.</p><p>There is deliberately no table-size explanation hiding in this comparison. Both kernels read the same eight-byte <code>Twiddle {value, shoup}</code> entry; the remainder kernel merely ignores the second word. The measured difference therefore belongs to the arithmetic and its dependencies, not to different root traffic. On another ISA, with vector lanes, or with a runtime modulus, the balance can reverse. Here it does not.</p><p>We keep the losing version in the benchmark and the plot because deleting negative results from an optimization diary teaches the wrong lesson. We do not keep it in the final kernel: the next step returns to the compiler&rsquo;s faster constant remainder.</p><span class=anchor id=removing-the-permutation></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#removing-the-permutation>#</a>Removing the Permutation</h2><p>After planning, the arithmetic loop is short enough that the bit-reversal pass matters. Computing the indices online costs integer work, and the resulting swaps still move distant coefficients. The cleanest improvement is not to compute the permutation faster, but to stop requiring it.</p><p>A convolution does not require either forward transform to be in natural order. It only requires corresponding frequency coefficients to have the same order before pointwise multiplication.</p><p>Decimation in frequency (DIF) changes the butterfly to</p>$$
+(u,v)\mapsto(u+v,\ (u-v)\omega),
+$$<p>runs the stage lengths in the order $n,n/2,\ldots,2$, and produces bit-reversed output. Decimation in time (DIT) consumes bit-reversed input and produces natural-order output. We can therefore use DIF for both forward transforms, multiply their bit-reversed outputs element by element, and use inverse DIT afterward. No permutation is performed anywhere.</p><p>The forward kernel is direct:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>void</span> <span class=nf>forward_dif</span><span class=p>(</span><span class=n>vector</span><span class=o>&lt;</span><span class=kt>uint32_t</span><span class=o>&gt;&amp;</span> <span class=n>a</span><span class=p>,</span> <span class=k>const</span> <span class=n>Plan</span><span class=o>&amp;</span> <span class=n>p</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>len</span> <span class=o>=</span> <span class=n>a</span><span class=p>.</span><span class=n>size</span><span class=p>();</span> <span class=n>len</span> <span class=o>&gt;=</span> <span class=mi>2</span><span class=p>;</span> <span class=n>len</span> <span class=o>/=</span> <span class=mi>2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>first</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>first</span> <span class=o>&lt;</span> <span class=kt>int</span><span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>size</span><span class=p>());</span> <span class=n>first</span> <span class=o>+=</span> <span class=n>len</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>;</span> <span class=n>j</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>uint32_t</span> <span class=n>u</span> <span class=o>=</span> <span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>                <span class=kt>uint32_t</span> <span class=n>v</span> <span class=o>=</span> <span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span> <span class=o>+</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>                <span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span><span class=p>]</span> <span class=o>=</span> <span class=n>add_mod</span><span class=p>(</span><span class=n>u</span><span class=p>,</span> <span class=n>v</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span> <span class=o>+</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>]</span> <span class=o>=</span>
+</span></span><span class=line><span class=cl>                    <span class=kt>uint64_t</span><span class=p>(</span><span class=n>sub_mod</span><span class=p>(</span><span class=n>u</span><span class=p>,</span> <span class=n>v</span><span class=p>))</span> <span class=o>*</span> <span class=n>p</span><span class=p>.</span><span class=n>root</span><span class=p>[</span><span class=n>len</span> <span class=o>/</span> <span class=mi>2</span> <span class=o>+</span> <span class=n>j</span><span class=p>]</span> <span class=o>%</span> <span class=n>q</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>The inverse runs the DIT stages upward with inverse roots and multiplies every coefficient by $n^{-1}$ at the end:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>void</span> <span class=nf>inverse_dit</span><span class=p>(</span><span class=n>vector</span><span class=o>&lt;</span><span class=kt>uint32_t</span><span class=o>&gt;&amp;</span> <span class=n>a</span><span class=p>,</span> <span class=k>const</span> <span class=n>Plan</span><span class=o>&amp;</span> <span class=n>p</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>len</span> <span class=o>=</span> <span class=mi>2</span><span class=p>;</span> <span class=n>len</span> <span class=o>&lt;=</span> <span class=kt>int</span><span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>size</span><span class=p>());</span> <span class=n>len</span> <span class=o>*=</span> <span class=mi>2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>first</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>first</span> <span class=o>&lt;</span> <span class=kt>int</span><span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>size</span><span class=p>());</span> <span class=n>first</span> <span class=o>+=</span> <span class=n>len</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>;</span> <span class=n>j</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>uint32_t</span> <span class=n>u</span> <span class=o>=</span> <span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>                <span class=kt>uint32_t</span> <span class=n>v</span> <span class=o>=</span> <span class=kt>uint64_t</span><span class=p>(</span><span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span> <span class=o>+</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>                           <span class=o>*</span> <span class=n>p</span><span class=p>.</span><span class=n>inverse_root</span><span class=p>[</span><span class=n>len</span> <span class=o>/</span> <span class=mi>2</span> <span class=o>+</span> <span class=n>j</span><span class=p>]</span> <span class=o>%</span> <span class=n>q</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>                <span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span><span class=p>]</span> <span class=o>=</span> <span class=n>add_mod</span><span class=p>(</span><span class=n>u</span><span class=p>,</span> <span class=n>v</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=n>a</span><span class=p>[</span><span class=n>first</span> <span class=o>+</span> <span class=n>j</span> <span class=o>+</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>]</span> <span class=o>=</span> <span class=n>sub_mod</span><span class=p>(</span><span class=n>u</span><span class=p>,</span> <span class=n>v</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>uint32_t</span><span class=o>&amp;</span> <span class=nl>x</span> <span class=p>:</span> <span class=n>a</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>x</span> <span class=o>=</span> <span class=kt>uint64_t</span><span class=p>(</span><span class=n>x</span><span class=p>)</span> <span class=o>*</span> <span class=n>p</span><span class=p>.</span><span class=n>inverse_n</span> <span class=o>%</span> <span class=n>q</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>This version never constructs or reads a reversal table. At $n=2^{18}$ it takes 1.024 ms. It is 6.10 times faster than the textbook transform and 1.61 times faster than the planned natural-order transform.</p><p><figure><img src=../img/ntt-stages.svg><figcaption>Speedup after each NTT optimization</figcaption></figure></p><p>This is why bottlenecks have to be removed in sequence. Shoup loses 24% against the compiler reduction, so we revert it. Removing the permutation then cuts another 38% from the faster planned kernel. Keeping the old layout and polishing the modular multiply would have optimized the smaller problem.</p><span class=anchor id=scaling-with-transform-length></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#scaling-with-transform-length>#</a>Scaling with Transform Length</h2><p>The size sweep tells us whether the headline point is representative:</p><p><figure><img src=../img/ntt-size.svg><figcaption>NTT time per butterfly by transform length</figcaption></figure></p><p>The textbook implementation stays between 2.30 and 2.77 ns per butterfly. The permutation-free implementation stays between 0.43 and 0.48 ns per butterfly over the entire range from $2^8$ to $2^{20}$.</p><p>For a forward transform, the active coefficient array occupies $4n$ bytes and the active forward-root table occupies $8n$ bytes. Their combined 12-byte-per-element working set outgrows the M4 Max&rsquo;s 128 KiB L1 data cache between $2^{13}$ and $2^{14}$, as marked on the plot. There is no corresponding cliff: the stages stream through contiguous coefficient blocks and root ranges, and the 16 MiB cluster L2 still holds the active data through $2^{20}$.</p><p>That is the <em>active</em> memory, not the whole plan allocation. The benchmark plan owns separate forward and inverse <code>Twiddle</code> arrays: $n$ eight-byte slots each, with slot zero unused in both, plus one eight-byte inverse of $n$. Its total twiddle payload is therefore $16n+8$ bytes, while a forward transform reads only one of the two arrays. A final remainder-only implementation can store 32-bit roots instead, reducing the active root table to $4n$ bytes and both directional tables together to $8n$ bytes.</p><p>At $n=2^{20}$, the baseline takes 29.035 ms and the permutation-free kernel takes 4.523 ms, a 6.42x speedup. The latter executes 2.319 billion butterflies per second. Algorithmically, that is 2.319 billion modular multiplications and 4.637 billion modular additions or subtractions per second, although each constant remainder expands to several machine instructions.</p><p>The permutation-free version wins throughout this sweep, but it returns a different order. A library still needs a natural-order transform when the caller asks for one; convolution should use the faster path because its pointwise product does not care about the permutation.</p><span class=anchor id=exact-convolution></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#exact-convolution>#</a>Exact Convolution</h2><p>The optimized convolution pads both inputs to a supported power of two and keeps the intermediate order bit-reversed:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>vector</span><span class=o>&lt;</span><span class=kt>uint32_t</span><span class=o>&gt;</span> <span class=n>multiply_mod</span><span class=p>(</span><span class=n>vector</span><span class=o>&lt;</span><span class=kt>uint32_t</span><span class=o>&gt;</span> <span class=n>a</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                              <span class=n>vector</span><span class=o>&lt;</span><span class=kt>uint32_t</span><span class=o>&gt;</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>empty</span><span class=p>()</span> <span class=o>||</span> <span class=n>b</span><span class=p>.</span><span class=n>empty</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=p>{};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>output_size</span> <span class=o>=</span> <span class=n>a</span><span class=p>.</span><span class=n>size</span><span class=p>()</span> <span class=o>+</span> <span class=n>b</span><span class=p>.</span><span class=n>size</span><span class=p>()</span> <span class=o>-</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>n</span> <span class=o>=</span> <span class=n>bit_ceil</span><span class=p>(</span><span class=kt>unsigned</span><span class=p>(</span><span class=n>output_size</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>    <span class=n>assert</span><span class=p>(</span><span class=n>n</span> <span class=o>&lt;=</span> <span class=p>(</span><span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=mi>23</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>    <span class=n>a</span><span class=p>.</span><span class=n>resize</span><span class=p>(</span><span class=n>n</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>b</span><span class=p>.</span><span class=n>resize</span><span class=p>(</span><span class=n>n</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>Plan</span> <span class=nf>plan</span><span class=p>(</span><span class=n>n</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>forward_dif</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>plan</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>forward_dif</span><span class=p>(</span><span class=n>b</span><span class=p>,</span> <span class=n>plan</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=kt>uint64_t</span><span class=p>(</span><span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>])</span> <span class=o>*</span> <span class=n>b</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>%</span> <span class=n>q</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>inverse_dit</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>plan</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>a</span><span class=p>.</span><span class=n>resize</span><span class=p>(</span><span class=n>output_size</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>a</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>The result is exact in $\mathbb Z/q\mathbb Z$. That is not automatically the exact product over the ordinary integers.</p><p>If the inputs are nonnegative and bounded by $A$ and $B$, then each output coefficient satisfies</p>$$
+c_k\le\min(|a|,|b|)AB.
+$$<p>When this bound is below $q$, the residue identifies the ordinary coefficient. If it is not, the coefficient may have wrapped around even though every NTT operation was exact. Larger ranges require several NTT-friendly primes followed by Chinese remainder reconstruction; their product must exceed the range of the answer, and every prime must support the padded transform length.</p><p>For signed coefficients, the symmetric interpretation of residues is unique only when the absolute result is below $q/2$.</p><span class=anchor id=testing-and-reproduction></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/#testing-and-reproduction>#</a>Testing and Reproduction</h2><p>Round trips alone are not sufficient tests: a forward and inverse transform can contain matching mistakes. The program checks all of the following:</p><ul><li>one million random Shoup products against 64-bit <code>% q</code>;</li><li>forward/inverse round trips for all four kernels and every power of two through $2^{12}$;</li><li>random convolutions against the quadratic definition;</li><li>the boundary residues 0 and $q-1$;</li><li>checked-wrapper rejection of non-power-of-two lengths, unreduced coefficients, and mismatched plans.</li></ul><p>The same suite passes both warnings-as-errors and AddressSanitizer/UndefinedBehaviorSanitizer builds:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>clang++ -std<span class=o>=</span>c++20 -O3 -mcpu<span class=o>=</span>native <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -Wall -Wextra -Wpedantic -Werror static/code/ntt_case.cpp -o ntt
+</span></span><span class=line><span class=cl>./ntt --test
+</span></span><span class=line><span class=cl>python3 scripts/median-csv.py --runs <span class=m>5</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  --output static/code/ntt_m4_results.txt -- ./ntt --bench
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>python3 static/code/plot_ntt.py static/code/ntt_m4_results.txt <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  content/english/hpc/algorithms/img/ntt-size.svg <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  content/english/hpc/algorithms/img/ntt-reduction.svg <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  content/english/hpc/algorithms/img/ntt-stages.svg
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>clang++ -std<span class=o>=</span>c++20 -O1 -g -fsanitize<span class=o>=</span>address,undefined <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -fno-omit-frame-pointer -Wall -Wextra -Wpedantic -Werror <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  static/code/ntt_case.cpp -o ntt-sanitized
+</span></span><span class=line><span class=cl>./ntt-sanitized --test
+</span></span></code></pre></div><p>The <a href=../../../code/ntt_m4_results.txt>raw measurements</a> and <a href=../../../code/plot_ntt.py>plotting script</a> are stored with the article. Plan construction is intentionally outside the timing, and the measurements belong to this CPU and compiler. In particular, the failed Shoup result should not be generalized to a machine whose constant-remainder sequence, multiply throughput, vector ISA, or cache hierarchy is different.</p><p>The final lesson is not that every NTT should use these exact instructions. It is that the most expensive-looking operator was not the main bottleneck. Reusing algebraic structure removed a dependency chain, and changing the representation of the intermediate result removed an entire memory pass. Those are much larger optimizations than spelling modular reduction by hand.</p></article><div class=nextprev><div class=left><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/ id=prev-article>← Fast Fourier Transform</a></div><div class=right><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/ id=next-article>Argmin with SIMD →</a></div></div></main><footer>Copyright 2021–2022 Sergey Slotin<br></footer></div></body></html>

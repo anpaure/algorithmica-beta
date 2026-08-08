@@ -1,104 +1,14 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Number Theory on Algorithmica β</title>
-    <link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/</link>
-    <description>Recent content in Number Theory on Algorithmica β</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/number-theory/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Modular Arithmetic</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/</guid>
-      <description>Computers usually store time as the number of seconds that have passed since the 1st of January, 1970 — the start of the &amp;ldquo;Unix era&amp;rdquo; — and use these timestamps in all computations that have to do with time.
-We humans also keep track of time relative to some point in the past, which usually has a political or religious significance. For example, at the moment of writing, approximately 63882260594 seconds have passed since 1 AD — 6th century Eastern Roman monks&amp;rsquo; best estimate of the day Jesus Christ was born.</description>
-    </item>
-    
-    <item>
-      <title>Binary Exponentiation</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/</guid>
-      <description>In modular arithmetic (and computational algebra in general), you often need to raise a number to the $n$-th power — to do modular division, perform primality tests, or compute some combinatorial values — ­and you usually want to spend fewer than $\Theta(n)$ operations calculating it.
-Binary exponentiation, also known as exponentiation by squaring, is a method that allows for computation of the $n$-th power using $O(\log n)$ multiplications, relying on the following observation:</description>
-    </item>
-    
-    <item>
-      <title>Extended Euclidean Algorithm</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/</guid>
-      <description>Fermat’s theorem allows us to calculate modular multiplicative inverses through binary exponentiation in $O(\log n)$ operations, but it only works with prime modula. There is a generalization of it, Euler&amp;rsquo;s theorem, stating that if $m$ and $a$ are coprime, then
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Number Theory on Algorithmica β</title><link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/</link><description>Recent content in Number Theory on Algorithmica β</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/number-theory/index.xml" rel="self" type="application/rss+xml"/><item><title>Modular Arithmetic</title><link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/</guid><description>Computers usually store time as the number of seconds that have passed since the 1st of January, 1970 — the start of the &amp;ldquo;Unix era&amp;rdquo; — and use these timestamps in all computations that have to do with time.
+We humans also keep track of time relative to some point in the past, which usually has a political or religious significance. For example, at the moment of writing, approximately 63882260594 seconds have passed since 1 AD — 6th century Eastern Roman monks&amp;rsquo; best estimate of the day Jesus Christ was born.</description></item><item><title>Binary Exponentiation</title><link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/</guid><description>In modular arithmetic (and computational algebra in general), you often need to raise a number to the $n$-th power — to do modular division, perform primality tests, or compute some combinatorial values — ­and you usually want to spend fewer than $\Theta(n)$ operations calculating it.
+Binary exponentiation, also known as exponentiation by squaring, is a method that allows for computation of the $n$-th power using $O(\log n)$ multiplications, relying on the following observation:</description></item><item><title>Extended Euclidean Algorithm</title><link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/</guid><description>Fermat’s theorem allows us to calculate modular multiplicative inverses through binary exponentiation in $O(\log n)$ operations, but it only works with prime modula. There is a generalization of it, Euler&amp;rsquo;s theorem, stating that if $m$ and $a$ are coprime, then
 $$ a^{\phi(m)} \equiv 1 \pmod m $$
-where $\phi(m)$ is Euler&amp;rsquo;s totient function defined as the number of positive integers $x &amp;lt; m$ that are coprime with $m$. In the special case when $m$ is a prime, then all the $m - 1$ residues are coprime and $\phi(m) = m - 1$, yielding the Fermat&amp;rsquo;s theorem.</description>
-    </item>
-    
-    <item>
-      <title>Montgomery Multiplication</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/</guid>
-      <description>Unsurprisingly, a large fraction of computation in modular arithmetic is often spent on calculating the modulo operation, which is as slow as general integer division and typically takes 15-20 cycles, depending on the operand size.
+where $\phi(m)$ is Euler&amp;rsquo;s totient function defined as the number of positive integers $x &amp;lt; m$ that are coprime with $m$. In the special case when $m$ is a prime, then all the $m - 1$ residues are coprime and $\phi(m) = m - 1$, yielding the Fermat&amp;rsquo;s theorem.</description></item><item><title>Montgomery Multiplication</title><link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/</guid><description>Unsurprisingly, a large fraction of computation in modular arithmetic is often spent on calculating the modulo operation, which is as slow as general integer division and typically takes 15-20 cycles, depending on the operand size.
 The best way to deal this nuisance is to avoid modulo operation altogether, delaying or replacing it with predication, which can be done, for example, when calculating modular sums:
-const int M = 1e9 + 7; // input: array of n integers in the [0, M) range // output: sum modulo M int slow_sum(int *a, int n) { int s = 0; for (int i = 0; i &amp;lt; n; i++) s = (s + a[i]) % M; return s; } int fast_sum(int *a, int n) { int s = 0; for (int i = 0; i &amp;lt; n; i++) { s += a[i]; // s &amp;lt; 2 * M  s = (s &amp;gt;= M ?</description>
-    </item>
-    
-    <item>
-      <title>Finite Fields</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/</guid>
-      <description>Residues modulo a prime are not the only mathematical objects that support the familiar arithmetic operations. Depending on which laws are preserved, these objects form groups, rings, and fields.
-The terminology may seem needlessly abstract, but it lets us reuse algorithms. Binary exponentiation does not really need integers; it only needs an associative multiplication and an identity element. Gaussian elimination does not really need real numbers; it needs addition, multiplication, and division by non-zero elements.</description>
-    </item>
-    
-    <item>
-      <title>Error Correction</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/</guid>
-      <description>If we store one bit and later read the opposite value, there is no way to tell whether the original bit was zero or one. If we store it three times, there is: after one bit flip, 000 becomes one of 001, 010, or 100, all of which are still closer to 000 than to 111.
-This is the main idea of error-correcting codes: we deliberately add redundancy so that valid messages are far apart.</description>
-    </item>
-    
-    <item>
-      <title>Cryptography</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/</guid>
-      <description>This article is an overview of all topics related to modern internet-era cryptography.
+const int M = 1e9 + 7; // input: array of n integers in the [0, M) range // output: sum modulo M int slow_sum(int *a, int n) { int s = 0; for (int i = 0; i &amp;lt; n; i++) s = (s + a[i]) % M; return s; } int fast_sum(int *a, int n) { int s = 0; for (int i = 0; i &amp;lt; n; i++) { s += a[i]; // s &amp;lt; 2 * M s = (s &amp;gt;= M ?</description></item><item><title>Finite Fields</title><link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/</guid><description>Residues modulo a prime are not the only mathematical objects that support the familiar arithmetic operations. Depending on which laws are preserved, these objects form groups, rings, and fields.
+The terminology may seem needlessly abstract, but it lets us reuse algorithms. Binary exponentiation does not really need integers; it only needs an associative multiplication and an identity element. Gaussian elimination does not really need real numbers; it needs addition, multiplication, and division by non-zero elements.</description></item><item><title>Error Correction</title><link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/</guid><description>If we store one bit and later read the opposite value, there is no way to tell whether the original bit was zero or one. If we store it three times, there is: after one bit flip, 000 becomes one of 001, 010, or 100, all of which are still closer to 000 than to 111.
+This is the main idea of error-correcting codes: we deliberately add redundancy so that valid messages are far apart.</description></item><item><title>Cryptography</title><link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/</guid><description>This article is an overview of all topics related to modern internet-era cryptography.
 Cryptography — from the Greek kryptos, &amp;ldquo;hidden,&amp;rdquo; and graphein, &amp;ldquo;to write&amp;rdquo; — studies secure communication in the presence of adversaries. &amp;ldquo;Secure&amp;rdquo; can mean several different things:
- confidentiality: nobody except the intended recipient can read the message; integrity: modifications are detected; authentication: we know who created the message; forward secrecy: stealing a long-term key does not reveal old sessions.</description>
-    </item>
-    
-    <item>
-      <title>Hashing</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/</guid>
-      <description>Hash functions take an object — a short message, document, image, or basically any binary sequence — and transform it into a fixed-length sequence in a deterministic way.
+confidentiality: nobody except the intended recipient can read the message; integrity: modifications are detected; authentication: we know who created the message; forward secrecy: stealing a long-term key does not reveal old sessions.</description></item><item><title>Hashing</title><link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/</guid><description>Hash functions take an object — a short message, document, image, or basically any binary sequence — and transform it into a fixed-length sequence in a deterministic way.
 This definition is intentionally broad. A hash used to select a bucket, a CRC used to detect a damaged packet, a password hash, and SHA-256 all compress data, but they solve different problems and require almost opposite properties.
- #CollisionsIf a hash accepts arbitrarily long inputs and returns only $n$ bits, collisions are unavoidable: there are more possible inputs than outputs.</description>
-    </item>
-    
-    <item>
-      <title>Random Number Generation</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/</guid>
-      <description>A computer is a deterministic machine: if we run the same instructions from the same state, we get the same result. Most programs therefore do not generate new randomness. They expand a small random seed into a long sequence that merely looks random for the problem at hand.
-This is a useful distinction. Simulations, randomized algorithms, and tests usually want a fast and reproducible sequence. Cryptographic keys and session tokens need something an adversary cannot predict.</description>
-    </item>
-    
-  </channel>
-</rss>
+#CollisionsIf a hash accepts arbitrarily long inputs and returns only $n$ bits, collisions are unavoidable: there are more possible inputs than outputs.</description></item><item><title>Random Number Generation</title><link>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/</guid><description>A computer is a deterministic machine: if we run the same instructions from the same state, we get the same result. Most programs therefore do not generate new randomness. They expand a small random seed into a long sequence that merely looks random for the problem at hand.
+This is a useful distinction. Simulations, randomized algorithms, and tests usually want a fast and reproducible sequence. Cryptographic keys and session tokens need something an adversary cannot predict.</description></item></channel></rss>

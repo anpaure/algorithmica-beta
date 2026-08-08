@@ -5,6 +5,7 @@ Build and run the correctness suite:
 
 Run the benchmark:
   ./knapsack bench
+  ./knapsack bench-csv
 
 Add -Rpass=loop-vectorize to inspect Clang's vectorization decisions, or
 -fno-vectorize -fno-slp-vectorize to measure the non-vectorized kernels.
@@ -61,6 +62,22 @@ long long knapsack_value_scalar(const Item *item, int n, int capacity,
 }
 
 // Subset sum: mark every exactly reachable sum in [0, capacity].
+void subset_sum_scalar_full(const int *weight, int n, int capacity,
+                            unsigned char *reachable) {
+    std::fill(reachable, reachable + capacity + 1, 0);
+    reachable[0] = 1;
+
+    for (int i = 0; i < n; i++) {
+        int w = weight[i];
+        require(w >= 0, "negative subset-sum weight");
+        if (w > capacity)
+            continue;
+        for (int s = capacity; s >= w; s--)
+            reachable[s] |= reachable[s - w];
+    }
+}
+
+// The same byte DP, bounded by the sum of the processed usable weights.
 void subset_sum_scalar(const int *weight, int n, int capacity,
                        unsigned char *reachable) {
     std::fill(reachable, reachable + capacity + 1, 0);
@@ -165,6 +182,18 @@ bool bit_is_set(const u64 *bits, int position) {
     return (bits[position / 64] >> (position % 64)) & 1;
 }
 
+// Return the largest reachable sum represented by a completed bitset.
+int best_sum(const u64 *bits, int capacity) {
+    for (int i = capacity / 64; i >= 0; i--) {
+        u64 word = bits[i];
+        if (i == capacity / 64)
+            word &= last_word_mask(capacity);
+        if (word)
+            return 64 * i + 63 - __builtin_clzll(word);
+    }
+    return 0;
+}
+
 // The scalar DP can retain one predecessor for each newly reached sum.
 bool recover_subset_scalar(const int *weight, int n, int target,
                            std::vector<int> &picked) {
@@ -245,16 +274,21 @@ long long brute_knapsack(const std::vector<Item> &item, int capacity) {
 void compare_subset_kernels(const std::vector<int> &weight, int capacity,
                             bool compare_brute) {
     std::vector<unsigned char> scalar(capacity + 1);
+    std::vector<unsigned char> scalar_full(capacity + 1);
     std::vector<u64> full(word_count(capacity));
     std::vector<u64> bounded(word_count(capacity));
     subset_sum_scalar(weight.data(), (int) weight.size(), capacity,
                       scalar.data());
+    subset_sum_scalar_full(weight.data(), (int) weight.size(), capacity,
+                           scalar_full.data());
     subset_sum_words_full(weight.data(), (int) weight.size(), capacity,
                           full.data());
     subset_sum_words_bounded(weight.data(), (int) weight.size(), capacity,
                              bounded.data());
 
     for (int s = 0; s <= capacity; s++) {
+        require(bool(scalar_full[s]) == bool(scalar[s]),
+                "full byte DP disagrees with bounded byte DP");
         require(bit_is_set(full.data(), s) == bool(scalar[s]),
                 "full word DP disagrees with scalar DP");
         require(bit_is_set(bounded.data(), s) == bool(scalar[s]),
@@ -264,6 +298,14 @@ void compare_subset_kernels(const std::vector<int> &weight, int capacity,
             "full word DP leaked bits past capacity");
     require((bounded.back() & ~last_word_mask(capacity)) == 0,
             "bounded word DP leaked bits past capacity");
+
+    int expected_best = capacity;
+    while (expected_best > 0 && !scalar[expected_best])
+        expected_best--;
+    require(best_sum(full.data(), capacity) == expected_best,
+            "best sum from full word DP is wrong");
+    require(best_sum(bounded.data(), capacity) == expected_best,
+            "best sum from bounded word DP is wrong");
 
     if (compare_brute) {
         std::vector<unsigned char> brute = brute_subset(weight, capacity);
@@ -421,6 +463,22 @@ double time_scalar(const std::vector<int> &weight, int capacity, int repeats) {
     return median(sample);
 }
 
+double time_scalar_full(const std::vector<int> &weight, int capacity,
+                        int repeats) {
+    std::vector<unsigned char> reachable(capacity + 1);
+    std::vector<double> sample;
+    for (int iteration = -2; iteration < repeats; iteration++) {
+        auto start = std::chrono::steady_clock::now();
+        subset_sum_scalar_full(weight.data(), (int) weight.size(), capacity,
+                               reachable.data());
+        auto stop = std::chrono::steady_clock::now();
+        benchmark_sink ^= reachable[capacity] + reachable[capacity / 2];
+        if (iteration >= 0)
+            sample.push_back(std::chrono::duration<double, std::milli>(stop - start).count());
+    }
+    return median(sample);
+}
+
 double time_words_full(const std::vector<int> &weight, int capacity, int repeats) {
     std::vector<u64> bits(word_count(capacity));
     std::vector<double> sample;
@@ -498,6 +556,87 @@ void run_benchmarks() {
                 (unsigned long long) benchmark_sink);
 }
 
+void print_csv_row(const char *kind, const char *suite, int n, int capacity,
+                   const char *variant, double milliseconds,
+                   double frontier_ratio) {
+    std::printf("%s,%s,%d,%d,%s,%.9f,%.6f\n", kind, suite, n, capacity,
+                variant, milliseconds, frontier_ratio);
+}
+
+void benchmark_case_csv(const char *kind, const char *name,
+                        const std::vector<int> &weight, int capacity,
+                        int repeats, bool all_variants) {
+    long long sum = 0;
+    for (int w : weight)
+        if (w <= capacity)
+            sum += w;
+    double frontier_ratio = static_cast<double>(sum) / capacity;
+    if (all_variants) {
+        print_csv_row(kind, name, (int) weight.size(), capacity, "byte-full",
+                      time_scalar_full(weight, capacity, repeats), frontier_ratio);
+        print_csv_row(kind, name, (int) weight.size(), capacity, "byte-bounded",
+                      time_scalar(weight, capacity, repeats), frontier_ratio);
+        print_csv_row(kind, name, (int) weight.size(), capacity, "words-full",
+                      time_words_full(weight, capacity, repeats), frontier_ratio);
+    }
+    print_csv_row(kind, name, (int) weight.size(), capacity, "words-bounded",
+                  time_words_bounded(weight, capacity, repeats), frontier_ratio);
+}
+
+std::vector<int> random_weights(int n, int lo, int hi, std::uint32_t seed) {
+    std::mt19937 rng(seed);
+    std::uniform_int_distribution<int> distribution(lo, hi);
+    std::vector<int> weight(n);
+    for (int &w : weight)
+        w = distribution(rng);
+    return weight;
+}
+
+void run_csv_benchmarks() {
+    std::puts("kind,suite,n,capacity,variant,milliseconds,frontier_ratio");
+    benchmark_case_csv("stage", "dense-100k",
+        random_weights(1000, 1, 1000, 101), 100000, 9, true);
+    benchmark_case_csv("stage", "dense-1m",
+        random_weights(2000, 1, 1000, 102), 1000000, 7, true);
+    benchmark_case_csv("stage", "wide-weights-1m",
+        random_weights(2000, 1, 1000000, 103), 1000000, 7, true);
+    benchmark_case_csv("stage", "sparse-frontier-5m",
+        random_weights(500, 1, 1000, 104), 5000000, 9, true);
+
+    for (int exponent : {10, 12, 14, 16, 17, 18, 20, 22, 24}) {
+        int capacity = 1 << exponent;
+        std::vector<int> weight = random_weights(
+            64, std::max(1, capacity / 128), std::max(2, capacity / 16),
+            200U + static_cast<std::uint32_t>(exponent));
+        long long usable_sum = 0;
+        for (int w : weight)
+            if (w <= capacity)
+                usable_sum += w;
+        double frontier_ratio = static_cast<double>(usable_sum) / capacity;
+        int repeats = exponent <= 18 ? 9 : (exponent <= 22 ? 7 : 5);
+        print_csv_row("size", "wide-size-sweep", (int) weight.size(), capacity,
+                      "byte-bounded", time_scalar(weight, capacity, repeats),
+                      frontier_ratio);
+        print_csv_row("size", "wide-size-sweep", (int) weight.size(), capacity,
+                      "words-bounded", time_words_bounded(weight, capacity, repeats),
+                      frontier_ratio);
+    }
+
+    constexpr int capacity = 1000000;
+    constexpr int n = 512;
+    for (double ratio : {0.01, 0.03, 0.1, 0.3, 1.0, 3.0}) {
+        int weight_value = std::max(1, int(ratio * capacity / n));
+        std::vector<int> weight(n, weight_value);
+        double actual_ratio = static_cast<double>(weight_value) * n / capacity;
+        print_csv_row("frontier", "constant-weights", n, capacity, "words-full",
+                      time_words_full(weight, capacity, 9), actual_ratio);
+        print_csv_row("frontier", "constant-weights", n, capacity, "words-bounded",
+                      time_words_bounded(weight, capacity, 9), actual_ratio);
+    }
+    std::fprintf(stderr, "benchmark sink: %llu\n",
+                 (unsigned long long) benchmark_sink);
+}
+
 int main(int argc, char **argv) {
     if (argc == 1 || std::string(argv[1]) == "test") {
         run_tests();
@@ -507,6 +646,10 @@ int main(int argc, char **argv) {
         run_benchmarks();
         return 0;
     }
-    std::fprintf(stderr, "usage: %s [test|bench]\n", argv[0]);
+    if (std::string(argv[1]) == "bench-csv") {
+        run_csv_benchmarks();
+        return 0;
+    }
+    std::fprintf(stderr, "usage: %s [test|bench|bench-csv]\n", argv[0]);
     return 2;
 }

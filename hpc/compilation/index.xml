@@ -1,95 +1,14 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Compilation on Algorithmica β</title>
-    <link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/</link>
-    <description>Recent content in Compilation on Algorithmica β</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/compilation/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Stages of Compilation</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/</guid>
-      <description>Before jumping straight to compiler optimizations, which is what most of this chapter is about, let&amp;rsquo;s briefly recap the &amp;ldquo;big picture&amp;rdquo; first. Skipping the boring parts, there are 4 stages of turning C programs into executables:
- Preprocessing expands macros, pulls included source from header files, and strips off comments from source code: gcc -E source.c (outputs preprocessed source to stdout) Compiling parses the source, checks for syntax errors, converts it into an intermediate representation, performs optimizations, and finally translates it into assembly language: gcc -S file.</description>
-    </item>
-    
-    <item>
-      <title>Flags and Targets</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/</guid>
-      <description>The first step of getting high performance from the compiler is to ask for it, which is done with over a hundred different compiler options, attributes, and pragmas.
- #Optimization LevelsThere are 4 and a half main levels of optimization for speed in GCC:
- -O0 is the default one that does no optimizations (although, in a sense, it does optimize: for compilation time). -O1 (also aliased as -O) does a few &amp;ldquo;low-hanging fruit&amp;rdquo; optimizations, almost not affecting the compilation time.</description>
-    </item>
-    
-    <item>
-      <title>Situational Optimizations</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/</guid>
-      <description>Most compiler optimizations enabled by -O2 and -O3 are guaranteed to either improve or at least not seriously hurt performance. Those that aren&amp;rsquo;t included in -O3 are either not strictly standard-compliant, or highly circumstantial and require some additional input from the programmer to help decide whether using them is beneficial.
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Compilation on Algorithmica β</title><link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/</link><description>Recent content in Compilation on Algorithmica β</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/compilation/index.xml" rel="self" type="application/rss+xml"/><item><title>Stages of Compilation</title><link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/</guid><description>Before jumping straight to compiler optimizations, which is what most of this chapter is about, let&amp;rsquo;s briefly recap the &amp;ldquo;big picture&amp;rdquo; first. Skipping the boring parts, there are 4 stages of turning C programs into executables:
+Preprocessing expands macros, pulls included source from header files, and strips off comments from source code: gcc -E source.c (outputs preprocessed source to stdout) Compiling parses the source, checks for syntax errors, converts it into an intermediate representation, performs optimizations, and finally translates it into assembly language: gcc -S file.</description></item><item><title>Flags and Targets</title><link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/</guid><description>The first step of getting high performance from the compiler is to ask for it, which is done with over a hundred different compiler options, attributes, and pragmas.
+#Optimization LevelsThere are 4 and a half main levels of optimization for speed in GCC:
+-O0 is the default one that does no optimizations (although, in a sense, it does optimize: for compilation time). -O1 (also aliased as -O) does a few &amp;ldquo;low-hanging fruit&amp;rdquo; optimizations, almost not affecting the compilation time.</description></item><item><title>Situational Optimizations</title><link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/</guid><description>Most compiler optimizations enabled by -O2 and -O3 are guaranteed to either improve or at least not seriously hurt performance. Those that aren&amp;rsquo;t included in -O3 are either not strictly standard-compliant, or highly circumstantial and require some additional input from the programmer to help decide whether using them is beneficial.
 Let&amp;rsquo;s discuss the most frequently used ones that we&amp;rsquo;ve also previously covered in this book.
- #Loop UnrollingLoop unrolling is disabled by default, unless the loop takes a small constant number of iterations known at compile time — in which case it will be replaced with a completely jump-free, repeated sequence of instructions.</description>
-    </item>
-    
-    <item>
-      <title>Contract Programming</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/</guid>
-      <description>In &amp;ldquo;safe&amp;rdquo; languages like Java and Rust, you normally have well-defined behavior for every possible operation and every possible input. There are some things that are under-defined, like the order of keys in a hash table or the growth factor of an std::vector, but these are usually some minor details that are left up to implementation for potential performance gains in the future.
-In contrast, C and C++ take the concept of undefined behavior to another level.</description>
-    </item>
-    
-    <item>
-      <title>Non-Zero-Cost Abstractions</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/</guid>
-      <description>In general, abstractions are great. Applied well, they reduce the amount of code and the mental burden of a programmer.
+#Loop UnrollingLoop unrolling is disabled by default, unless the loop takes a small constant number of iterations known at compile time — in which case it will be replaced with a completely jump-free, repeated sequence of instructions.</description></item><item><title>Contract Programming</title><link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/</guid><description>In &amp;ldquo;safe&amp;rdquo; languages like Java and Rust, you normally have well-defined behavior for every possible operation and every possible input. There are some things that are under-defined, like the order of keys in a hash table or the growth factor of an std::vector, but these are usually some minor details that are left up to implementation for potential performance gains in the future.
+In contrast, C and C++ take the concept of undefined behavior to another level.</description></item><item><title>Non-Zero-Cost Abstractions</title><link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/</guid><description>In general, abstractions are great. Applied well, they reduce the amount of code and the mental burden of a programmer.
 But abstractions often come at a cost in terms of performance. A call into a separately compiled shared library may prevent inlining and require dynamic symbol resolution. A virtual call uses an indirect branch whose target may or may not be predictable.
-Languages like C++ and Rust heavily promote the idea of zero-cost abstractions.</description>
-    </item>
-    
-    <item>
-      <title>Precomputation</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/</guid>
-      <description>When compilers can infer that a certain variable does not depend on any user-provided data, they can compute its value during compile time and turn it into a constant by embedding it into the generated machine code.
-This optimization helps performance a lot, but it is not a part of the C++ standard, so compilers don&amp;rsquo;t have to do that. When a compile-time computation is either hard to implement or time-intensive, a compiler may pass on that opportunity.</description>
-    </item>
-    
-    <item>
-      <title>Arithmetic Optimizations</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/</guid>
-      <description>Programmers are taught many little arithmetic tricks: replace multiplication by a power of two with a shift, replace x % 2 with x &amp;amp; 1, move divisions out of loops, and so on.
-Most of these tricks are useful for understanding the machine, but not for outsmarting the compiler. Modern compilers already know thousands of algebraic identities, along with the awkward corner cases that decide whether each identity is legal.</description>
-    </item>
-    
-    <item>
-      <title>What Compilers Can and Can&#39;t Do</title>
-      <link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/</guid>
-      <description>Let&amp;rsquo;s sum up this chapter with some general advice.
+Languages like C++ and Rust heavily promote the idea of zero-cost abstractions.</description></item><item><title>Precomputation</title><link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/</guid><description>When compilers can infer that a certain variable does not depend on any user-provided data, they can compute its value during compile time and turn it into a constant by embedding it into the generated machine code.
+This optimization helps performance a lot, but it is not a part of the C++ standard, so compilers don&amp;rsquo;t have to do that. When a compile-time computation is either hard to implement or time-intensive, a compiler may pass on that opportunity.</description></item><item><title>Arithmetic Optimizations</title><link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/</guid><description>Programmers are taught many little arithmetic tricks: replace multiplication by a power of two with a shift, replace x % 2 with x &amp;amp; 1, move divisions out of loops, and so on.
+Most of these tricks are useful for understanding the machine, but not for outsmarting the compiler. Modern compilers already know thousands of algebraic identities, along with the awkward corner cases that decide whether each identity is legal.</description></item><item><title>What Compilers Can and Can't Do</title><link>https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/</guid><description>Let&amp;rsquo;s sum up this chapter with some general advice.
 Writing optimizing compilers is very hard. The standard introductory textbook by Alfred Aho, Monica Lam, Ravi Sethi, and Jeffrey Ullman is about 1000 pages long, and it only begins to describe the subject.
 GCC enables a long list of separate optimization passes at -O3. At a very high level, these optimizations improve performance by:
- doing a good job at fundamental algorithms like register allocation, scheduling, and dead-code elimination; eliminating unnecessary abstractions by inlining functions and removing temporary objects; knowing the CPU architecture very well — replacing divisions by powers of two with binary shifts, forming addressing operations with lea, and selecting suitable instructions; knowing lots and lots of &amp;ldquo;tricks&amp;rdquo; — specific peephole optimizations and loop transformations — and applying them whenever they are legal and expected to be profitable.</description>
-    </item>
-    
-  </channel>
-</rss>
+doing a good job at fundamental algorithms like register allocation, scheduling, and dead-code elimination; eliminating unnecessary abstractions by inlining functions and removing temporary objects; knowing the CPU architecture very well — replacing divisions by powers of two with binary shifts, forming addressing operations with lea, and selecting suitable instructions; knowing lots and lots of &amp;ldquo;tricks&amp;rdquo; — specific peephole optimizations and loop transformations — and applying them whenever they are legal and expected to be profitable.</description></item></channel></rss>

@@ -1,1095 +1,127 @@
-<!doctype html>
-<html lang='en-us'><head><meta charset="utf-8">
-  <link rel="icon" href="https://anpaure.github.io/algorithmica-beta/favicon.ico">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/beta.css">
-  
-
-  
-  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/style.min.390d1fc41f8875c678a6c714096f8f46585799e0a4ca94c968af52bc5f8e93d9.css" integrity="sha256-OQ0fxB&#43;IdcZ4pscUCW&#43;PRlhXmeCkypTJaK9SvF&#43;Ok9k=">
-  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/syntax.css" id="syntax-theme">
-
-  <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
-  <script src="https://tikzjax.com/v1/tikzjax.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
-  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js"></script>
-  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js"></script>
-  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js"></script>
-
-  
-  <link rel="stylesheet" id="theme">
-
-  <script>
-    function toggleSidebar() {
-      console.log("Toggling sidebar visibility")
-      var sidebar = document.getElementById('sidebar')
-      var wrapper = document.getElementById('wrapper')
-      if (sidebar.classList.contains('sidebar-toggled') || window.getComputedStyle(sidebar).display == 'block') { 
-        sidebar.classList.toggle('sidebar-hidden')
-        wrapper.classList.toggle('sidebar-hidden')
-      }
-      sidebar.classList.add('sidebar-toggled')
-      wrapper.classList.add('sidebar-toggled')
-    }
-
-    function switchTheme(theme) {
-      console.log("Changing theme:", theme)
-      document.getElementById('theme').href = (theme == 'dark' ? "https:\/\/anpaure.github.io\/algorithmica-beta\/dark.min.3ad3d1be62e1d88e56b599b0103dbd3daf3203f1ed2a2d0f737454856c25036d.css" : "")
-      document.getElementById('syntax-theme').href = (theme == 'dark' ? 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax-dark.css' : 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax.css')
-      localStorage.setItem('theme', theme)
-    }
-
-    async function toggleSearch() {
-      console.log("Toggling search")
-      
-      var searchDiv = document.getElementById('search')
-      if (window.getComputedStyle(searchDiv).display == 'none') {
-        searchDiv.style.display = 'block'
-        window.scrollTo({ top: 0 });
-        document.getElementById('search-bar').focus()
-      } else {
-        searchDiv.style.display = 'none'  
-      }
-
-      if (!index) {
-        console.log("Fetching index")
-        const response = await fetch('https:\/\/anpaure.github.io\/algorithmica-beta\/searchindex.json')
-        const pages = await response.json()
-        index = lunr(function() {
-          this.use(lunr.multiLanguage('en', 'ru'))
-          this.field('title', {
-            boost: 5
-          })
-          this.field('content', {
-            boost: 1
-          })
-          pages.forEach(function(doc) {
-            this.add(doc)
-            articles.push(doc)
-          }, this)
-        })
-        console.log("Ready to search")
-      }
-    }
-
-    var articles = []
-    var index = undefined
-
-    function search() {
-      var query = document.getElementById('search-bar').value
-      var resultsDiv = document.getElementById('search-results')
-      var countDiv = document.getElementById('search-count')
-      
-      if (query == '') {
-        resultsDiv.innerHTML = ''
-        countDiv.innerHTML = ''
-        return
-      }
-      
-      var results = index.search(query)
-
-      countDiv.innerHTML = 'Found <b>' + results.length + '</b> pages'
-
-      let resultList = ''
-
-      for (const n in results) {
-        const item = articles[results[n].ref]
-        resultList += '<li><a href="' + item.path + '">' + item.title + '</a> <p>'
-        const text = item.content
-
-        const contextLimit = 80
-
-        if (text.includes(query)) {
-          const start = text.indexOf(query)
-          if (start > contextLimit)
-            resultList += '…'
-          resultList += text.substring(start - contextLimit, start)
-                      + '<b>' + query + '</b>' + text.substring(start + query.length, start + query.length + contextLimit)
-
-        } else {
-          resultList += text.substring(0, contextLimit * 2)
-        }
-        resultList += '…</p></li>'
-      }
-
-      resultsDiv.innerHTML = resultList
-    }
-
-    if (localStorage.getItem('theme') == 'dark') {
-      switchTheme('dark')
-    }
-
-    window.addEventListener('load', function() {
-      var el = document.getElementById("active-element")
-      
-      if (el) {
-        el.scrollIntoView({block: "center"})
-      }
-      
-
-    })
-
-    window.addEventListener('scroll', function() {
-      var menu = document.getElementById('menu')
-      if (window.scrollY < 120) {
-        
-        menu.classList.remove('scrolled')
-      } else {
-        
-        menu.classList.add('scrolled')
-      }
-    })
-
-    window.addEventListener('keydown', function(e) {
-      if (e.altKey) { return }
-      if (document.activeElement.tagName == 'INPUT') { return }
-      if (e.key == 'ArrowLeft') {
-        document.getElementById('prev-article').click()
-      } else if (e.key == 'ArrowRight') {
-        document.getElementById('next-article').click()
-      }
-    })
-  </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
-  onload="renderMathInElement(document.body, {
-    delimiters: [
-      {left: '$$', right: '$$', display: true},
-      {left: '$', right: '$', display: false}
-    ]
-  })"></script>
-
-  
-  <title>Binary Search - Algorithmica β</title>
-</head>
-<body><nav id='sidebar' >
-  
-  
-  <div class='title'>
-    <a href='https://anpaure.github.io/algorithmica-beta/'>Algorithmica β</a>
-    
-      
-        
-        <span class='slash'>/</span>
-        <a href='https://anpaure.github.io/algorithmica-beta/hpc/' class='divisionAbbr'
-           >
-          HPC
-        </a>
-      
-    
-  </div>
-  <ul>
-    
-      
-        
-        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/preface/'
-          
-          >Preface</a></li>
-        
-      
-        
-          <li class='part'>Performance Engineering</li>
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/'
-          
-          >Complexity Models</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/'
-                
-                >Modern Hardware</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/'
-                
-                >Programming Languages</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/'
-                
-                >Models of Computation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/'
-                
-                >When to Optimize</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/'
-          
-          >Computer Architecture</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/'
-                
-                >Instruction Set Architectures</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/'
-                
-                >Assembly Language</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/'
-                
-                >Loops and Conditionals</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/'
-                
-                >Functions and Recursion</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/'
-                
-                >Indirect Branching</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/'
-                
-                >Machine Code Layout</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/'
-                
-                >Interrupts and System Calls</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/'
-                
-                >Virtualization</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/'
-          
-          >Instruction-Level Parallelism</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/'
-                
-                >Pipeline Hazards</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/'
-                
-                >The Cost of Branching</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/'
-                
-                >Branchless Programming</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/'
-                
-                >Instruction Tables</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/'
-                
-                >Instruction Scheduling</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/'
-                
-                >Throughput Computing</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/'
-                
-                >Theoretical Performance Limits</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/'
-          
-          >Compilation</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/'
-                
-                >Stages of Compilation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/'
-                
-                >Flags and Targets</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/'
-                
-                >Situational Optimizations</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/'
-                
-                >Contract Programming</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/'
-                
-                >Non-Zero-Cost Abstractions</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/'
-                
-                >Precomputation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/'
-                
-                >Arithmetic Optimizations</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/'
-                
-                >What Compilers Can and Can&#39;t Do</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/'
-          
-          >Profiling</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/'
-                
-                >Instrumentation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/'
-                
-                >Statistical Profiling</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/'
-                
-                >Program Simulation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/'
-                
-                >Machine Code Analyzers</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/'
-                
-                >Benchmarking</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/'
-                
-                >Getting Accurate Results</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/'
-          
-          >Arithmetic</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/'
-                
-                >Floating-Point Numbers</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/'
-                
-                >IEEE 754 Floats</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/'
-                
-                >Rounding Errors</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/'
-                
-                >Newton&#39;s Method</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/'
-                
-                >Fast Inverse Square Root</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/'
-                
-                >Integer Numbers</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/'
-                
-                >Integer Division</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/'
-                
-                >Bit Manipulation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/'
-                
-                >Data Compression</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/'
-          
-          >Number Theory</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/'
-                
-                >Modular Arithmetic</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/'
-                
-                >Binary Exponentiation</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/'
-                
-                >Extended Euclidean Algorithm</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/'
-                
-                >Montgomery Multiplication</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/'
-                
-                >Finite Fields</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/'
-                
-                >Error Correction</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/'
-                
-                >Cryptography</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/'
-                
-                >Hashing</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/'
-                
-                >Random Number Generation</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/'
-          
-          >External Memory</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/'
-                
-                >Memory Hierarchy</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/'
-                
-                >Virtual Memory</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/'
-                
-                >External Memory Model</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/'
-                
-                >External Sorting</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/'
-                
-                >List Ranking</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/'
-                
-                >Eviction Policies</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/'
-                
-                >Cache-Oblivious Algorithms</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/'
-                
-                >Spatial and Temporal Locality</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/'
-                
-                >B-Trees</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/'
-                
-                >Sublinear Algorithms</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/'
-                
-                >Memory Management</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/'
-          
-          >RAM &amp; CPU Caches</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/'
-                
-                >Memory Bandwidth</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/'
-                
-                >Memory Latency</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/'
-                
-                >Cache Lines</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/'
-                
-                >Memory Sharing</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/'
-                
-                >Memory-Level Parallelism</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/'
-                
-                >Prefetching</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/'
-                
-                >Alignment and Packing</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/'
-                
-                >Pointer Alternatives</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/'
-                
-                >Cache Associativity</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/'
-                
-                >Memory Paging</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/'
-                
-                >AoS and SoA</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/'
-          
-          >SIMD Parallelism</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/'
-                
-                >Intrinsics and Vector Types</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/'
-                
-                >Moving Data</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/'
-                
-                >Reductions</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/'
-                
-                >Masking and Blending</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/'
-                
-                >In-Register Shuffles</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/'
-                
-                >Auto-Vectorization and SPMD</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/'
-          
-          >Algorithms Case Studies</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/'
-                
-                >Binary GCD</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/'
-                
-                >Prime Number Sieves</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/'
-                
-                >Integer Factorization</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/'
-                
-                >Optimizing Logistic Regression</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/'
-                
-                >Big Integers and Karatsuba Multiplication</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/'
-                
-                >Fast Fourier Transform</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/'
-                
-                >Number-Theoretic Transform</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/'
-                
-                >Argmin with SIMD</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/'
-                
-                >Prefix Sum with SIMD</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/'
-                
-                >Reading Decimal Integers</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/'
-                
-                >Writing Decimal Integers</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/'
-                
-                >Reading and Writing Floating-Point Numbers</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/'
-                
-                >String Searching</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/'
-                
-                >Sorting</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/'
-                
-                >Matrix Multiplication</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/knapsack/'
-                
-                >Knapsack with Bitsets</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/'
-          
-          >Data Structures Case Studies</a></li>
-        
-          <ol>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/'
-                id='active-element'
-                >Binary Search</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/'
-                
-                >Static B-Trees</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/'
-                
-                >Search Trees</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/'
-                
-                >Segment Trees</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/'
-                
-                >Tries</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/'
-                
-                >Range Minimum Query</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/'
-                
-                >Hash Tables</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/'
-                
-                >Bitmaps</a></li>
-            
-              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/'
-                
-                >Probabilistic Filters</a></li>
-            
-          </ol>
-        
-      
-        
-        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/summary/'
-          
-          >Summary</a></li>
-        
-      
-        
-          <li class='part'>Appendix</li>
-        
-        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/stats/'
-          
-          >Probability Theory Refresher</a></li>
-        
-      
-    
-  </ul>
-</nav>
-<div id='wrapper' ><menu id='menu'>
-  
-  
-  
-  
-  <div class='left'>
-    <a>
-      <img src='https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg'
-           onclick='toggleSidebar()'
-           title='open table of contents'>
-    </a>
-    <a>
-      <img src='https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg'
-           style='position: relative; top: -1px'
-           onclick='switchTheme(localStorage.getItem("theme") == "dark" ? "light" : "dark")'
-           title='dark theme'>
-    </a>
-    <a>
-      <img src='https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg'
-           onclick='toggleSearch()'
-           title='search'>
-    </a>
-  </div>
-  <div class='title'>
-    
-      <span class='beta-brand'>Algorithmica β</span>
-      <span class='chapter-title'>Binary Search</span>
-    
-  </div>
-  <div class='right'>
-    <a onClick='window.print()'>
-      <img src='https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg' title='print'>
-    </a>
-    <a href='https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2fdata-structures%2fbinary-search.md'>
-      <img src='https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg'
-           title='edit'
-           style='width: 18px; position: relative; right: -2px; top: -1px'>
-    </a>
-    <a href='https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/data-structures/binary-search.md' class='github-main'>
-      <img src='https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg' title='view on github'>
-    </a>
-  </div>
-</menu>
-<main>
-        <div id="search">
-    <input id="search-bar" type="search" placeholder='Search this book…' oninput="search()">
-    <div id="search-count"></div>
-    <div id="search-results">
-    </div>
-</div>
-<header>
-  
-  <h1>Binary Search</h1>
-  
-    <div class='info'></div>
-  
-</header>
-<article>
-  
-
-
-  
-    
-    
-      
-        <!-- mention interpolation search and radix trees? -->
-<p>While improving the speed of user-facing applications is the end goal of performance engineering, people don&rsquo;t really get excited over 5-10% improvements in some databases. Yes, this is what software engineers are paid for, but these types of optimizations tend to be too intricate and system-specific to be readily generalized to other software.</p>
-<p>Instead, the most fascinating showcases of performance engineering are multifold optimizations of textbook algorithms: the kinds that everybody knows and deemed so simple that it would never even occur to try to optimize them in the first place. These optimizations are simple and instructive and can very much be adopted elsewhere. And they are surprisingly not as rare as you&rsquo;d think.</p>
-<!-- Yet, with remarkable periodicity, these can be optimized to ridiculous levels of performance. -->
-<p>In this section, we focus on one such fundamental algorithm — <em>binary search</em> — and implement two of its variants that are, depending on the problem size, up to 4x faster than <code>std::lower_bound</code>, while being under just 15 lines of code.</p>
-<p>The first algorithm achieves that by removing <a href="https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching">branches</a>, and the second also optimizes the memory layout to achieve better <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache">cache system</a> performance. This technically disqualifies it from being a drop-in replacement for <code>std::lower_bound</code> as it needs to permute the elements of the array before it can start answering queries — but I can&rsquo;t recall a lot of scenarios where you obtain a sorted array but can&rsquo;t afford to spend linear time on preprocessing.</p>
-<!--
-
-- *Branchless binary search* that is up to 3x faster on *small* arrays and can act as a drop-in replacement to `std::lower_bound`.
-- *Eytzinger binary search* that rearranges the elements of a sorted array in a cache-friendly way of is also 3x faster on small arrays and 2x faster on large arrays.
-
--->
-<p>The usual disclaimer: the CPU is a <a href="https://www.7-cpu.com/cpu/Zen2.html">Zen 2</a>, the RAM is a <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/">DDR4-2666</a>, and the compiler we will be using by default is Clang 10. The performance on your machine may be different, so I highly encourage to <a href="https://godbolt.org/z/14rd5Pnve">go and test it</a> for yourself.</p>
-<!--
-
-It performs slightly worse on array sizes that fit lower layers of cache, but in low-bandwidth environments it can be up to 3x faster (or 7x faster than `std::lower_bound`). GCC sucked on all benchmarks, so we will mostly be using Clang (10.0). The CPU is a Zen 2, although the results should be transferrable to other platforms, including most Arm-based chips.
-
-The CPU is a Zen 2, and as always, the results are a bit architecture dependant, although the results should be transferrable to other platforms, including most Arm-based chips.
-
-This is a large article, which will turn into a multi-hour read. If you feel comfortable reading [intrinsic](/hpc/simd/intrinsics)-heavy code without any context whatsoever, you can skim through the first four implementation and jump straight to the last section.
-
-Build up understanding gradually, but you can skip them.
-
--->
-<span class='anchor' id="binary-search"></span>
-<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#binary-search">#</a>Binary Search</h2><!--
-
-For our benchmark, we create an array of random integers of size `n` and sort it. Then, each implementations can do some preprocessing:
-
-```c++
-void prepare(int *a, int n);
-int lower_bound(int x);
-```
-
-Already sorted array `t` of size `n`.
-
-We are going ot create an array named `a` into array named `t`.
-
--->
-<p>Here is the standard way of searching for the first element not less than <code>x</code> in a sorted array <code>t</code> of <code>n</code> integers that you can find in any introductory computer science textbook:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">lower_bound</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">x</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">            <span class="n">r</span> <span class="o">=</span> <span class="n">m</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">else</span>
-</span></span><span class="line"><span class="cl">            <span class="n">l</span> <span class="o">=</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">t</span><span class="p">[</span><span class="n">l</span><span class="p">];</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><!-- We maintain the indices of first and the last element that may be the answer, compare the element the middle to the key `x`, and then shrink the search interval by half depending how the comparison went. Beautiful in its simplicity. -->
-<p>Find the middle element of the search range, compare it to <code>x</code>, shrink the range in half. Beautiful in its simplicity.</p>
-<p>A similar approach is employed by <code>std::lower_bound</code>, except that it needs to be more generic to support containers with non-random-access iterators and thus uses the first element and the size of the search interval instead of the two of its ends. To this end, implementations from both <a href="https://github.com/llvm-mirror/libcxx/blob/78d6a7767ed57b50122a161b91f59f19c9bd0d19/include/algorithm#L4169">Clang</a> and <a href="https://github.com/gcc-mirror/gcc/blob/d9375e490072d1aae73a93949aa158fcd2a27018/libstdc%2B%2B-v3/include/bits/stl_algobase.h#L1023">GCC</a> use this metaprogramming monstrosity:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Compare</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_ForwardIterator</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Tp</span><span class="o">&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="n">_LIBCPP_CONSTEXPR_AFTER_CXX17</span> <span class="n">_ForwardIterator</span>
-</span></span><span class="line"><span class="cl"><span class="n">__lower_bound</span><span class="p">(</span><span class="n">_ForwardIterator</span> <span class="n">__first</span><span class="p">,</span> <span class="n">_ForwardIterator</span> <span class="n">__last</span><span class="p">,</span> <span class="k">const</span> <span class="n">_Tp</span><span class="o">&amp;</span> <span class="n">__value_</span><span class="p">,</span> <span class="n">_Compare</span> <span class="n">__comp</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">typedef</span> <span class="k">typename</span> <span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">_ForwardIterator</span><span class="o">&gt;::</span><span class="n">difference_type</span> <span class="n">difference_type</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="n">difference_type</span> <span class="n">__len</span> <span class="o">=</span> <span class="n">_VSTD</span><span class="o">::</span><span class="n">distance</span><span class="p">(</span><span class="n">__first</span><span class="p">,</span> <span class="n">__last</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">__len</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">difference_type</span> <span class="n">__l2</span> <span class="o">=</span> <span class="n">_VSTD</span><span class="o">::</span><span class="n">__half_positive</span><span class="p">(</span><span class="n">__len</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">_ForwardIterator</span> <span class="n">__m</span> <span class="o">=</span> <span class="n">__first</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="n">_VSTD</span><span class="o">::</span><span class="n">advance</span><span class="p">(</span><span class="n">__m</span><span class="p">,</span> <span class="n">__l2</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">__comp</span><span class="p">(</span><span class="o">*</span><span class="n">__m</span><span class="p">,</span> <span class="n">__value_</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">        <span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="n">__first</span> <span class="o">=</span> <span class="o">++</span><span class="n">__m</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="n">__len</span> <span class="o">-=</span> <span class="n">__l2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span><span class="line"><span class="cl">        <span class="k">else</span>
-</span></span><span class="line"><span class="cl">            <span class="n">__len</span> <span class="o">=</span> <span class="n">__l2</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">__first</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>If the compiler is successful in removing the abstractions, it compiles to roughly the same machine code and yields roughly the same average latency, which <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency">expectedly</a> grows with the array size:</p>
-<p><figure>
-  <img src="../img/search-std.svg">
-  <figcaption></figcaption>
-</figure>
-</p>
-<p>Since most people don&rsquo;t implement binary search by hand, we will use <code>std::lower_bound</code> from Clang as the baseline.</p>
-<span class='anchor' id="the-bottleneck"></span>
-<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#the-bottleneck">#</a>The Bottleneck</h3><p>Before jumping to the optimized implementations, let&rsquo;s briefly discuss why binary search is slow in the first place.</p>
-<p>If you run <code>std::lower_bound</code> with <a href="https://anpaure.github.io/algorithmica-beta/hpc/profiling/events">perf</a>, you&rsquo;ll see that it spends most of its time on a <a href="https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops">conditional jump</a> instruction:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl">       <span class="err">│35:</span>   <span class="nf">mov</span>    <span class="o">%</span><span class="nb">rax</span><span class="p">,</span><span class="o">%</span><span class="nb">rdx</span>
-</span></span><span class="line"><span class="cl">  <span class="err">0</span><span class="nf">.52</span> <span class="err">│</span>      <span class="nv">sar</span>    <span class="o">%</span><span class="nb">rdx</span>
-</span></span><span class="line"><span class="cl">  <span class="err">0</span><span class="nf">.33</span> <span class="err">│</span>      <span class="nv">lea</span>    <span class="p">(</span><span class="o">%</span><span class="nb">rsi</span><span class="p">,</span><span class="o">%</span><span class="nb">rdx</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span><span class="o">%</span><span class="nb">rcx</span>
-</span></span><span class="line"><span class="cl">  <span class="err">4</span><span class="nf">.30</span> <span class="err">│</span>      <span class="nv">cmp</span>    <span class="p">(</span><span class="o">%</span><span class="nb">rcx</span><span class="p">),</span><span class="o">%</span><span class="nb">edi</span>
-</span></span><span class="line"><span class="cl"> <span class="err">65</span><span class="nf">.39</span> <span class="err">│</span>    <span class="err">↓</span> <span class="nv">jle</span>    <span class="nv">b0</span>
-</span></span><span class="line"><span class="cl">  <span class="err">0</span><span class="nf">.07</span> <span class="err">│</span>      <span class="nv">sub</span>    <span class="o">%</span><span class="nb">rdx</span><span class="p">,</span><span class="o">%</span><span class="nb">rax</span>
-</span></span><span class="line"><span class="cl">  <span class="err">9</span><span class="nf">.32</span> <span class="err">│</span>      <span class="nv">lea</span>    <span class="mh">0x4</span><span class="p">(</span><span class="o">%</span><span class="nb">rcx</span><span class="p">),</span><span class="o">%</span><span class="nb">rsi</span>
-</span></span><span class="line"><span class="cl">  <span class="err">0</span><span class="nf">.06</span> <span class="err">│</span>      <span class="nv">dec</span>    <span class="o">%</span><span class="nb">rax</span>
-</span></span><span class="line"><span class="cl">  <span class="err">1</span><span class="nf">.37</span> <span class="err">│</span>      <span class="nv">test</span>   <span class="o">%</span><span class="nb">rax</span><span class="p">,</span><span class="o">%</span><span class="nb">rax</span>
-</span></span><span class="line"><span class="cl">  <span class="err">1</span><span class="nf">.11</span> <span class="err">│</span>    <span class="err">↑</span> <span class="nv">jg</span>     <span class="mi">35</span>
-</span></span></code></pre></div><p>This <a href="https://anpaure.github.io/algorithmica-beta/hpc/">pipeline stall</a> stops the search from progressing, and it is mainly caused by two <a href="https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards">factors</a>:</p>
-<ul>
-<li>We suffer a <em>control hazard</em> because we have a <a href="https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching">branch</a> that is impossible to predict (queries and keys are drawn independently at random), and the processor has to halt for 10-15 cycles to flush the pipeline and fill it back on each branch mispredict.</li>
-<li>We suffer a <em>data hazard</em> because we have to wait for the preceding comparison to complete, which in turn waits for one of its operands to be fetched from the memory — and it <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency">may take</a> anywhere between 0 and 300 cycles, depending on where it is located.</li>
-</ul>
-<p>Now, let&rsquo;s try to get rid of these obstacles one by one.</p>
-<span class='anchor' id="removing-branches"></span>
-<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#removing-branches">#</a>Removing Branches</h2><p>We can replace branching with <a href="https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless">predication</a>. To make the task easier, we can adopt the STL approach and rewrite the loop using the first element and the size of the search interval (instead of its first and last element):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">lower_bound</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="o">*</span><span class="n">base</span> <span class="o">=</span> <span class="n">t</span><span class="p">,</span> <span class="n">len</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">len</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">half</span> <span class="o">=</span> <span class="n">len</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">half</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="n">base</span> <span class="o">+=</span> <span class="n">half</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="n">len</span> <span class="o">=</span> <span class="n">len</span> <span class="o">-</span> <span class="n">half</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="n">len</span> <span class="o">=</span> <span class="n">half</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">*</span><span class="n">base</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>Note that, on each iteration, <code>len</code> is essentially just halved and then either floored or ceiled, depending on how the comparison went. This conditional update seems unnecessary; to avoid it, we can simply say that it&rsquo;s always ceiled:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">lower_bound</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="o">*</span><span class="n">base</span> <span class="o">=</span> <span class="n">t</span><span class="p">,</span> <span class="n">len</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">len</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">half</span> <span class="o">=</span> <span class="n">len</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">half</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">            <span class="n">base</span> <span class="o">+=</span> <span class="n">half</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="n">len</span> <span class="o">-=</span> <span class="n">half</span><span class="p">;</span> <span class="c1">// = ceil(len / 2)
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">*</span><span class="n">base</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>This way, we only need to update the first element of the search interval with a <a href="https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/">conditional move</a> and halve its size on each iteration:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">lower_bound</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="o">*</span><span class="n">base</span> <span class="o">=</span> <span class="n">t</span><span class="p">,</span> <span class="n">len</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">len</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">half</span> <span class="o">=</span> <span class="n">len</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="n">base</span> <span class="o">+=</span> <span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">half</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">half</span><span class="p">;</span> <span class="c1">// will be replaced with a &#34;cmov&#34;
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">len</span> <span class="o">-=</span> <span class="n">half</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">*</span><span class="n">base</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><!-- pre-compute base pointer for next iteration? -->
-<p>Note that this loop is not always equivalent to the standard binary search. Since it always rounds <em>up</em> the size of the search interval, it accesses slightly different elements and may perform one comparison more than needed. Apart from simplifying computations on each iteration, it also makes the number of iterations constant if the array size is constant, removing branch mispredictions completely.</p>
-<p>As typical for predication, this trick is very fragile to compiler optimizations — depending on the compiler and how the function is invoked, it may still leave a branch or generate suboptimal code. It works fine on Clang 10, yielding a 2.5-3x improvement on small arrays:</p>
-<p><figure>
-  <img src="../img/search-branchless.svg">
-  <figcaption></figcaption>
-</figure>
-</p>
-<p>One interesting detail is that it performs worse on large arrays. It seems weird: the total delay is dominated by the RAM latency, and since it does roughly the same memory accesses as the standard binary search, it should be roughly the same or even slightly better.</p>
-<p>The real question you need to ask is not why the branchless implementation is worse but why the branchy version is better. It happens because when you have branching, the CPU can <a href="https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/">speculate</a> on one of the branches and start fetching either the left or the right key before it can even confirm that it is the right one — which effectively acts as implicit <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching">prefetching</a>.</p>
-<p>For the branchless implementation, this doesn&rsquo;t happen, as <code>cmov</code> is treated as every other instruction, and the branch predictor doesn&rsquo;t try to peek into its operands to predict the future. To compensate for this, we can prefetch the data in software by explicitly requesting the left and right child key:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">lower_bound</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="o">*</span><span class="n">base</span> <span class="o">=</span> <span class="n">t</span><span class="p">,</span> <span class="n">len</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">len</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">half</span> <span class="o">=</span> <span class="n">len</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="n">len</span> <span class="o">-=</span> <span class="n">half</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="n">__builtin_prefetch</span><span class="p">(</span><span class="o">&amp;</span><span class="n">base</span><span class="p">[</span><span class="n">len</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">__builtin_prefetch</span><span class="p">(</span><span class="o">&amp;</span><span class="n">base</span><span class="p">[</span><span class="n">half</span> <span class="o">+</span> <span class="n">len</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">base</span> <span class="o">+=</span> <span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">half</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">half</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">*</span><span class="n">base</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>With prefetching, the performance on large arrays becomes roughly the same:</p>
-<p><figure>
-  <img src="../img/search-branchless-prefetch.svg">
-  <figcaption></figcaption>
-</figure>
-</p>
-<p>The graph still grows faster as the branchy version also prefetches &ldquo;grandchildren,&rdquo; &ldquo;great-grandchildren,&rdquo; and so on — although the usefulness of each new speculative read diminishes exponentially as the prediction is less and less likely to be correct.</p>
-<p>In the branchless version, we could also fetch ahead by more than one layer, but the number of fetches we&rsquo;d need also grows exponentially. Instead, we will try a different approach to optimize memory operations.</p>
-<span class='anchor' id="optimizing-the-layout"></span>
-<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#optimizing-the-layout">#</a>Optimizing the Layout</h2><p>The memory requests we perform during binary search form a very specific access pattern:</p>
-<p><figure>
-  <img src="../img/binary-search.png">
-  <figcaption></figcaption>
-</figure>
-</p>
-<p>How likely is it that the elements on each request are cached? How good is their <a href="https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/">data locality</a>?</p>
-<ul>
-<li><em>Spatial locality</em> seems to be okay for the last 3 to 4 requests that are likely to be on the same <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines">cache line</a> — but all the previous requests require huge memory jumps.</li>
-<li><em>Temporal locality</em> seems to be okay for the first dozen or so requests — there aren&rsquo;t that many different comparison sequences of this length, so we will be comparing against the same middle elements over and over, which are likely to be cached.</li>
-</ul>
-<p>To illustrate how important the second type of cache sharing is, let&rsquo;s try to pick the element we will compare to on each iteration randomly among the elements of the search interval, instead of the middle one:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">lower_bound</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="n">l</span> <span class="o">+</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">l</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">x</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">            <span class="n">r</span> <span class="o">=</span> <span class="n">m</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">else</span>
-</span></span><span class="line"><span class="cl">            <span class="n">l</span> <span class="o">=</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">t</span><span class="p">[</span><span class="n">l</span><span class="p">];</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p><a href="#appendix-random-binary-search">Theoretically</a>, this randomized binary search is expected to do 30-40% more comparisons than the normal one, but on a real computer, the running time goes ~6x on large arrays:</p>
-<p><figure>
-  <img src="../img/search-random.svg">
-  <figcaption></figcaption>
-</figure>
-</p>
-<p>This isn&rsquo;t just caused by the <code>rand()</code> call being slow. You can clearly see the point on the L2-L3 boundary where memory latency outweighs the random number generation and <a href="https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division">modulo</a>. The performance degrades because all of the fetched elements are unlikely to be cached and not just some small suffix of them.</p>
-<p>Another potential negative effect is that of <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity">cache associativity</a>. If the array size is a multiple of a large power of two, then the indices of these &ldquo;hot&rdquo; elements will also be divisible by some large powers of two and map to the same cache line, kicking each other out. For example, binary searching over arrays of size $2^{20}$ takes about ~360ns per query while searching over arrays of size $(2^{20} + 123)$ takes ~300ns — a 20% difference. There are <a href="https://en.wikipedia.org/wiki/Fibonacci_search_technique">ways</a> to fix this problem, but to not get distracted from more pressing matters, we are just going to ignore it: all array sizes we use are in the form of $\lfloor 1.17^k \rfloor$ for integer $k$ so that any cache side effects are unlikely.</p>
-<p>The real problem with our memory layout is that it doesn&rsquo;t make the most efficient use of temporal locality because it groups hot and cold elements together. For example, we likely store the element $\lfloor n/2 \rfloor$, which we request the first thing on each query, in the same cache line with $\lfloor n/2 \rfloor + 1$, which we almost never request.</p>
-<!--  (sometimes literally never — if it is the first element in a search range of three, and it is indeed the lower bound, we just compare against the middle and deduce it has to be the first element without ever even fetching it) — this is not true -->
-<p>Here is the heatmap visualizing the expected frequency of comparisons for a 31-element array:</p>
-<p><figure>
-  <img src="../img/binary-heat.png">
-  <figcaption></figcaption>
-</figure>
-</p>
-<p>So, ideally, we&rsquo;d want a memory layout where hot elements are grouped with hot elements, and cold elements are grouped with cold elements. And we can achieve this if we permute the array in a more cache-friendly way by renumbering them. The numeration we will use is actually half a millennium old, and chances are, you already know it.</p>
-<span class='anchor' id="eytzinger-layout"></span>
-<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#eytzinger-layout">#</a>Eytzinger Layout</h3><p><strong>Michaël Eytzinger</strong> is a 16th-century Austrian nobleman known for his work on genealogy, particularly for a system for numbering ancestors called <em>ahnentafel</em> (German for &ldquo;ancestor table&rdquo;).</p>
-<p>Ancestry mattered a lot back then, but writing down that data was expensive. <em>Ahnentafel</em> allows displaying a person&rsquo;s genealogy compactly, without wasting extra space by drawing diagrams.</p>
-<p>It lists a person&rsquo;s direct ancestors in a fixed sequence of ascent. First, the person themselves is listed as number 1, and then, recursively, for each person numbered $k$, their father is listed as $2k$ and their mother as $(2k+1)$.</p>
-<p>Here is the example for <a href="https://en.wikipedia.org/wiki/Paul_I_of_Russia">Paul I</a>, the great-grandson of <a href="https://en.wikipedia.org/wiki/Peter_the_Great">Peter the Great</a>:</p>
-<ol>
-<li>Paul I</li>
-<li>Peter III (Paul&rsquo;s father)</li>
-<li><a href="https://en.wikipedia.org/wiki/Catherine_the_Great">Catherine II</a> (Paul&rsquo;s mother)</li>
-<li>Charles Frederick (Peter&rsquo;s father, Paul&rsquo;s paternal grandfather)</li>
-<li>Anna Petrovna (Peter&rsquo;s mother, Paul&rsquo;s paternal grandmother)</li>
-<li>Christian August (Catherine&rsquo;s father, Paul&rsquo;s maternal grandfather)</li>
-<li>Johanna Elisabeth (Catherine&rsquo;s mother, Paul&rsquo;s maternal grandmother)</li>
-</ol>
-<p>Apart from being compact, it has some nice properties, like that all even-numbered persons are male and all odd-numbered (possibly except for 1) are female. One can also find the number of a particular ancestor only knowing the genders of their descendants. For example, Peter the Great&rsquo;s bloodline is Paul I → Peter III → Anna Petrovna → Peter the Great, so his number should be $((1 \times 2) \times 2 + 1) \times 2 = 10$.</p>
-<p><strong>In computer science</strong>, this enumeration has been widely used for implicit (pointer-free) implementations of heaps, segment trees, and other binary tree structures — where instead of names, it stores underlying array items.</p>
-<p>Here is how this layout looks when applied to binary search:</p>
-<p><figure>
-  <img src="../img/eytzinger.png">
-  <figcaption>Note that the tree is slightly imbalanced (because of the last layer is continuous)</figcaption>
-</figure>
-</p>
-<p>When searching in this layout, we just need to start from the first element of the array, and then on each iteration jump to either $2 k$ or $(2k + 1)$, depending on how the comparison went:</p>
-<p><figure>
-  <img src="../img/eytzinger-search.png">
-  <figcaption></figcaption>
-</figure>
-</p>
-<p>You can immediately see how its temporal locality is better (and, in fact, theoretically optimal) as the elements closer to the root are closer to the beginning of the array and thus are more likely to be fetched from the cache.</p>
-<p><figure>
-  <img src="../img/eytzinger-heat.png">
-  <figcaption></figcaption>
-</figure>
-</p>
-<p>Another way to look at it is that we write every even-indexed element to the end of the new array, then write every even-indexed element of the remaining ones right before them, and so on, until we place the root as the first element.</p>
-<span class='anchor' id="construction"></span>
-<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#construction">#</a>Construction</h3><p>To construct the Eytzinger array, we could do this even-odd <a href="https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/#permutations-and-lookup-tables">filtering</a> $O(\log n)$ times — and, perhaps, this is the fastest approach — but for brevity, we will instead build it by traversing the original search tree:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span> <span class="c1">// the original sorted array and the eytzinger array we build
-</span></span></span><span class="line"><span class="cl"><span class="c1">//              ^ we need one element more because of one-based indexing
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">eytzinger</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// &lt;- careful running it on multiple arrays
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">k</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">eytzinger</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">t</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">];</span>
-</span></span><span class="line"><span class="cl">        <span class="n">eytzinger</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>This function takes the current node number <code>k</code>, recursively writes out all elements to the left of the middle of the search interval, writes out the current element we&rsquo;d compare against, and then recursively writes out all the elements on the right. It seems a bit complicated, but to convince yourself that it works, you only need three observations:</p>
-<ul>
-<li>It writes exactly <code>n</code> elements as we enter the body of <code>if</code> for each <code>k</code> from <code>1</code> to <code>n</code> just once.</li>
-<li>It writes out sequential elements from the original array as it increments the <code>i</code> pointer each time.</li>
-<li>By the time we write the element at node <code>k</code>, we will have already written all the elements to its left (exactly <code>i</code>).</li>
-</ul>
-<p>Despite being recursive, it is actually quite fast as all the memory reads are sequential, and the memory writes are only in $O(\log n)$ different memory blocks at a time. Maintaining the permutation is both logically and computationally harder to maintain though: adding an element to a sorted array only requires shifting a suffix of its elements one position to the right, while Eytzinger array practically needs to be rebuilt from scratch.</p>
-<p>Note that this traversal and the resulting permutation are not exactly equivalent to the &ldquo;tree&rdquo; of vanilla binary search: for example, the left child subtree may be larger than the right child subtree — up to twice as large — but it doesn&rsquo;t matter much since both approaches result in the same $\lceil \log_2 n \rceil$ tree depth.</p>
-<p>Also note that the Eytzinger array is one-indexed — this will be important for performance later. You can put in the zeroth element the value that you want to be returned in the case when the lower bound doesn&rsquo;t exist (similar to <code>a.end()</code> for <code>std::lower_bound</code>).</p>
-<span class='anchor' id="search-implementation"></span>
-<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#search-implementation">#</a>Search Implementation</h3><p>We can now descend this array using only indices: we just start with $k=1$ and execute $k := 2k$ if we need to go left and $k := 2k + 1$ if we need to go right. We don&rsquo;t even need to store and recalculate the search boundaries anymore. This simplicity also lets us avoid branching:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="k">while</span> <span class="p">(</span><span class="n">k</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">);</span>
-</span></span></code></pre></div><p>The only problem arises when we need to restore the index of the resulting element, as $k$ does not directly point to it. Consider this example (its corresponding tree is listed above):</p>
-<!--
-    array:  0 1 2 3 4 5 6 7 8 9                           
-eytzinger:  6 3 7 1 5 8 9 0 2 4                           
-1st range:  -------------------  k := 1                    
-2nd range:  -------------        k := 2*k     = 2   (6 ≥ 3)
-3rd range:  -------              k := 2*k     = 4   (3 ≥ 3)
-4th range:      ---              k := 2*k + 1 = 9   (1 < 3)
-5th range:        -              k := 2*k + 1 = 19  (2 < 3)
--->
-<pre class='center-pre'>
+<!doctype html><html lang=en-us><head><meta charset=utf-8><link rel=icon href=https://anpaure.github.io/algorithmica-beta/favicon.ico><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/beta.css><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/style.min.390d1fc41f8875c678a6c714096f8f46585799e0a4ca94c968af52bc5f8e93d9.css integrity="sha256-OQ0fxB+IdcZ4pscUCW+PRlhXmeCkypTJaK9SvF+Ok9k="><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/syntax.css id=syntax-theme><link rel=stylesheet type=text/css href=https://tikzjax.com/v1/fonts.css><script src=https://tikzjax.com/v1/tikzjax.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js></script>
+<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js></script>
+<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js></script>
+<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js></script>
+<link rel=stylesheet id=theme><script>function toggleSidebar(){console.log("Toggling sidebar visibility");var e=document.getElementById("sidebar"),t=document.getElementById("wrapper");(e.classList.contains("sidebar-toggled")||window.getComputedStyle(e).display=="block")&&(e.classList.toggle("sidebar-hidden"),t.classList.toggle("sidebar-hidden")),e.classList.add("sidebar-toggled"),t.classList.add("sidebar-toggled")}function switchTheme(e){console.log("Changing theme:",e),document.getElementById("theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/dark.min.3ad3d1be62e1d88e56b599b0103dbd3daf3203f1ed2a2d0f737454856c25036d.css":"",document.getElementById("syntax-theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/syntax-dark.css":"https://anpaure.github.io/algorithmica-beta/syntax.css",localStorage.setItem("theme",e)}async function toggleSearch(){console.log("Toggling search");var e=document.getElementById("search");if(window.getComputedStyle(e).display=="none"?(e.style.display="block",window.scrollTo({top:0}),document.getElementById("search-bar").focus()):e.style.display="none",!index){console.log("Fetching index");const e=await fetch("https://anpaure.github.io/algorithmica-beta/searchindex.json"),t=await e.json();index=lunr(function(){this.use(lunr.multiLanguage("en","ru")),this.field("title",{boost:5}),this.field("content",{boost:1}),t.forEach(function(e){this.add(e),articles.push(e)},this)}),console.log("Ready to search")}}var articles=[],index=void 0;function search(){var e=document.getElementById("search-bar").value,n,s=document.getElementById("search-results"),o=document.getElementById("search-count");if(e==''){s.innerHTML='',o.innerHTML='';return}n=index.search(e),o.innerHTML="Found <b>"+n.length+"</b> pages";let t='';for(const a in n){const i=articles[n[a].ref];t+='<li><a href="'+i.path+'">'+i.title+"</a> <p>";const s=i.content,o=80;if(s.includes(e)){const n=s.indexOf(e);n>o&&(t+="…"),t+=s.substring(n-o,n)+"<b>"+e+"</b>"+s.substring(n+e.length,n+e.length+o)}else t+=s.substring(0,o*2);t+="…</p></li>"}s.innerHTML=t}localStorage.getItem("theme")=="dark"&&switchTheme("dark"),window.addEventListener("load",function(){var e=document.getElementById("active-element");e&&e.scrollIntoView({block:"center"})}),window.addEventListener("scroll",function(){var e=document.getElementById("menu");window.scrollY<120?e.classList.remove("scrolled"):e.classList.add("scrolled")}),window.addEventListener("keydown",function(e){if(e.altKey)return;if(document.activeElement.tagName=="INPUT")return;e.key=="ArrowLeft"?document.getElementById("prev-article").click():e.key=="ArrowRight"&&document.getElementById("next-article").click()})</script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><title>Binary Search - Algorithmica β</title></head><body><nav id=sidebar><div class=title><a href=https://anpaure.github.io/algorithmica-beta/>Algorithmica β</a>
+<span class=slash>/</span>
+<a href=https://anpaure.github.io/algorithmica-beta/hpc/ class=divisionAbbr>HPC</a></div><ul><li class=ignore-indexing><a href=https://anpaure.github.io/algorithmica-beta/hpc/preface/>Preface</a></li><li class=part>Performance Engineering</li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/>Complexity Models</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/>Modern Hardware</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/>Programming Languages</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/>Models of Computation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/>When to Optimize</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/>Computer Architecture</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/>Instruction Set Architectures</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/>Assembly Language</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/>Loops and Conditionals</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/>Functions and Recursion</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/>Indirect Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/>Machine Code Layout</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/>Interrupts and System Calls</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/>Virtualization</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/>Instruction-Level Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/>Pipeline Hazards</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/>The Cost of Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/>Branchless Programming</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/>Instruction Tables</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/>Instruction Scheduling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/>Throughput Computing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/>Theoretical Performance Limits</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/>Compilation</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/>Stages of Compilation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/>Flags and Targets</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/>Situational Optimizations</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/>Contract Programming</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/>Non-Zero-Cost Abstractions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/>Precomputation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/>Arithmetic Optimizations</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/>What Compilers Can and Can't Do</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/>Profiling</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/>Instrumentation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/>Statistical Profiling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/>Program Simulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/>Machine Code Analyzers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/>Benchmarking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/>Getting Accurate Results</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/>Arithmetic</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/>Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/>IEEE 754 Floats</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/>Rounding Errors</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/>Newton's Method</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/>Fast Inverse Square Root</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/>Integer Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/>Integer Division</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/>Bit Manipulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/>Data Compression</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/>Number Theory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/>Modular Arithmetic</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/>Binary Exponentiation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/>Extended Euclidean Algorithm</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/>Montgomery Multiplication</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/>Finite Fields</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/>Error Correction</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/>Cryptography</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/>Hashing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/>Random Number Generation</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/>External Memory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/>Memory Hierarchy</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/>Virtual Memory</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/>External Memory Model</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/>External Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/>List Ranking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/>Eviction Policies</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/>Cache-Oblivious Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/>Spatial and Temporal Locality</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/>B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/>Sublinear Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/>Memory Management</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/>RAM & CPU Caches</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/>Memory Bandwidth</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/>Memory Latency</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/>Cache Lines</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/>Memory Sharing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/>Memory-Level Parallelism</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/>Prefetching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/>Alignment and Packing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/>Pointer Alternatives</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/>Cache Associativity</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/>Memory Paging</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/>AoS and SoA</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/>SIMD Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/>Intrinsics and Vector Types</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/>Moving Data</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/>Reductions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/>Masking and Blending</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/>In-Register Shuffles</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/>Auto-Vectorization and SPMD</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/>Algorithms Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/>Binary GCD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/>Prime Number Sieves</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/>Integer Factorization</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/>Optimizing Logistic Regression</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/>Big Integers and Karatsuba Multiplication</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/>Fast Fourier Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/>Number-Theoretic Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/>Argmin with SIMD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/>Prefix Sum with SIMD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/>Reading Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/>Writing Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/>Reading and Writing Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/>String Searching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/>Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/>Matrix Multiplication</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/knapsack/>Knapsack with Bitsets</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/>Data Structures Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/ id=active-element>Binary Search</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/>Static B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/>Search Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/>Segment Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/>Tries</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/>Range Minimum Query</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/>Hash Tables</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/>Bitmaps</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/>Probabilistic Filters</a></li></ol><li class=ignore-indexing><a href=https://anpaure.github.io/algorithmica-beta/hpc/summary/>Summary</a></li><li class=part>Appendix</li><li class=ignore-indexing><a href=https://anpaure.github.io/algorithmica-beta/hpc/stats/>Probability Theory Refresher</a></li></ul></nav><div id=wrapper><menu id=menu><div class=left><a><img src=https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg onclick=toggleSidebar() title="open table of contents"></a>
+<a><img src=https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg style=position:relative;top:-1px onclick='switchTheme(localStorage.getItem("theme")=="dark"?"light":"dark")' title="dark theme"></a>
+<a><img src=https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg onclick=toggleSearch() title=search></a></div><div class=title><span class=beta-brand>Algorithmica β</span>
+<span class=chapter-title>Binary Search</span></div><div class=right><a onclick=window.print()><img src=https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg title=print></a>
+<a href=https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2fdata-structures%2fbinary-search.md><img src=https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg title=edit style=width:18px;position:relative;right:-2px;top:-1px></a>
+<a href=https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/data-structures/binary-search.md class=github-main><img src=https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg title="view on github"></a></div></menu><main><div id=search><input id=search-bar type=search placeholder="Search this book…" oninput=search()><div id=search-count></div><div id=search-results></div></div><header><h1>Binary Search</h1><div class=info></div></header><article><p>While improving the speed of user-facing applications is the end goal of performance engineering, people don&rsquo;t really get excited over 5-10% improvements in some databases. Yes, this is what software engineers are paid for, but these types of optimizations tend to be too intricate and system-specific to be readily generalized to other software.</p><p>Instead, the most fascinating showcases of performance engineering are multifold optimizations of textbook algorithms: the kinds that everybody knows and deemed so simple that it would never even occur to try to optimize them in the first place. These optimizations are simple and instructive and can very much be adopted elsewhere. And they are surprisingly not as rare as you&rsquo;d think.</p><p>In this section, we focus on one such fundamental algorithm — <em>binary search</em> — and implement two of its variants that are, depending on the problem size, up to 4x faster than <code>std::lower_bound</code>, while being under just 15 lines of code.</p><p>The first algorithm achieves that by removing <a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching>branches</a>, and the second also optimizes the memory layout to achieve better <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache>cache system</a> performance. This technically disqualifies it from being a drop-in replacement for <code>std::lower_bound</code> as it needs to permute the elements of the array before it can start answering queries — but I can&rsquo;t recall a lot of scenarios where you obtain a sorted array but can&rsquo;t afford to spend linear time on preprocessing.</p><p>The usual disclaimer: the CPU is a <a href=https://www.7-cpu.com/cpu/Zen2.html>Zen 2</a>, the RAM is a <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/>DDR4-2666</a>, and the compiler we will be using by default is Clang 10. The performance on your machine may be different, so I highly encourage to <a href=https://godbolt.org/z/14rd5Pnve>go and test it</a> for yourself.</p><span class=anchor id=binary-search></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#binary-search>#</a>Binary Search</h2><p>Here is the standard way of searching for the first element not less than <code>x</code> in a sorted array <code>t</code> of <code>n</code> integers that you can find in any introductory computer science textbook:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>lower_bound</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>l</span> <span class=o>=</span> <span class=mi>0</span><span class=p>,</span> <span class=n>r</span> <span class=o>=</span> <span class=n>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>l</span> <span class=o>&lt;</span> <span class=n>r</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>m</span> <span class=o>=</span> <span class=p>(</span><span class=n>l</span> <span class=o>+</span> <span class=n>r</span><span class=p>)</span> <span class=o>/</span> <span class=mi>2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>t</span><span class=p>[</span><span class=n>m</span><span class=p>]</span> <span class=o>&gt;=</span> <span class=n>x</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>r</span> <span class=o>=</span> <span class=n>m</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>else</span>
+</span></span><span class=line><span class=cl>            <span class=n>l</span> <span class=o>=</span> <span class=n>m</span> <span class=o>+</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>t</span><span class=p>[</span><span class=n>l</span><span class=p>];</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>Find the middle element of the search range, compare it to <code>x</code>, shrink the range in half. Beautiful in its simplicity.</p><p>A similar approach is employed by <code>std::lower_bound</code>, except that it needs to be more generic to support containers with non-random-access iterators and thus uses the first element and the size of the search interval instead of the two of its ends. To this end, implementations from both <a href=https://github.com/llvm-mirror/libcxx/blob/78d6a7767ed57b50122a161b91f59f19c9bd0d19/include/algorithm#L4169>Clang</a> and <a href=https://github.com/gcc-mirror/gcc/blob/d9375e490072d1aae73a93949aa158fcd2a27018/libstdc%2B%2B-v3/include/bits/stl_algobase.h#L1023>GCC</a> use this metaprogramming monstrosity:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>template</span> <span class=o>&lt;</span><span class=k>class</span> <span class=nc>_Compare</span><span class=p>,</span> <span class=k>class</span> <span class=nc>_ForwardIterator</span><span class=p>,</span> <span class=k>class</span> <span class=nc>_Tp</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl><span class=n>_LIBCPP_CONSTEXPR_AFTER_CXX17</span> <span class=n>_ForwardIterator</span>
+</span></span><span class=line><span class=cl><span class=n>__lower_bound</span><span class=p>(</span><span class=n>_ForwardIterator</span> <span class=n>__first</span><span class=p>,</span> <span class=n>_ForwardIterator</span> <span class=n>__last</span><span class=p>,</span> <span class=k>const</span> <span class=n>_Tp</span><span class=o>&amp;</span> <span class=n>__value_</span><span class=p>,</span> <span class=n>_Compare</span> <span class=n>__comp</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>typedef</span> <span class=k>typename</span> <span class=n>iterator_traits</span><span class=o>&lt;</span><span class=n>_ForwardIterator</span><span class=o>&gt;::</span><span class=n>difference_type</span> <span class=n>difference_type</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>difference_type</span> <span class=n>__len</span> <span class=o>=</span> <span class=n>_VSTD</span><span class=o>::</span><span class=n>distance</span><span class=p>(</span><span class=n>__first</span><span class=p>,</span> <span class=n>__last</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>__len</span> <span class=o>!=</span> <span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>difference_type</span> <span class=n>__l2</span> <span class=o>=</span> <span class=n>_VSTD</span><span class=o>::</span><span class=n>__half_positive</span><span class=p>(</span><span class=n>__len</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>_ForwardIterator</span> <span class=n>__m</span> <span class=o>=</span> <span class=n>__first</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>_VSTD</span><span class=o>::</span><span class=n>advance</span><span class=p>(</span><span class=n>__m</span><span class=p>,</span> <span class=n>__l2</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>__comp</span><span class=p>(</span><span class=o>*</span><span class=n>__m</span><span class=p>,</span> <span class=n>__value_</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>__first</span> <span class=o>=</span> <span class=o>++</span><span class=n>__m</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>__len</span> <span class=o>-=</span> <span class=n>__l2</span> <span class=o>+</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=k>else</span>
+</span></span><span class=line><span class=cl>            <span class=n>__len</span> <span class=o>=</span> <span class=n>__l2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>__first</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>If the compiler is successful in removing the abstractions, it compiles to roughly the same machine code and yields roughly the same average latency, which <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency>expectedly</a> grows with the array size:</p><p><figure><img src=../img/search-std.svg><figcaption></figcaption></figure></p><p>Since most people don&rsquo;t implement binary search by hand, we will use <code>std::lower_bound</code> from Clang as the baseline.</p><span class=anchor id=the-bottleneck></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#the-bottleneck>#</a>The Bottleneck</h3><p>Before jumping to the optimized implementations, let&rsquo;s briefly discuss why binary search is slow in the first place.</p><p>If you run <code>std::lower_bound</code> with <a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/events>perf</a>, you&rsquo;ll see that it spends most of its time on a <a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops>conditional jump</a> instruction:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nasm data-lang=nasm><span class=line><span class=cl>       <span class=err>│35:</span>   <span class=nf>mov</span>    <span class=o>%</span><span class=nb>rax</span><span class=p>,</span><span class=o>%</span><span class=nb>rdx</span>
+</span></span><span class=line><span class=cl>  <span class=err>0</span><span class=nf>.52</span> <span class=err>│</span>      <span class=nv>sar</span>    <span class=o>%</span><span class=nb>rdx</span>
+</span></span><span class=line><span class=cl>  <span class=err>0</span><span class=nf>.33</span> <span class=err>│</span>      <span class=nv>lea</span>    <span class=p>(</span><span class=o>%</span><span class=nb>rsi</span><span class=p>,</span><span class=o>%</span><span class=nb>rdx</span><span class=p>,</span><span class=mi>4</span><span class=p>),</span><span class=o>%</span><span class=nb>rcx</span>
+</span></span><span class=line><span class=cl>  <span class=err>4</span><span class=nf>.30</span> <span class=err>│</span>      <span class=nv>cmp</span>    <span class=p>(</span><span class=o>%</span><span class=nb>rcx</span><span class=p>),</span><span class=o>%</span><span class=nb>edi</span>
+</span></span><span class=line><span class=cl> <span class=err>65</span><span class=nf>.39</span> <span class=err>│</span>    <span class=err>↓</span> <span class=nv>jle</span>    <span class=nv>b0</span>
+</span></span><span class=line><span class=cl>  <span class=err>0</span><span class=nf>.07</span> <span class=err>│</span>      <span class=nv>sub</span>    <span class=o>%</span><span class=nb>rdx</span><span class=p>,</span><span class=o>%</span><span class=nb>rax</span>
+</span></span><span class=line><span class=cl>  <span class=err>9</span><span class=nf>.32</span> <span class=err>│</span>      <span class=nv>lea</span>    <span class=mh>0x4</span><span class=p>(</span><span class=o>%</span><span class=nb>rcx</span><span class=p>),</span><span class=o>%</span><span class=nb>rsi</span>
+</span></span><span class=line><span class=cl>  <span class=err>0</span><span class=nf>.06</span> <span class=err>│</span>      <span class=nv>dec</span>    <span class=o>%</span><span class=nb>rax</span>
+</span></span><span class=line><span class=cl>  <span class=err>1</span><span class=nf>.37</span> <span class=err>│</span>      <span class=nv>test</span>   <span class=o>%</span><span class=nb>rax</span><span class=p>,</span><span class=o>%</span><span class=nb>rax</span>
+</span></span><span class=line><span class=cl>  <span class=err>1</span><span class=nf>.11</span> <span class=err>│</span>    <span class=err>↑</span> <span class=nv>jg</span>     <span class=mi>35</span>
+</span></span></code></pre></div><p>This <a href=https://anpaure.github.io/algorithmica-beta/hpc/>pipeline stall</a> stops the search from progressing, and it is mainly caused by two <a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards>factors</a>:</p><ul><li>We suffer a <em>control hazard</em> because we have a <a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching>branch</a> that is impossible to predict (queries and keys are drawn independently at random), and the processor has to halt for 10-15 cycles to flush the pipeline and fill it back on each branch mispredict.</li><li>We suffer a <em>data hazard</em> because we have to wait for the preceding comparison to complete, which in turn waits for one of its operands to be fetched from the memory — and it <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency>may take</a> anywhere between 0 and 300 cycles, depending on where it is located.</li></ul><p>Now, let&rsquo;s try to get rid of these obstacles one by one.</p><span class=anchor id=removing-branches></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#removing-branches>#</a>Removing Branches</h2><p>We can replace branching with <a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless>predication</a>. To make the task easier, we can adopt the STL approach and rewrite the loop using the first element and the size of the search interval (instead of its first and last element):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>lower_bound</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=o>*</span><span class=n>base</span> <span class=o>=</span> <span class=n>t</span><span class=p>,</span> <span class=n>len</span> <span class=o>=</span> <span class=n>n</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>len</span> <span class=o>&gt;</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>half</span> <span class=o>=</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>base</span><span class=p>[</span><span class=n>half</span> <span class=o>-</span> <span class=mi>1</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>base</span> <span class=o>+=</span> <span class=n>half</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>len</span> <span class=o>=</span> <span class=n>len</span> <span class=o>-</span> <span class=n>half</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>len</span> <span class=o>=</span> <span class=n>half</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=o>*</span><span class=n>base</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>Note that, on each iteration, <code>len</code> is essentially just halved and then either floored or ceiled, depending on how the comparison went. This conditional update seems unnecessary; to avoid it, we can simply say that it&rsquo;s always ceiled:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>lower_bound</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=o>*</span><span class=n>base</span> <span class=o>=</span> <span class=n>t</span><span class=p>,</span> <span class=n>len</span> <span class=o>=</span> <span class=n>n</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>len</span> <span class=o>&gt;</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>half</span> <span class=o>=</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>base</span><span class=p>[</span><span class=n>half</span> <span class=o>-</span> <span class=mi>1</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>x</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>base</span> <span class=o>+=</span> <span class=n>half</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>len</span> <span class=o>-=</span> <span class=n>half</span><span class=p>;</span> <span class=c1>// = ceil(len / 2)
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=o>*</span><span class=n>base</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>This way, we only need to update the first element of the search interval with a <a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/>conditional move</a> and halve its size on each iteration:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>lower_bound</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=o>*</span><span class=n>base</span> <span class=o>=</span> <span class=n>t</span><span class=p>,</span> <span class=n>len</span> <span class=o>=</span> <span class=n>n</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>len</span> <span class=o>&gt;</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>half</span> <span class=o>=</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>base</span> <span class=o>+=</span> <span class=p>(</span><span class=n>base</span><span class=p>[</span><span class=n>half</span> <span class=o>-</span> <span class=mi>1</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>x</span><span class=p>)</span> <span class=o>*</span> <span class=n>half</span><span class=p>;</span> <span class=c1>// will be replaced with a &#34;cmov&#34;
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>len</span> <span class=o>-=</span> <span class=n>half</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=o>*</span><span class=n>base</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>Note that this loop is not always equivalent to the standard binary search. Since it always rounds <em>up</em> the size of the search interval, it accesses slightly different elements and may perform one comparison more than needed. Apart from simplifying computations on each iteration, it also makes the number of iterations constant if the array size is constant, removing branch mispredictions completely.</p><p>As typical for predication, this trick is very fragile to compiler optimizations — depending on the compiler and how the function is invoked, it may still leave a branch or generate suboptimal code. It works fine on Clang 10, yielding a 2.5-3x improvement on small arrays:</p><p><figure><img src=../img/search-branchless.svg><figcaption></figcaption></figure></p><p>One interesting detail is that it performs worse on large arrays. It seems weird: the total delay is dominated by the RAM latency, and since it does roughly the same memory accesses as the standard binary search, it should be roughly the same or even slightly better.</p><p>The real question you need to ask is not why the branchless implementation is worse but why the branchy version is better. It happens because when you have branching, the CPU can <a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/>speculate</a> on one of the branches and start fetching either the left or the right key before it can even confirm that it is the right one — which effectively acts as implicit <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching>prefetching</a>.</p><p>For the branchless implementation, this doesn&rsquo;t happen, as <code>cmov</code> is treated as every other instruction, and the branch predictor doesn&rsquo;t try to peek into its operands to predict the future. To compensate for this, we can prefetch the data in software by explicitly requesting the left and right child key:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>lower_bound</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=o>*</span><span class=n>base</span> <span class=o>=</span> <span class=n>t</span><span class=p>,</span> <span class=n>len</span> <span class=o>=</span> <span class=n>n</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>len</span> <span class=o>&gt;</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>half</span> <span class=o>=</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>len</span> <span class=o>-=</span> <span class=n>half</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>__builtin_prefetch</span><span class=p>(</span><span class=o>&amp;</span><span class=n>base</span><span class=p>[</span><span class=n>len</span> <span class=o>/</span> <span class=mi>2</span> <span class=o>-</span> <span class=mi>1</span><span class=p>]);</span>
+</span></span><span class=line><span class=cl>        <span class=n>__builtin_prefetch</span><span class=p>(</span><span class=o>&amp;</span><span class=n>base</span><span class=p>[</span><span class=n>half</span> <span class=o>+</span> <span class=n>len</span> <span class=o>/</span> <span class=mi>2</span> <span class=o>-</span> <span class=mi>1</span><span class=p>]);</span>
+</span></span><span class=line><span class=cl>        <span class=n>base</span> <span class=o>+=</span> <span class=p>(</span><span class=n>base</span><span class=p>[</span><span class=n>half</span> <span class=o>-</span> <span class=mi>1</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>x</span><span class=p>)</span> <span class=o>*</span> <span class=n>half</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=o>*</span><span class=n>base</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>With prefetching, the performance on large arrays becomes roughly the same:</p><p><figure><img src=../img/search-branchless-prefetch.svg><figcaption></figcaption></figure></p><p>The graph still grows faster as the branchy version also prefetches &ldquo;grandchildren,&rdquo; &ldquo;great-grandchildren,&rdquo; and so on — although the usefulness of each new speculative read diminishes exponentially as the prediction is less and less likely to be correct.</p><p>In the branchless version, we could also fetch ahead by more than one layer, but the number of fetches we&rsquo;d need also grows exponentially. Instead, we will try a different approach to optimize memory operations.</p><span class=anchor id=optimizing-the-layout></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#optimizing-the-layout>#</a>Optimizing the Layout</h2><p>The memory requests we perform during binary search form a very specific access pattern:</p><p><figure><img src=../img/binary-search.png><figcaption></figcaption></figure></p><p>How likely is it that the elements on each request are cached? How good is their <a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/>data locality</a>?</p><ul><li><em>Spatial locality</em> seems to be okay for the last 3 to 4 requests that are likely to be on the same <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines>cache line</a> — but all the previous requests require huge memory jumps.</li><li><em>Temporal locality</em> seems to be okay for the first dozen or so requests — there aren&rsquo;t that many different comparison sequences of this length, so we will be comparing against the same middle elements over and over, which are likely to be cached.</li></ul><p>To illustrate how important the second type of cache sharing is, let&rsquo;s try to pick the element we will compare to on each iteration randomly among the elements of the search interval, instead of the middle one:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>lower_bound</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>l</span> <span class=o>=</span> <span class=mi>0</span><span class=p>,</span> <span class=n>r</span> <span class=o>=</span> <span class=n>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>l</span> <span class=o>&lt;</span> <span class=n>r</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>m</span> <span class=o>=</span> <span class=n>l</span> <span class=o>+</span> <span class=n>rand</span><span class=p>()</span> <span class=o>%</span> <span class=p>(</span><span class=n>r</span> <span class=o>-</span> <span class=n>l</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>t</span><span class=p>[</span><span class=n>m</span><span class=p>]</span> <span class=o>&gt;=</span> <span class=n>x</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>r</span> <span class=o>=</span> <span class=n>m</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>else</span>
+</span></span><span class=line><span class=cl>            <span class=n>l</span> <span class=o>=</span> <span class=n>m</span> <span class=o>+</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>t</span><span class=p>[</span><span class=n>l</span><span class=p>];</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p><a href=#appendix-random-binary-search>Theoretically</a>, this randomized binary search is expected to do 30-40% more comparisons than the normal one, but on a real computer, the running time goes ~6x on large arrays:</p><p><figure><img src=../img/search-random.svg><figcaption></figcaption></figure></p><p>This isn&rsquo;t just caused by the <code>rand()</code> call being slow. You can clearly see the point on the L2-L3 boundary where memory latency outweighs the random number generation and <a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division>modulo</a>. The performance degrades because all of the fetched elements are unlikely to be cached and not just some small suffix of them.</p><p>Another potential negative effect is that of <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity>cache associativity</a>. If the array size is a multiple of a large power of two, then the indices of these &ldquo;hot&rdquo; elements will also be divisible by some large powers of two and map to the same cache line, kicking each other out. For example, binary searching over arrays of size $2^{20}$ takes about ~360ns per query while searching over arrays of size $(2^{20} + 123)$ takes ~300ns — a 20% difference. There are <a href=https://en.wikipedia.org/wiki/Fibonacci_search_technique>ways</a> to fix this problem, but to not get distracted from more pressing matters, we are just going to ignore it: all array sizes we use are in the form of $\lfloor 1.17^k \rfloor$ for integer $k$ so that any cache side effects are unlikely.</p><p>The real problem with our memory layout is that it doesn&rsquo;t make the most efficient use of temporal locality because it groups hot and cold elements together. For example, we likely store the element $\lfloor n/2 \rfloor$, which we request the first thing on each query, in the same cache line with $\lfloor n/2 \rfloor + 1$, which we almost never request.</p><p>Here is the heatmap visualizing the expected frequency of comparisons for a 31-element array:</p><p><figure><img src=../img/binary-heat.png><figcaption></figcaption></figure></p><p>So, ideally, we&rsquo;d want a memory layout where hot elements are grouped with hot elements, and cold elements are grouped with cold elements. And we can achieve this if we permute the array in a more cache-friendly way by renumbering them. The numeration we will use is actually half a millennium old, and chances are, you already know it.</p><span class=anchor id=eytzinger-layout></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#eytzinger-layout>#</a>Eytzinger Layout</h3><p><strong>Michaël Eytzinger</strong> is a 16th-century Austrian nobleman known for his work on genealogy, particularly for a system for numbering ancestors called <em>ahnentafel</em> (German for &ldquo;ancestor table&rdquo;).</p><p>Ancestry mattered a lot back then, but writing down that data was expensive. <em>Ahnentafel</em> allows displaying a person&rsquo;s genealogy compactly, without wasting extra space by drawing diagrams.</p><p>It lists a person&rsquo;s direct ancestors in a fixed sequence of ascent. First, the person themselves is listed as number 1, and then, recursively, for each person numbered $k$, their father is listed as $2k$ and their mother as $(2k+1)$.</p><p>Here is the example for <a href=https://en.wikipedia.org/wiki/Paul_I_of_Russia>Paul I</a>, the great-grandson of <a href=https://en.wikipedia.org/wiki/Peter_the_Great>Peter the Great</a>:</p><ol><li>Paul I</li><li>Peter III (Paul&rsquo;s father)</li><li><a href=https://en.wikipedia.org/wiki/Catherine_the_Great>Catherine II</a> (Paul&rsquo;s mother)</li><li>Charles Frederick (Peter&rsquo;s father, Paul&rsquo;s paternal grandfather)</li><li>Anna Petrovna (Peter&rsquo;s mother, Paul&rsquo;s paternal grandmother)</li><li>Christian August (Catherine&rsquo;s father, Paul&rsquo;s maternal grandfather)</li><li>Johanna Elisabeth (Catherine&rsquo;s mother, Paul&rsquo;s maternal grandmother)</li></ol><p>Apart from being compact, it has some nice properties, like that all even-numbered persons are male and all odd-numbered (possibly except for 1) are female. One can also find the number of a particular ancestor only knowing the genders of their descendants. For example, Peter the Great&rsquo;s bloodline is Paul I → Peter III → Anna Petrovna → Peter the Great, so his number should be $((1 \times 2) \times 2 + 1) \times 2 = 10$.</p><p><strong>In computer science</strong>, this enumeration has been widely used for implicit (pointer-free) implementations of heaps, segment trees, and other binary tree structures — where instead of names, it stores underlying array items.</p><p>Here is how this layout looks when applied to binary search:</p><p><figure><img src=../img/eytzinger.png><figcaption>Note that the tree is slightly imbalanced (because of the last layer is continuous)</figcaption></figure></p><p>When searching in this layout, we just need to start from the first element of the array, and then on each iteration jump to either $2 k$ or $(2k + 1)$, depending on how the comparison went:</p><p><figure><img src=../img/eytzinger-search.png><figcaption></figcaption></figure></p><p>You can immediately see how its temporal locality is better (and, in fact, theoretically optimal) as the elements closer to the root are closer to the beginning of the array and thus are more likely to be fetched from the cache.</p><p><figure><img src=../img/eytzinger-heat.png><figcaption></figcaption></figure></p><p>Another way to look at it is that we write every even-indexed element to the end of the new array, then write every even-indexed element of the remaining ones right before them, and so on, until we place the root as the first element.</p><span class=anchor id=construction></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#construction>#</a>Construction</h3><p>To construct the Eytzinger array, we could do this even-odd <a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/#permutations-and-lookup-tables>filtering</a> $O(\log n)$ times — and, perhaps, this is the fastest approach — but for brevity, we will instead build it by traversing the original search tree:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=n>a</span><span class=p>[</span><span class=n>n</span><span class=p>],</span> <span class=n>t</span><span class=p>[</span><span class=n>n</span> <span class=o>+</span> <span class=mi>1</span><span class=p>];</span> <span class=c1>// the original sorted array and the eytzinger array we build
+</span></span></span><span class=line><span class=cl><span class=c1>//              ^ we need one element more because of one-based indexing
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>eytzinger</span><span class=p>(</span><span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>static</span> <span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=c1>// &lt;- careful running it on multiple arrays
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>if</span> <span class=p>(</span><span class=n>k</span> <span class=o>&lt;=</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>eytzinger</span><span class=p>(</span><span class=mi>2</span> <span class=o>*</span> <span class=n>k</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>t</span><span class=p>[</span><span class=n>k</span><span class=p>]</span> <span class=o>=</span> <span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=o>++</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>        <span class=n>eytzinger</span><span class=p>(</span><span class=mi>2</span> <span class=o>*</span> <span class=n>k</span> <span class=o>+</span> <span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>This function takes the current node number <code>k</code>, recursively writes out all elements to the left of the middle of the search interval, writes out the current element we&rsquo;d compare against, and then recursively writes out all the elements on the right. It seems a bit complicated, but to convince yourself that it works, you only need three observations:</p><ul><li>It writes exactly <code>n</code> elements as we enter the body of <code>if</code> for each <code>k</code> from <code>1</code> to <code>n</code> just once.</li><li>It writes out sequential elements from the original array as it increments the <code>i</code> pointer each time.</li><li>By the time we write the element at node <code>k</code>, we will have already written all the elements to its left (exactly <code>i</code>).</li></ul><p>Despite being recursive, it is actually quite fast as all the memory reads are sequential, and the memory writes are only in $O(\log n)$ different memory blocks at a time. Maintaining the permutation is both logically and computationally harder to maintain though: adding an element to a sorted array only requires shifting a suffix of its elements one position to the right, while Eytzinger array practically needs to be rebuilt from scratch.</p><p>Note that this traversal and the resulting permutation are not exactly equivalent to the &ldquo;tree&rdquo; of vanilla binary search: for example, the left child subtree may be larger than the right child subtree — up to twice as large — but it doesn&rsquo;t matter much since both approaches result in the same $\lceil \log_2 n \rceil$ tree depth.</p><p>Also note that the Eytzinger array is one-indexed — this will be important for performance later. You can put in the zeroth element the value that you want to be returned in the case when the lower bound doesn&rsquo;t exist (similar to <code>a.end()</code> for <code>std::lower_bound</code>).</p><span class=anchor id=search-implementation></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#search-implementation>#</a>Search Implementation</h3><p>We can now descend this array using only indices: we just start with $k=1$ and execute $k := 2k$ if we need to go left and $k := 2k + 1$ if we need to go right. We don&rsquo;t even need to store and recalculate the search boundaries anymore. This simplicity also lets us avoid branching:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>while</span> <span class=p>(</span><span class=n>k</span> <span class=o>&lt;=</span> <span class=n>n</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>k</span> <span class=o>=</span> <span class=mi>2</span> <span class=o>*</span> <span class=n>k</span> <span class=o>+</span> <span class=p>(</span><span class=n>t</span><span class=p>[</span><span class=n>k</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>x</span><span class=p>);</span>
+</span></span></code></pre></div><p>The only problem arises when we need to restore the index of the resulting element, as $k$ does not directly point to it. Consider this example (its corresponding tree is listed above):</p><pre class=center-pre>
     array:  0 1 2 3 4 5 6 7 8 9                            
 eytzinger:  <u>6</u> <u>3</u> 7 <u>1</u> 5 8 9 0 <u>2</u> 4                            
 1st range:  ------------?------  k := 2*k     = 2   (6 ≥ 3)
@@ -1097,359 +129,105 @@ eytzinger:  <u>6</u> <u>3</u> 7 <u>1</u> 5 8 9 0 <u>2</u> 4
 3rd range:  --?----              k := 2*k + 1 = 9   (1 < 3)
 4th range:      ?--              k := 2*k + 1 = 19  (2 < 3)
 5th range:        !                                        
-</pre>
-<!-- do we need the last comparison? -->
-<p>Here we query the array of $[0, …, 9]$ for the lower bound of $x=3$. We compare it against $6$, $3$, $1$, and $2$, go left-left-right-right, and end up with $k = 19$, which isn&rsquo;t even a valid array index.</p>
-<p>The trick is to notice that, unless the answer is the last element of the array, we compare $x$ against it at some point, and after we&rsquo;ve learned that it is not less than $x$, we go left exactly once and then keep going right until we reach a leaf (because we will only be comparing $x$ against lesser elements). Therefore, to restore the answer, we just need to &ldquo;cancel&rdquo; some number of right turns and then one more.</p>
-<p>This can be done in an elegant way by observing that the right turns are recorded in the binary representation of $k$ as 1-bits, and so we just need to find the number of trailing 1s in the binary representation and right-shift $k$ by exactly that number of bits plus one. To do this, we can invert the number (<code>~k</code>) and call the &ldquo;find first set&rdquo; instruction:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">lower_bound</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">k</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="n">k</span> <span class="o">&gt;&gt;=</span> <span class="n">__builtin_ffs</span><span class="p">(</span><span class="o">~</span><span class="n">k</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">t</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>We run it, and… well, it doesn&rsquo;t look <em>that</em> good:</p>
-<p><figure>
-  <img src="../img/search-eytzinger.svg">
-  <figcaption></figcaption>
-</figure>
-</p>
-<p>The latency on smaller arrays is on par with the branchless binary search implementation — which isn&rsquo;t surprising as it is just two lines of code — but it starts taking off much sooner. The reason is that the Eytzinger binary search doesn&rsquo;t get the advantage of spatial locality: the last 3-4 elements we compare against are not in the same cache line anymore, and we have to fetch them separately.</p>
-<p>If you think about it deeper, you might object that the improved temporal locality should compensate for that. Before, we were using only about $\frac{1}{16}$-th of the cache line to store one hot element, and now we are using all of it, so the effective cache size is larger by a factor of 16, which lets us cover $\log_2 16 = 4$ more first requests.</p>
-<p>But if you think about it more, you understand that this isn’t enough compensation. Caching the other 15 elements wasn’t completely useless, and also, the hardware prefetcher could fetch the neighboring cache lines of our requests. If this was one of our last requests, the rest of what we will be reading will probably be cached elements. So actually, the last 6-7 accesses are likely to be cached, not 3-4.</p>
-<p>It seems like we did an overall stupid thing switching to this layout, but there is a way to make it worthwhile.</p>
-<span class='anchor' id="prefetching"></span>
-<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#prefetching">#</a>Prefetching</h3><p>To hide the memory latency, we can use software prefetching similar to how we did for branchless binary search. But instead of issuing two separate prefetch instructions for the left and right child nodes, we can notice that they are neighbors in the Eytzinger array: one has index $2 k$ and the other $(2k + 1)$, so they are likely in the same cache line, and we can use just one instruction.</p>
-<p>This observation extends to the grand-children of node $k$ — they are also stored sequentially:</p>
-<pre tabindex="0"><code>2 * 2 * k           = 4 * k
+</pre><p>Here we query the array of $[0, …, 9]$ for the lower bound of $x=3$. We compare it against $6$, $3$, $1$, and $2$, go left-left-right-right, and end up with $k = 19$, which isn&rsquo;t even a valid array index.</p><p>The trick is to notice that, unless the answer is the last element of the array, we compare $x$ against it at some point, and after we&rsquo;ve learned that it is not less than $x$, we go left exactly once and then keep going right until we reach a leaf (because we will only be comparing $x$ against lesser elements). Therefore, to restore the answer, we just need to &ldquo;cancel&rdquo; some number of right turns and then one more.</p><p>This can be done in an elegant way by observing that the right turns are recorded in the binary representation of $k$ as 1-bits, and so we just need to find the number of trailing 1s in the binary representation and right-shift $k$ by exactly that number of bits plus one. To do this, we can invert the number (<code>~k</code>) and call the &ldquo;find first set&rdquo; instruction:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>lower_bound</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>k</span> <span class=o>&lt;=</span> <span class=n>n</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>k</span> <span class=o>=</span> <span class=mi>2</span> <span class=o>*</span> <span class=n>k</span> <span class=o>+</span> <span class=p>(</span><span class=n>t</span><span class=p>[</span><span class=n>k</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>x</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>k</span> <span class=o>&gt;&gt;=</span> <span class=n>__builtin_ffs</span><span class=p>(</span><span class=o>~</span><span class=n>k</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>t</span><span class=p>[</span><span class=n>k</span><span class=p>];</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>We run it, and… well, it doesn&rsquo;t look <em>that</em> good:</p><p><figure><img src=../img/search-eytzinger.svg><figcaption></figcaption></figure></p><p>The latency on smaller arrays is on par with the branchless binary search implementation — which isn&rsquo;t surprising as it is just two lines of code — but it starts taking off much sooner. The reason is that the Eytzinger binary search doesn&rsquo;t get the advantage of spatial locality: the last 3-4 elements we compare against are not in the same cache line anymore, and we have to fetch them separately.</p><p>If you think about it deeper, you might object that the improved temporal locality should compensate for that. Before, we were using only about $\frac{1}{16}$-th of the cache line to store one hot element, and now we are using all of it, so the effective cache size is larger by a factor of 16, which lets us cover $\log_2 16 = 4$ more first requests.</p><p>But if you think about it more, you understand that this isn’t enough compensation. Caching the other 15 elements wasn’t completely useless, and also, the hardware prefetcher could fetch the neighboring cache lines of our requests. If this was one of our last requests, the rest of what we will be reading will probably be cached elements. So actually, the last 6-7 accesses are likely to be cached, not 3-4.</p><p>It seems like we did an overall stupid thing switching to this layout, but there is a way to make it worthwhile.</p><span class=anchor id=prefetching></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#prefetching>#</a>Prefetching</h3><p>To hide the memory latency, we can use software prefetching similar to how we did for branchless binary search. But instead of issuing two separate prefetch instructions for the left and right child nodes, we can notice that they are neighbors in the Eytzinger array: one has index $2 k$ and the other $(2k + 1)$, so they are likely in the same cache line, and we can use just one instruction.</p><p>This observation extends to the grand-children of node $k$ — they are also stored sequentially:</p><pre tabindex=0><code>2 * 2 * k           = 4 * k
 2 * 2 * k + 1       = 4 * k + 1
 2 * (2 * k + 1)     = 4 * k + 2
 2 * (2 * k + 1) + 1 = 4 * k + 3
-</code></pre><!--
+</code></pre><p>Their cache line can also be fetched with one instruction. Interesting… what if we continue this, and instead of fetching direct children, we fetch ahead as many descendants as we can cramp into one cache line? That would be $\frac{64}{4} = 16$ elements, our great-great-grandchildren with indices from $16k$ to $(16k + 15)$.</p><p>Now, if we prefetch just one of these 16 elements, we will probably only get some but not all of them, as they may cross a cache line boundary. We can prefetch the first <em>and</em> the last element, but to get away with just one memory request, we need to notice that the index of the first element, $16k$, is divisible by $16$, so its memory address will be the base address of the array plus something divisible by $16 \cdot 4 = 64$, the cache line size. If the array were to begin on a cache line, then these $16$ great-great-grandchildren elements will be guaranteed to be on a single cache line, which is just what we needed.</p><p>Therefore, we only need to <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment>align</a> the array:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>t</span> <span class=o>=</span> <span class=p>(</span><span class=kt>int</span><span class=o>*</span><span class=p>)</span> <span class=n>std</span><span class=o>::</span><span class=n>aligned_alloc</span><span class=p>(</span><span class=mi>64</span><span class=p>,</span> <span class=mi>4</span> <span class=o>*</span> <span class=p>(</span><span class=n>n</span> <span class=o>+</span> <span class=mi>1</span><span class=p>));</span>
+</span></span></code></pre></div><p>And then prefetch the element indexed $16 k$ on each iteration:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>lower_bound</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>k</span> <span class=o>&lt;=</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>__builtin_prefetch</span><span class=p>(</span><span class=n>t</span> <span class=o>+</span> <span class=n>k</span> <span class=o>*</span> <span class=mi>16</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>k</span> <span class=o>=</span> <span class=mi>2</span> <span class=o>*</span> <span class=n>k</span> <span class=o>+</span> <span class=p>(</span><span class=n>t</span><span class=p>[</span><span class=n>k</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>x</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=n>k</span> <span class=o>&gt;&gt;=</span> <span class=n>__builtin_ffs</span><span class=p>(</span><span class=o>~</span><span class=n>k</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>t</span><span class=p>[</span><span class=n>k</span><span class=p>];</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>The performance on large arrays improves 3-4x from the previous version and ~2x compared to <code>std::lower_bound</code>. Not bad for just two more lines of code:</p><p><figure><img src=../img/search-eytzinger-prefetch.svg><figcaption></figcaption></figure></p><p>Essentially, what we do here is hide the latency by prefetching four steps ahead and overlapping memory requests. Theoretically, if the compute didn&rsquo;t matter, we would expect a ~4x speedup, but in reality, we get a somewhat more moderate speedup.</p><p>We can also try to prefetch further than that four steps ahead, and we don&rsquo;t even have to use more than one prefetch instruction for that: we can try to request only the first cache line and rely on the hardware to prefetch its neighbors. This trick may or may not improve actual performance — depends on the hardware:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>__builtin_prefetch</span><span class=p>(</span><span class=n>t</span> <span class=o>+</span> <span class=n>k</span> <span class=o>*</span> <span class=mi>32</span><span class=p>);</span>
+</span></span></code></pre></div><p>Also, note that the last few prefetch requests are actually not needed, and in fact, they may even be outside the memory region allocated for the program. On most modern CPUs, invalid prefetch instructions get converted into no-ops, so it isn&rsquo;t a problem, but on some platforms, this may cause a slowdown, so it may make sense, for example, to split off the last ~4 iterations from the loop to try to remove them.</p><p>This prefetching technique allows us to read up to four elements ahead, but it doesn&rsquo;t really come for free — we are effectively trading off excess memory <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth>bandwidth</a> for reduced <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency>latency</a>. If you run more than one instance at a time on separate hardware threads or just any other memory-intensive computation in the background, it will significantly <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing>affect</a> the benchmark performance.</p><p>But we can do better. Instead of fetching four cache lines at a time, we could fetch four times <em>fewer</em> cache lines. And in the <a href=../s-tree>next section</a>, we will explore the approach.</p><span class=anchor id=removing-the-last-branch></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#removing-the-last-branch>#</a>Removing the Last Branch</h3><p>Just one finishing touch: did you notice the bumpiness of the Eytzinger search? This isn&rsquo;t random noise — let&rsquo;s zoom in:</p><p><figure><img src=../img/search-eytzinger-small.svg><figcaption></figcaption></figure></p><p>The latency is ~10ns higher for the array sizes in the form of $1.5 \cdot 2^k$. These are mispredicted branches from the loop itself — the last branch, to be exact. When the array size is far from a power of two, it is hard to predict whether the loop will make $\lfloor \log_2 n \rfloor$ or $\lfloor \log_2 n \rfloor + 1$ iterations, so we have a 50% chance to suffer exactly one branch mispredict.</p><p>One way to address it is to pad the array with infinities to the closest power of two, but this wastes memory. Instead, we get rid of that last branch by always executing a constant minimum number of iterations and then using predication to optionally make the last comparison against some dummy element — that is guaranteed to be less than $x$ so that its comparison will be canceled:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>t</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>=</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span> <span class=c1>// an element that is less than x
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>iters</span> <span class=o>=</span> <span class=n>std</span><span class=o>::</span><span class=n>__lg</span><span class=p>(</span><span class=n>n</span> <span class=o>+</span> <span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>lower_bound</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>iters</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>k</span> <span class=o>=</span> <span class=mi>2</span> <span class=o>*</span> <span class=n>k</span> <span class=o>+</span> <span class=p>(</span><span class=n>t</span><span class=p>[</span><span class=n>k</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>x</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=o>*</span><span class=n>loc</span> <span class=o>=</span> <span class=p>(</span><span class=n>k</span> <span class=o>&lt;=</span> <span class=n>n</span> <span class=o>?</span> <span class=n>t</span> <span class=o>+</span> <span class=nl>k</span> <span class=p>:</span> <span class=n>t</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>k</span> <span class=o>=</span> <span class=mi>2</span> <span class=o>*</span> <span class=n>k</span> <span class=o>+</span> <span class=p>(</span><span class=o>*</span><span class=n>loc</span> <span class=o>&lt;</span> <span class=n>x</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>k</span> <span class=o>&gt;&gt;=</span> <span class=n>__builtin_ffs</span><span class=p>(</span><span class=o>~</span><span class=n>k</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>t</span><span class=p>[</span><span class=n>k</span><span class=p>];</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>The graph is now smooth, and on small arrays, it is just a couple of cycles slower than the branchless binary search:</p><p><figure><img src=../img/search-eytzinger-branchless.svg><figcaption></figcaption></figure></p><p>Interestingly, now GCC fails to replace the branch with <code>cmov</code>, but Clang doesn&rsquo;t. 1-1.</p><span class=anchor id=appendix-random-binary-search></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#appendix-random-binary-search>#</a>Appendix: Random Binary Search</h3><p>By the way, finding the exact expected number of comparisons for random binary search is quite an interesting math problem in and of itself. Try solving it yourself first!</p><p>The way to compute it <em>algorithmically</em> is through dynamic programming. If we denote $f_n$ as the expected number of comparisons to find a random lower bound on a search interval of size $n$, it can be calculated from the previous $f_n$ by considering all the $(n - 1)$ possible splits:</p>$$
+f_n = \sum_{l = 1}^{n - 1} \frac{1}{n-1} \cdot \left( f_l \cdot \frac{l}{n} + f_{n - l} \cdot \frac{n - l}{n} \right) + 1
+$$
+Directly applying this formula gives us an $O(n^2)$ algorithm, but we can optimize it by rearranging the sum like this:
+$$
 \begin{aligned}
-   2 \cdot 2 \cdot k       &= 4 \cdot k
-\\ 2 \cdot 2 \cdot k + 1   &= 4 \cdot k + 1
-\\ 2 \cdot (2 \cdot k) + 1 &= 4 \cdot k + 2
-\\ 2 \cdot (2 \cdot k + 1) + 1 &= 4 \cdot k + 3
+f_n &= \sum_{i = 1}^{n - 1} \frac{ f_i \cdot i + f_{n - i} \cdot (n - i) }{ n \cdot (n - 1) } + 1
+\\ &= \frac{2}{n \cdot (n - 1)} \cdot \sum_{i = 1}^{n - 1} f_i \cdot i + 1
 \end{aligned}
--->
-<p>Their cache line can also be fetched with one instruction. Interesting… what if we continue this, and instead of fetching direct children, we fetch ahead as many descendants as we can cramp into one cache line? That would be $\frac{64}{4} = 16$ elements, our great-great-grandchildren with indices from $16k$ to $(16k + 15)$.</p>
-<p>Now, if we prefetch just one of these 16 elements, we will probably only get some but not all of them, as they may cross a cache line boundary. We can prefetch the first <em>and</em> the last element, but to get away with just one memory request, we need to notice that the index of the first element, $16k$, is divisible by $16$, so its memory address will be the base address of the array plus something divisible by $16 \cdot 4 = 64$, the cache line size. If the array were to begin on a cache line, then these $16$ great-great-grandchildren elements will be guaranteed to be on a single cache line, which is just what we needed.</p>
-<p>Therefore, we only need to <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment">align</a> the array:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span> <span class="n">std</span><span class="o">::</span><span class="n">aligned_alloc</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">));</span>
-</span></span></code></pre></div><p>And then prefetch the element indexed $16 k$ on each iteration:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">lower_bound</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">k</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">__builtin_prefetch</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="mi">16</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="n">k</span> <span class="o">&gt;&gt;=</span> <span class="n">__builtin_ffs</span><span class="p">(</span><span class="o">~</span><span class="n">k</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">t</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>The performance on large arrays improves 3-4x from the previous version and ~2x compared to <code>std::lower_bound</code>. Not bad for just two more lines of code:</p>
-<p><figure>
-  <img src="../img/search-eytzinger-prefetch.svg">
-  <figcaption></figcaption>
-</figure>
-</p>
-<p>Essentially, what we do here is hide the latency by prefetching four steps ahead and overlapping memory requests. Theoretically, if the compute didn&rsquo;t matter, we would expect a ~4x speedup, but in reality, we get a somewhat more moderate speedup.</p>
-<p>We can also try to prefetch further than that four steps ahead, and we don&rsquo;t even have to use more than one prefetch instruction for that: we can try to request only the first cache line and rely on the hardware to prefetch its neighbors. This trick may or may not improve actual performance — depends on the hardware:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">__builtin_prefetch</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="mi">32</span><span class="p">);</span>
-</span></span></code></pre></div><p>Also, note that the last few prefetch requests are actually not needed, and in fact, they may even be outside the memory region allocated for the program. On most modern CPUs, invalid prefetch instructions get converted into no-ops, so it isn&rsquo;t a problem, but on some platforms, this may cause a slowdown, so it may make sense, for example, to split off the last ~4 iterations from the loop to try to remove them.</p>
-<p>This prefetching technique allows us to read up to four elements ahead, but it doesn&rsquo;t really come for free — we are effectively trading off excess memory <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth">bandwidth</a> for reduced <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency">latency</a>. If you run more than one instance at a time on separate hardware threads or just any other memory-intensive computation in the background, it will significantly <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing">affect</a> the benchmark performance.</p>
-<p>But we can do better. Instead of fetching four cache lines at a time, we could fetch four times <em>fewer</em> cache lines. And in the <a href="../s-tree">next section</a>, we will explore the approach.</p>
-<!--
-
-But that was a small detour. Let's get back to optimizing for *large* arrays.
-
-[Part 2](https://algorithmica.org/en/b-tree) explores efficient implementation of implicit static B-trees in bandwidth-constrained environment.
-
--->
-<span class='anchor' id="removing-the-last-branch"></span>
-<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#removing-the-last-branch">#</a>Removing the Last Branch</h3><p>Just one finishing touch: did you notice the bumpiness of the Eytzinger search? This isn&rsquo;t random noise — let&rsquo;s zoom in:</p>
-<p><figure>
-  <img src="../img/search-eytzinger-small.svg">
-  <figcaption></figcaption>
-</figure>
-</p>
-<p>The latency is ~10ns higher for the array sizes in the form of $1.5 \cdot 2^k$. These are mispredicted branches from the loop itself — the last branch, to be exact. When the array size is far from a power of two, it is hard to predict whether the loop will make $\lfloor \log_2 n \rfloor$ or $\lfloor \log_2 n \rfloor + 1$ iterations, so we have a 50% chance to suffer exactly one branch mispredict.</p>
-<p>One way to address it is to pad the array with infinities to the closest power of two, but this wastes memory. Instead, we get rid of that last branch by always executing a constant minimum number of iterations and then using predication to optionally make the last comparison against some dummy element — that is guaranteed to be less than $x$ so that its comparison will be canceled:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// an element that is less than x
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">iters</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">__lg</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">lower_bound</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">iters</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="o">*</span><span class="n">loc</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="o">?</span> <span class="n">t</span> <span class="o">+</span> <span class="nl">k</span> <span class="p">:</span> <span class="n">t</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span> <span class="o">+</span> <span class="p">(</span><span class="o">*</span><span class="n">loc</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="n">k</span> <span class="o">&gt;&gt;=</span> <span class="n">__builtin_ffs</span><span class="p">(</span><span class="o">~</span><span class="n">k</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">t</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>The graph is now smooth, and on small arrays, it is just a couple of cycles slower than the branchless binary search:</p>
-<p><figure>
-  <img src="../img/search-eytzinger-branchless.svg">
-  <figcaption></figcaption>
-</figure>
-</p>
-<p>Interestingly, now GCC fails to replace the branch with <code>cmov</code>, but Clang doesn&rsquo;t. 1-1.</p>
-<span class='anchor' id="appendix-random-binary-search"></span>
-<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#appendix-random-binary-search">#</a>Appendix: Random Binary Search</h3><p>By the way, finding the exact expected number of comparisons for random binary search is quite an interesting math problem in and of itself. Try solving it yourself first!</p>
-<p>The way to compute it <em>algorithmically</em> is through dynamic programming. If we denote $f_n$ as the expected number of comparisons to find a random lower bound on a search interval of size $n$, it can be calculated from the previous $f_n$ by considering all the $(n - 1)$ possible splits:</p>
-
-      
-    
-  
-
-  
-    $$
-    
-f_n = \sum_{l = 1}^{n - 1} \frac{1}{n-1} \cdot \left( f_l \cdot \frac{l}{n} &#43; f_{n - l} \cdot \frac{n - l}{n} \right) &#43; 1
-
-    $$
-  
-
-  
-    
-    
-      
-        Directly applying this formula gives us an $O(n^2)$ algorithm, but we can optimize it by rearranging the sum like this:
-      
-    
-  
-
-  
-    $$
-    
-\begin{aligned}
-f_n &amp;= \sum_{i = 1}^{n - 1} \frac{ f_i \cdot i &#43; f_{n - i} \cdot (n - i) }{ n \cdot (n - 1) } &#43; 1
-\\  &amp;= \frac{2}{n \cdot (n - 1)} \cdot \sum_{i = 1}^{n - 1} f_i \cdot i &#43; 1
-\end{aligned}
-
-    $$
-  
-
-  
-    
-    
-      
-        To update $f_n$, we only need to calculate the sum of $f_i \cdot i$ for all $i &lt; n$. To do that, let&rsquo;s introduce two new variables:
-      
-    
-  
-
-  
-    $$
-    
+$$
+To update $f_n$, we only need to calculate the sum of $f_i \cdot i$ for all $i &lt; n$. To do that, let&rsquo;s introduce two new variables:
+$$
 g_n = f_n \cdot n,
 \;\;
 s_n = \sum_{i=1}^{n} g_n
-
-    $$
-  
-
-  
-    
-    
-      
-        Now they can be sequentially calculated as:
-      
-    
-  
-
-  
-    $$
-    
+$$
+Now they can be sequentially calculated as:
+$$
 \begin{aligned}
-g_n &amp;= f_n \cdot n
-     = \frac{2}{n-1} \cdot \sum_{i = 1}^{n - 1} g_i &#43; n
-     = \frac{2}{n - 1} \cdot s_{n - 1} &#43; n
-\\ s_n &amp;= s_{n - 1} &#43; g_n
+g_n &= f_n \cdot n
+= \frac{2}{n-1} \cdot \sum_{i = 1}^{n - 1} g_i + n
+= \frac{2}{n - 1} \cdot s_{n - 1} + n
+\\ s_n &= s_{n - 1} + g_n
 \end{aligned}
-
-    $$
-  
-
-  
-    
-    
-      
-        This way we get an $O(n)$ algorithm, but we can do even better. Let&rsquo;s substitute $g_n$ in the update formula for $s_n$:
-      
-    
-  
-
-  
-    $$
-    
+$$
+This way we get an $O(n)$ algorithm, but we can do even better. Let&rsquo;s substitute $g_n$ in the update formula for $s_n$:
+$$
 \begin{aligned}
-s_n &amp;= s_{n - 1} &#43; \frac{2}{n - 1} \cdot s_{n - 1} &#43; n
-\\  &amp;= (1 &#43; \frac{2}{n - 1}) \cdot s_{n - 1} &#43; n
-\\  &amp;= \frac{n &#43; 1}{n - 1} \cdot s_{n - 1} &#43; n
+s_n &= s_{n - 1} + \frac{2}{n - 1} \cdot s_{n - 1} + n
+\\ &= (1 + \frac{2}{n - 1}) \cdot s_{n - 1} + n
+\\ &= \frac{n + 1}{n - 1} \cdot s_{n - 1} + n
 \end{aligned}
-
-    $$
-  
-
-  
-    
-    
-      
-        The next trick is more complicated. We define $r_n$ like this:
-      
-    
-  
-
-  
-    $$
-    
+$$
+The next trick is more complicated. We define $r_n$ like this:
+$$
 \begin{aligned}
-r_n &amp;= \frac{s_n}{n}
-\\  &amp;= \frac{1}{n} \cdot \left(\frac{n &#43; 1}{n - 1} \cdot s_{n - 1} &#43; n\right)
-\\  &amp;= \frac{n &#43; 1}{n} \cdot \frac{s_{n - 1}}{n - 1} &#43; 1
-\\  &amp;= \left(1 &#43; \frac{1}{n}\right) \cdot r_{n - 1} &#43; 1
+r_n &= \frac{s_n}{n}
+\\ &= \frac{1}{n} \cdot \left(\frac{n + 1}{n - 1} \cdot s_{n - 1} + n\right)
+\\ &= \frac{n + 1}{n} \cdot \frac{s_{n - 1}}{n - 1} + 1
+\\ &= \left(1 + \frac{1}{n}\right) \cdot r_{n - 1} + 1
 \end{aligned}
-
-    $$
-  
-
-  
-    
-    
-      
-        We can substitute it into the formula we got for $g_n$ before:
-      
-    
-  
-
-  
-    $$
-    
-g_n = \frac{2}{n - 1} \cdot s_{n - 1} &#43; n = 2 \cdot r_{n - 1} &#43; n
-
-    $$
-  
-
-  
-    
-    
-      
-        Recalling that $g_n = f_n \cdot n$, we can express $r_{n - 1}$ using $f_n$:
-      
-    
-  
-
-  
-    $$
-    
-f_n \cdot n = 2 \cdot r_{n - 1} &#43; n
+$$
+We can substitute it into the formula we got for $g_n$ before:
+$$
+g_n = \frac{2}{n - 1} \cdot s_{n - 1} + n = 2 \cdot r_{n - 1} + n
+$$
+Recalling that $g_n = f_n \cdot n$, we can express $r_{n - 1}$ using $f_n$:
+$$
+f_n \cdot n = 2 \cdot r_{n - 1} + n
 \implies
 r_{n - 1} = \frac{(f_n - 1) \cdot n}{2}
-
-    $$
-  
-
-  
-    
-    
-      
-        Final step. We&rsquo;ve just expressed $r_n$ through $r_{n - 1}$ and $r_{n - 1}$ through $f_n$. This lets us express $f_{n + 1}$ through $f_n$:
-      
-    
-  
-
-  
-    $$
-    
+$$
+Final step. We&rsquo;ve just expressed $r_n$ through $r_{n - 1}$ and $r_{n - 1}$ through $f_n$. This lets us express $f_{n + 1}$ through $f_n$:
+$$
 \begin{aligned}
-&amp;&amp;\quad r_n &amp;= \left(1 &#43; \frac{1}{n}\right) \cdot r_{n - 1} &#43; 1
-\\ &amp;\Rightarrow &amp; \frac{(f_{n &#43; 1} - 1) \cdot (n &#43; 1)}{2} &amp;= \left(1 &#43; \frac{1}{n}\right) \cdot \frac{(f_n - 1) \cdot n}{2} &#43; 1
-\\ &amp;&amp;&amp;= \frac{n &#43; 1}{2} \cdot (f_n - 1) &#43; 1
-\\ &amp;\Rightarrow &amp; (f_{n &#43; 1} - 1) &amp;= (f_{n} - 1) &#43; \frac{2}{n &#43; 1}
-\\ &amp;\Rightarrow &amp;f_{n &#43; 1} &amp;= f_{n} &#43; \frac{2}{n &#43; 1}
-\\ &amp;\Rightarrow &amp;f_{n} &amp;= f_{n - 1} &#43; \frac{2}{n}
-\\ &amp;\Rightarrow &amp;f_{n} &amp;= \sum_{k = 2}^{n} \frac{2}{k}
+&&\quad r_n &= \left(1 + \frac{1}{n}\right) \cdot r_{n - 1} + 1
+\\ &\Rightarrow & \frac{(f_{n + 1} - 1) \cdot (n + 1)}{2} &= \left(1 + \frac{1}{n}\right) \cdot \frac{(f_n - 1) \cdot n}{2} + 1
+\\ &&&= \frac{n + 1}{2} \cdot (f_n - 1) + 1
+\\ &\Rightarrow & (f_{n + 1} - 1) &= (f_{n} - 1) + \frac{2}{n + 1}
+\\ &\Rightarrow &f_{n + 1} &= f_{n} + \frac{2}{n + 1}
+\\ &\Rightarrow &f_{n} &= f_{n - 1} + \frac{2}{n}
+\\ &\Rightarrow &f_{n} &= \sum_{k = 2}^{n} \frac{2}{k}
 \end{aligned}
-
-    $$
-  
-
-  
-    
-    
-      
-        <p>The last expression is double the <a href="https://en.wikipedia.org/wiki/Harmonic_series_(mathematics)">harmonic series</a>, which is well known to approximate $\ln n$ as $n \to \infty$. Therefore, the random binary search will perform $\frac{2 \ln n}{\log_2 n} = 2 \ln 2 \approx 1.386$ more comparisons compared to the normal one.</p>
-<span class='anchor' id="acknowledgements"></span>
-<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#acknowledgements">#</a>Acknowledgements</h3><p>The article is loosely based on &ldquo;<a href="https://arxiv.org/pdf/1509.05053.pdf">Array Layouts for Comparison-Based Searching</a>&rdquo; by Paul-Virak Khuong and Pat Morin. It is 46 pages long and discusses these and many other (less successful) approaches in more detail. I highly recommend also checking it out — this is one of my favorite performance engineering papers.</p>
-<p>Thanks to Marshall Lochbaum for <a href="https://github.com/algorithmica-org/algorithmica/issues/57">providing</a> the proof for the random binary search. No way I could do it myself.</p>
-<p>I also stole these lovely layout visualizations from some blog a long time ago, but I don&rsquo;t remember the name of the blog and what license they had, and inverse image search doesn&rsquo;t find them anymore. If you don&rsquo;t sue me, thank you, whoever you are!</p>
-
-      
-    
-  
-
-
-
-        </article>
-        <div class='nextprev'>
-  
-    
-      
-      
-
-      
-      
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-
-      
-        <div class='left'>
-        
-          <a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/' id='prev-article'>← ../Data Structures Case Studies</a>
-        
-        </div>
-        <div class='right'>
-        
-          <a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/' id='next-article'>Static B-Trees →</a>
-        
-        </div>
-      
-    
-  
-</div>
-
-      </main>
-      <footer>
-  Copyright 2021–2022 Sergey Slotin
-  <br>
-   
-</footer>
-
-    </div>
-  </body>
-</html>
+$$<p>The last expression is double the <a href=https://en.wikipedia.org/wiki/Harmonic_series_(mathematics)>harmonic series</a>, which is well known to approximate $\ln n$ as $n \to \infty$. Therefore, the random binary search will perform $\frac{2 \ln n}{\log_2 n} = 2 \ln 2 \approx 1.386$ more comparisons compared to the normal one.</p><span class=anchor id=acknowledgements></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/#acknowledgements>#</a>Acknowledgements</h3><p>The article is loosely based on &ldquo;<a href=https://arxiv.org/pdf/1509.05053.pdf>Array Layouts for Comparison-Based Searching</a>&rdquo; by Paul-Virak Khuong and Pat Morin. It is 46 pages long and discusses these and many other (less successful) approaches in more detail. I highly recommend also checking it out — this is one of my favorite performance engineering papers.</p><p>Thanks to Marshall Lochbaum for <a href=https://github.com/algorithmica-org/algorithmica/issues/57>providing</a> the proof for the random binary search. No way I could do it myself.</p><p>I also stole these lovely layout visualizations from some blog a long time ago, but I don&rsquo;t remember the name of the blog and what license they had, and inverse image search doesn&rsquo;t find them anymore. If you don&rsquo;t sue me, thank you, whoever you are!</p></article><div class=nextprev><div class=left><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/ id=prev-article>← ../Data Structures Case Studies</a></div><div class=right><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/ id=next-article>Static B-Trees →</a></div></div></main><footer>Copyright 2021–2022 Sergey Slotin<br></footer></div></body></html>
