@@ -38,7 +38,7 @@ Disadvantage of RSA is that it is hard to calculate. You really don't want to ex
 
 Such schemes exist but they require a secure key. This is where RSA comes in, but after that they switch to AES.
 
-![](../img/aes.png)
+![](../../arithmetic/img/aes.png)
 
 confusion and diffusion.
 

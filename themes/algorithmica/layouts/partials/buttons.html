@@ -1,6 +1,8 @@
 <menu id='menu'>
   {{ $path := "" }}
   {{ with .File }}{{ $path = .Path }}{{ end }}
+  {{ $sourceRepoSlug := default "algorithmica-org/algorithmica" .Site.Params.SourceRepoSlug }}
+  {{ $sourceBranch := default "master" .Site.Params.SourceBranch }}
   <div class='left'>
     <a>
       <img src='/icons/bars-solid.svg'
@@ -19,17 +21,24 @@
            title='search'>
     </a>
   </div>
-  <div class='title'>{{.Title}}</div>
+  <div class='title'>
+    {{ with .Site.Params.EditionLabel }}
+      <span class='beta-brand'>{{ . }}</span>
+      <span class='chapter-title'>{{ $.Title }}</span>
+    {{ else }}
+      {{ $.Title }}
+    {{ end }}
+  </div>
   <div class='right'>
     <a onClick='window.print()'>
       <img src='/icons/print-solid.svg' title='print'>
     </a>
-    <a href='https://prose.io/#algorithmica-org/algorithmica/edit/master/{{.Site.Params.ContentDir}}/{{$path}}'>
+    <a href='https://prose.io/#{{$sourceRepoSlug}}/edit/{{$sourceBranch}}/{{.Site.Params.ContentDir}}/{{$path}}'>
       <img src='/icons/edit-solid.svg'
            title='edit'
            style='width: 18px; position: relative; right: -2px; top: -1px'>
     </a>
-    <a href='{{.Site.Params.Repo}}/blob/master/{{.Site.Params.ContentDir}}/{{$path}}' class='github-main'>
+    <a href='{{.Site.Params.Repo}}/blob/{{$sourceBranch}}/{{.Site.Params.ContentDir}}/{{$path}}' class='github-main'>
       <img src='/icons/github-brands.svg' title='view on github'>
     </a>
   </div>

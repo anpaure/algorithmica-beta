@@ -20,7 +20,7 @@ for (int i = 0; i < N; i++)
 Then we create a loop where we sum up all its elements under 50:
 
 ```c++
-volatile int s;
+volatile int s = 0;
 
 for (int i = 0; i < N; i++)
     if (a[i] < 50)
@@ -83,7 +83,7 @@ Let's fix `P` back at 50, and then sort the array first before the main summatio
 for (int i = 0; i < N; i++)
     a[i] = rand() % 100;
 
-std::sort(a, a + n);
+std::sort(a, a + N);
 ```
 
 We are still processing the same elements, but in a different order, and instead of 14 cycles, it now runs in a little bit more than 4, which is exactly the average of the cost of the pure `<` and `>=` branches.

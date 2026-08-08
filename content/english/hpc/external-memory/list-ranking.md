@@ -19,8 +19,8 @@ The main idea of the algorithm is to remove some fraction of elements, recursive
 
 Consider some three consecutive elements $x$, $y$ and $z$. Assume that we deleted $y$ and solved the problem for the remaining list, which included $x$ and $z$, and now we need to restore the answer for the original triplet. The weight of $x$ would be correct as it is, but we need to calculate the answer for $y$ and adjust it for $z$, namely:
 
-- $w_y' = w_y + w_x$
-- $w_z' = w_z + w_y + w_x$
+- $w_y^\prime = w_y + w_x$
+- $w_z^\prime = w_z + w_y + w_x$
 
 Now, we can just delete, say, the first element, solve the problem recursively, and recalculate weights for the original array. But, unfortunately, it would work in quadratic time, because to make the update, we would need to know where its neighbors are, and since we can't hold the entire array in memory, we would need to scan it each time.
 

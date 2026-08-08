@@ -1,0 +1,36 @@
+menu .title {
+  opacity: 1;
+}
+
+menu .beta-brand {
+  color: #111;
+  white-space: nowrap;
+}
+
+menu .chapter-title {
+  display: none;
+}
+
+menu.scrolled .beta-brand {
+  display: none;
+}
+
+menu.scrolled .chapter-title {
+  display: inline;
+}
+
+@media only screen and (max-width: 600px) {
+  menu .title {
+    display: block;
+    font-size: 20px;
+    margin-top: 0;
+  }
+
+  menu.scrolled .beta-brand {
+    display: inline;
+  }
+
+  menu.scrolled .chapter-title {
+    display: none;
+  }
+}

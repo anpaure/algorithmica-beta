@@ -83,17 +83,17 @@ The first type of such value is the two infinities: a positive and a negative on
 
 $$
 \begin{aligned}
-   -∞ < x &< ∞
-\\  ∞ + x &= ∞
-\\  x ÷ ∞ &= 0
+   -\infty < x &< \infty
+\\  \infty + x &= \infty
+\\  x \div \infty &= 0
 \end{aligned}
 $$
 
 What happens if we, say, divide a value by zero? Should it be a negative or a positive infinity? This case is actually unambiguous because, somewhat less intuitively, there are also two zeros: a positive and a negative one.
 
 $$
-          \frac{1}{+0} = +∞
-\;\;\;\;  \frac{1}{-0} = -∞
+          \frac{1}{+0} = +\infty
+\;\;\;\;  \frac{1}{-0} = -\infty
 $$
 
 Fun fact: `x + 0.0` can't be folded to `x`, but `x + (-0.0)` can, so the negative zero is a better initializer value than the positive zero as it is more likely to be optimized away by the compiler. The reason why `+0.0` doesn't work is that IEEE says that `+0.0 + -0.0 == +0.0`, so it will give a wrong answer for `x = -0.0`. The presence of two zeros frequently causes headaches like this — good news that you can pass `-fno-signed-zeros` to the compiler if you want to disable this behavior.
@@ -103,7 +103,7 @@ Zeros are encoded by setting all bits to zero, except for the sign bit in the ne
 The other type is the "not-a-number” (NaN), which is generated as the result of mathematically incorrect operations:
 
 $$
-\log(-1),\; \arccos(1.01),\; ∞ − ∞,\; −∞ + ∞,\; 0 × ∞,\; 0 ÷ 0,\; ∞ ÷ ∞
+\log(-1),\; \arccos(1.01),\; \infty - \infty,\; -\infty + \infty,\; 0 \times \infty,\; 0 \div 0,\; \infty \div \infty
 $$
 
 There are two types of NaNs: a *signaling NaN* and a *quiet NaN*. A signaling NaN raises an exception flag, which may or may not cause immediate hardware interrupt depending on the FPU configuration, while a quiet NaN just propagates through almost every arithmetic operation, resulting in more NaNs.

@@ -12,7 +12,7 @@ We can definie product of permutations as application of one permutation to anot
 
 This operation is associative, so we can use binary exponentiation to compute $n$-th power in $O(n \log n)$ time.
 
-![](../img/permutation.png)
+![](../../arithmetic/img/permutation.png)
 
 In general, this is called *permutation group*, and *groups* are sets of element that have an operation defined on them.
 
@@ -34,7 +34,7 @@ $$
 a + bi = r \cdot ( \cos \phi + i \sin \phi )
 $$
 
-![](../img/complex-plane.png)
+![](../../arithmetic/img/complex-plane.png)
 
 The reason this representation is useful is because if we need to multiply two complex numbers it can be shown with high school trigonometry that instead of doing binomial expansion we just need to multiply their moduli and add their arguments:
 
@@ -71,7 +71,7 @@ $$
 
 where $\tau$ means $2 \pi$ (a [modern notation](https://tauday.com/tau-manifesto)).
 
-![](../img/roots.png)
+![](../../arithmetic/img/roots.png)
 
 The first root $w_1$ (the second root, to be more precise, because $1$ is also a root) is called generating root of unity. Raising it to 1st, 2nd and so on powers will generate a sequence of roots that will cycle after $n$ iterations.
 

@@ -1,0 +1,7 @@
+{{- $.Scratch.Add "searchindex" slice -}}
+{{- range $index, $element := .Site.Pages -}}
+  {{- if hasPrefix $element.RelPermalink "/hpc/" -}}
+    {{- $.Scratch.Add "searchindex" (dict "id" $index "title" $element.Title "path" $element.Permalink "content" $element.Plain) -}}
+  {{- end -}}
+{{- end -}}
+{{- $.Scratch.Get "searchindex" | jsonify -}}

@@ -29,7 +29,7 @@ Random variables can be used to derive another random variables. An **event** is
 For example, the probability of rolling 4 or more on a 6-sided die is:
 
 $$
-P(x \geq 4) = \frac{|\\{ 4, 5, 6 \\}|}{|X|} = \frac{3}{6} = \frac{1}{2}
+P(x \geq 4) = \frac{|\{ 4, 5, 6 \}|}{|X|} = \frac{3}{6} = \frac{1}{2}
 $$
 
 A **joint probability** of two or more events is the probability of them happening at the same time. Two random variables $X$ and $Y$ are called **independent** if $p(x, y) = p(x) p(y)$ for all $x \in X$ and $y \in Y$, and **correlated** otherwise.
@@ -40,12 +40,12 @@ An **observation** is a value of a random variable that was observed (that actua
 
 The sample space of a variable does not have to be finite or even discrete, but in this case we need to adjust our definition of probability distribution. For example, when we pick a number uniformly between $0$ and $1$, each individual real-valued outcome has a probability of $0$ being picked (out of an infinite set of numbers), so instead of probability function we define *probability density*, which can be used to calculate probability of number lying in a certain range:
 
-![](../img/pdf.png)
+![](../architecture/img/pdf.png)
 
 The probability density function should satisfy similar requirements, but in continuous case:
 
 $$
-p(a \leq x \leq b) = \int_{a}{b} p(x) \\; dx
+p(a \leq x \leq b) = \int_{a}{b} p(x) \; dx
 $$
 
 For simplicity, we will only consider finite sample spaces, but most statements can be extended to the general case.
@@ -175,7 +175,7 @@ The birthday problem consideres the case when there is enough groups for all ite
 
 A concrete example is the probability that in a group of $n$ randomly chosen people, some pair of them will have the same birthday. In a group of $23$ people, there is more than 50% chance that at least two of them will share a birthday, and in a group of $70$ there is at least 99.9% chance. This result seems counterintuitive given that there are only 23 individuals and 366 days to account for, but you really need to consider that the comparisons of birthdays are made between every possible pair of individuals, so there are $23 \times 22 / 2 = 253$ pairs to consider, which is more than half the number of days in a year.
 
-![](../img/birthday.png)
+![](../architecture/img/birthday.png)
 
 More generally, let $f(n, m)$ be the probability of *not* having a birthday collision, that is, $f(n, m) = 1 - g(n, m)$, where $g(n, m)$ is the probability of collision we actually want. Now, consider a group of $n-1$ random people with distinct birthdays and the probability that adding the $n$-th person to the group will not cause a collision, which is the same as not picking any of the $(n-1)$ already taken birthdays:
 
@@ -322,7 +322,7 @@ We can rephrase the problem more concisely this way: calculate the area of inter
 
 What we can do instead is to pick a few points of the square at random and check each one of them if it is covered by any circle with a simple $(x-x_i)^2 + (y-y_i)^2 \leq r_i^2$ predicate. Then the ratio of covered points will be our estimate of the real answer, and the result should be pretty close given enough points.
 
-![You can approximate $\pi$ this way if you put a single unit circle inside the square](../img/monte-carlo.gif)
+![You can approximate $\pi$ this way if you put a single unit circle inside the square](../architecture/img/monte-carlo.gif)
 
 But if we have a formal requirement on the precision of our answer — say, if we want 3 correct digits at least 99% of the time — how many points do we need? We can estimate the variance of our approximation and then plug it in Chebyshev's inequality.
 
@@ -367,7 +367,7 @@ $$
 
 There is a theorem slightly beyond the scope of this tutorial that states that if we continue to add distributions together, then the resulting distribution will eventually converge to what's called the normal distribution:
 
-![](../img/clt.png)
+![](../architecture/img/clt.png)
 
 For data with a “bell-shaped” graph, about 68% of the values lie
 within one standard deviation of the mean, about 95% lie withing

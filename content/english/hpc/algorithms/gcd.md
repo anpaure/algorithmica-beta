@@ -100,7 +100,7 @@ Analogous to the Euclidean algorithm, it is based on a few similar observations:
 1. $\gcd(0, b) = b$ and symmetrically $\gcd(a, 0) = a$;
 2. $\gcd(2a, 2b) = 2 \cdot \gcd(a, b)$;
 3. $\gcd(2a, b) = \gcd(a, b)$ if $b$ is odd and symmetrically $\gcd(a, b) = \gcd(a, 2b)$ if $a$ is odd;
-4. $\gcd(a, b) = \gcd(|a − b|, \min(a, b))$, if $a$ and $b$ are both odd.
+4. $\gcd(a, b) = \gcd(|a - b|, \min(a, b))$, if $a$ and $b$ are both odd.
 
 Likewise, the algorithm itself is just a repeated application of these identities.
 
@@ -207,7 +207,7 @@ Let's draw the dependency graph of this loop:
 
 Modern processors can execute many instructions in parallel, essentially meaning that the true "cost" of this computation is roughly the sum of latencies on its critical path. In this case, it is the total latency of `diff`, `abs`, `ctz`, and `shift`.
 
-We can decrease this latency using the fact that we can actually calculate `ctz` using just `diff = a - b`, because a [negative number](../hpc/arithmetic/integer/#signed-integers) divisible by $2^k$ still has $k$ zeros at the end of its binary representation. This lets us not wait for `max(diff, -diff)` to be computed first, resulting in a shorter graph like this:
+We can decrease this latency using the fact that we can actually calculate `ctz` using just `diff = a - b`, because a [negative number](../../arithmetic/integer/#signed-integers) divisible by $2^k$ still has $k$ zeros at the end of its binary representation. This lets us not wait for `max(diff, -diff)` to be computed first, resulting in a shorter graph like this:
 
 <!--
 \node [draw, circle] (diff)  at (3, 10) {diff};

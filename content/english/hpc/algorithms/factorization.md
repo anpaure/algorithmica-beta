@@ -109,7 +109,7 @@ u64 find_factor(u64 n) {
 }
 ```
 
-With this approach, we can process 3M 16-bit integers per second, although it would probably [get slower](../hpc/cpu-cache/bandwidth/) for larger numbers. While it requires just a few milliseconds and 64KB of memory to calculate and store the divisors of the first $2^{16}$ numbers, it does not scale well for larger inputs.
+With this approach, we can process 3M 16-bit integers per second, although it would probably [get slower](../../cpu-cache/bandwidth/) for larger numbers. While it requires just a few milliseconds and 64KB of memory to calculate and store the divisors of the first $2^{16}$ numbers, it does not scale well for larger inputs.
 
 ### Wheel factorization
 

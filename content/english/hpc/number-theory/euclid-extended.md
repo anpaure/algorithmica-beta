@@ -3,7 +3,7 @@ title: Extended Euclidean Algorithm
 weight: 3
 ---
 
-[Fermat’s theorem](../modular/#fermats-theorem) allows us to calculate modular multiplicative inverses through [binary exponentiation](..exponentiation/) in $O(\log n)$ operations, but it only works with prime modula. There is a generalization of it, [Euler's theorem](https://en.wikipedia.org/wiki/Euler%27s_theorem), stating that if $m$ and $a$ are coprime, then
+[Fermat’s theorem](../modular/#fermats-theorem) allows us to calculate modular multiplicative inverses through [binary exponentiation](../exponentiation/) in $O(\log n)$ operations, but it only works with prime modula. There is a generalization of it, [Euler's theorem](https://en.wikipedia.org/wiki/Euler%27s_theorem), stating that if $m$ and $a$ are coprime, then
 
 $$
 a^{\phi(m)} \equiv 1 \pmod m
@@ -29,7 +29,7 @@ $$
 
 Note that, if $a$ is not coprime with $m$, there is no solution since no integer combination of $a$ and $m$ can yield anything that is not a multiple of their greatest common divisor.
 
-The algorithm is also recursive: it calculates the coefficients $x'$ and $y'$ for $\gcd(b, a \bmod b)$ and restores the solution for the original number pair. If we have a solution $(x', y')$ for the pair $(b, a \bmod b)$
+The algorithm is also recursive: it calculates the coefficients $x^\prime$ and $y^\prime$ for $\gcd(b, a \bmod b)$ and restores the solution for the original number pair. If we have a solution $(x^\prime, y^\prime)$ for the pair $(b, a \bmod b)$
 
 $$
 b \cdot x' + (a \bmod b) \cdot y' = g

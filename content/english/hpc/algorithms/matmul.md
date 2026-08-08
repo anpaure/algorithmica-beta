@@ -449,10 +449,12 @@ It is also known as the "distance product" due to its graph interpretation: when
 A cool thing about the distance product is that if we iterate the process and calculate
 
 $$
-D_2 = D \circ D \\
-D_4 = D_2 \circ D_2 \\
-D_8 = D_4 \circ D_4 \\
-\ldots
+\begin{aligned}
+D_2 &= D \circ D, \\
+D_4 &= D_2 \circ D_2, \\
+D_8 &= D_4 \circ D_4, \\
+&\ldots
+\end{aligned}
 $$
 
 …we can find all-pairs shortest paths in $O(\log n)$ steps:

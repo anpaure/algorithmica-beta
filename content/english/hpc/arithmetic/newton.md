@@ -110,7 +110,7 @@ $$
 |\delta_{i+1}| = \frac{|f''(x_i)|}{2 \cdot |f'(x_n)|} \cdot \delta_i^2
 $$
 
-which results in at least quadratic convergence under a few additional assumptions, namely $f'(x)$ not being equal to $0$ and $f''(x)$ being continuous.
+which results in at least quadratic convergence under a few additional assumptions, namely $f^\prime(x)$ not being equal to $0$ and $f^{\prime\prime}(x)$ being continuous.
 
 ## Further Reading
 

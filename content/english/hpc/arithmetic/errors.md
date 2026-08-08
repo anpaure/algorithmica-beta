@@ -53,7 +53,7 @@ It seems surprising to expect this guarantee from hardware that performs complex
 There are two natural ways to measure computational errors:
 
 * The engineers who create hardware or spec-compliant exact software are concerned with *units in the last place* (ulps), which is the distance between two numbers in terms of how many representable numbers can fit between the precise real value and the actual result of the computation.
-* People that are working on numerical algorithms care about *relative precision*, which is the absolute value of the approximation error divided by the real answer: $|\frac{v-v'}{v}|$.
+* People that are working on numerical algorithms care about *relative precision*, which is the absolute value of the approximation error divided by the real answer: $|\frac{v-v^\prime}{v}|$.
 
 In either case, the usual tactic to analyze errors is to assume the worst case and simply bound them.
 

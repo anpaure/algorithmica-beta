@@ -8,7 +8,7 @@ In machine learning, perhaps the most popular way of doing black-box classificat
 
 Say, we want to classify $28 \times 28$ black-and-white pictures of digits into one of 10 categories (0..9):
 
-![Numbers that some Canadian students wrote on test blanks make MNIST dataset](../img/mnist.png)
+![Numbers that some Canadian students wrote on test blanks make MNIST dataset](../../arithmetic/img/mnist.png)
 
 Computationally, it works like this. If we are working with $n$-dimensional data, which we need to classify into one of $m$ classes, then we multiply the input vector by a parameter matrix of size $n \times m$, and then apply a special "softmax" function to the output $m$-element vector:
 

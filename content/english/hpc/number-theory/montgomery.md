@@ -37,7 +37,7 @@ int faster_sum(int *a, int n) {
 }
 ```
 
-However, sometimes you only have a chain of modular multiplications, and there is no good way to eel out of computing the remainder of the division — other than with the [integer division tricks](../hpc/arithmetic/division/) requiring a constant modulo and some precomputation.
+However, sometimes you only have a chain of modular multiplications, and there is no good way to eel out of computing the remainder of the division — other than with the [integer division tricks](../../arithmetic/division/) requiring a constant modulo and some precomputation.
 
 But there is another technique designed specifically for modular arithmetic, called *Montgomery multiplication*.
 
@@ -168,7 +168,7 @@ $$
 m = x \cdot n^\prime \cdot n \equiv x \pmod r
 $$
 
-But why would we voluntarily choose to perfom two right-shifts instead of just one? This is beneficial because for `((u64) q * n) >> 32` we need to do a 32-by-32 multiplication and take the upper 32 bits of the result (which the x86 `mul` instruction [already writes](../hpc/arithmetic/integer/#128-bit-integers) in a separate register, so it doesn't cost anything), and the other right-shift `x >> 32` is not on the critical path.
+But why would we voluntarily choose to perfom two right-shifts instead of just one? This is beneficial because for `((u64) q * n) >> 32` we need to do a 32-by-32 multiplication and take the upper 32 bits of the result (which the x86 `mul` instruction [already writes](../../arithmetic/integer/#128-bit-integers) in a separate register, so it doesn't cost anything), and the other right-shift `x >> 32` is not on the critical path.
 
 ```c++
 u32 reduce(u64 x) {
@@ -178,7 +178,7 @@ u32 reduce(u64 x) {
 }
 ```
 
-One of the main advantages of Montgomery multiplication over other modular reduction methods is that it doesn't require very large data types: it only needs a $r \times r$ multiplication that extracts the lower and higher $r$ bits of the result, which [has special support](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#ig_expand=7395,7392,7269,4868,7269,7269,1820,1835,6385,5051,4909,4918,5051,7269,6423,7410,150,2138,1829,1944,3009,1029,7077,519,5183,4462,4490,1944,5055,5012,5055&techs=AVX,AVX2&text=mul) on most hardware also makes it easily generalizable to [SIMD](../hpc/simd/) and larger data types:
+One of the main advantages of Montgomery multiplication over other modular reduction methods is that it doesn't require very large data types: it only needs a $r \times r$ multiplication that extracts the lower and higher $r$ bits of the result, which [has special support](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#ig_expand=7395,7392,7269,4868,7269,7269,1820,1835,6385,5051,4909,4918,5051,7269,6423,7410,150,2138,1829,1944,3009,1029,7077,519,5183,4462,4490,1944,5055,5012,5055&techs=AVX,AVX2&text=mul) on most hardware also makes it easily generalizable to [SIMD](../../simd/) and larger data types:
 
 ```c++
 typedef __uint128_t u128;
@@ -225,9 +225,9 @@ a \cdot x \cdot (2 - a \cdot x)
 \end{aligned}
 $$
 
-We can start with $x = 1$ as the inverse of $a$ modulo $2^1$ and apply this identity exactly $\log_2 r$ times, each time doubling the number of bits in the inverse — somewhat reminiscent of [the Newton's method](../hpc/arithmetic/newton/).
+We can start with $x = 1$ as the inverse of $a$ modulo $2^1$ and apply this identity exactly $\log_2 r$ times, each time doubling the number of bits in the inverse — somewhat reminiscent of [the Newton's method](../../arithmetic/newton/).
 
-**Transforming** a number into the Montgomery space can be done by multiplying it by $r$ and computing modulo [the usual way](../hpc/arithmetic/division/), but we can also take advantage of this relation:
+**Transforming** a number into the Montgomery space can be done by multiplying it by $r$ and computing modulo [the usual way](../../arithmetic/division/), but we can also take advantage of this relation:
 
 $$
 \bar{x} = x \cdot r \bmod n = x * r^2
@@ -268,7 +268,7 @@ struct Montgomery {
 };
 ```
 
-To test its performance, we can plug Montgomery multiplication into the [binary exponentiation](../hpc/number-theory/exponentiation/):
+To test its performance, we can plug Montgomery multiplication into the [binary exponentiation](../exponentiation/):
 
 ```c++
 constexpr Montgomery space(M);

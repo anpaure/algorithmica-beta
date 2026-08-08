@@ -1,0 +1,44 @@
+baseURL: https://anpaure.github.io/algorithmica-beta/
+title: Algorithmica β
+contentDir: content/english
+languageCode: en-us
+canonifyURLs: true
+buildDrafts: true
+disableKinds:
+- taxonomy
+- term
+ignoreFiles:
+- hpc/(parallel|distributed|slides)/
+layoutDir: layouts-beta
+staticDir:
+- static
+- static-beta
+theme:
+- algorithmica
+pygmentsUseClasses: true
+outputFormats:
+  Reveal:
+    baseName: index
+    mediaType: text/html
+    isHTML: true
+  SearchIndex:
+    mediaType: application/json
+    baseName: searchindex
+    isPlainText: true
+    notAlternative: true
+outputs:
+  home:
+  - HTML
+  - SearchIndex
+markup:
+  goldmark:
+    footnote: false
+    renderer:
+      unsafe: true
+sectionPagesMenu: main
+params:
+  repo: https://github.com/anpaure/algorithmica-beta
+  sourceRepoSlug: anpaure/algorithmica-beta
+  sourceBranch: source
+  contentDir: content/english
+  editionLabel: Algorithmica β

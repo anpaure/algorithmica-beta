@@ -2,18 +2,22 @@
   {{- partial "analytics.html" -}}
 
   <meta charset="utf-8">
+  {{ with .Site.Params.EditionLabel }}
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ "beta.css" | absURL }}">
+  {{ end }}
 
   {{ $style := resources.Get "style.sass" | toCSS | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
-  <link rel="stylesheet" href="/syntax.css" id="syntax-theme">
+  <link rel="stylesheet" href="{{ "syntax.css" | relURL }}" id="syntax-theme">
 
   <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
   <script src="https://tikzjax.com/v1/tikzjax.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
-  <script src="/scripts/lunr.stemmer.support.min.js"></script>
-  <script src="/scripts/lunr.ru.min.js"></script>
-  <script src="/scripts/lunr.multi.min.js"></script>
+  <script src="{{ "scripts/lunr.stemmer.support.min.js" | relURL }}"></script>
+  <script src="{{ "scripts/lunr.ru.min.js" | relURL }}"></script>
+  <script src="{{ "scripts/lunr.multi.min.js" | relURL }}"></script>
 
   {{ $dark := resources.Get "dark.sass" | toCSS | minify | fingerprint }}
   <link rel="stylesheet" id="theme">
@@ -33,8 +37,8 @@
 
     function switchTheme(theme) {
       console.log("Changing theme:", theme)
-      document.getElementById('theme').href = (theme == 'dark' ? "{{ $dark.RelPermalink }}" : "")
-      document.getElementById('syntax-theme').href = (theme == 'dark' ? '/syntax-dark.css' : '/syntax.css')
+      document.getElementById('theme').href = (theme == 'dark' ? "{{ $dark.Permalink }}" : "")
+      document.getElementById('syntax-theme').href = (theme == 'dark' ? '{{ "syntax-dark.css" | absURL }}' : '{{ "syntax.css" | absURL }}')
       localStorage.setItem('theme', theme)
     }
 
@@ -52,7 +56,7 @@
 
       if (!index) {
         console.log("Fetching index")
-        const response = await fetch('/searchindex.json')
+        const response = await fetch('{{ "searchindex.json" | absURL }}')
         const pages = await response.json()
         index = lunr(function() {
           this.use(lunr.multiLanguage('en', 'ru'))

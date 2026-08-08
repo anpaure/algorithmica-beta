@@ -26,7 +26,7 @@ Here we used a single pointer to the beginning of the memory region instead of a
 
 The I/O complexity of this code is $O(N^2)$ because the writes are not sequential. If you try to swap the iteration variables, it will be the other way around, but the result is going to be the same.
 
-### Algorithm
+### Recursive Algorithm
 
 The *cache-oblivious* algorithm relies on the following block matrix identity:
 
