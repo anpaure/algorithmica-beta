@@ -42,3 +42,4 @@ params:
   sourceBranch: source
   contentDir: content/english
   editionLabel: Algorithmica β
+  disableAnalytics: true
