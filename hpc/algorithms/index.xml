@@ -172,5 +172,15 @@ All implementations are compiled with GCC 13 and run on a Zen 2 CPU clocked at 2
  #BaselineThe result of multiplying an $l \times n$ matrix $A$ by an $n \times m$ matrix $B$ is defined as an $l \times m$ matrix $C$ such that:</description>
     </item>
     
+    <item>
+      <title>Knapsack with Bitsets</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/algorithms/knapsack/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/algorithms/knapsack/</guid>
+      <description>We have already used the knapsack problem as a small example when discussing memory locality. We ended that example with a transition that fits in two lines:
+bitset&amp;lt;W + 1&amp;gt; possible; possible[0] = 1; for (int x : cost) possible |= possible &amp;lt;&amp;lt; x; This looks suspiciously easier than the dynamic program it replaces. In this case the short code is not hiding a complicated library algorithm: the shift and the OR are the algorithm.</description>
+    </item>
+    
   </channel>
 </rss>
