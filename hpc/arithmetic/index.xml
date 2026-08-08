@@ -1,17 +1,104 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Arithmetic on Algorithmica β</title><link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/</link><description>Recent content in Arithmetic on Algorithmica β</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/index.xml" rel="self" type="application/rss+xml"/><item><title>Floating-Point Numbers</title><link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/</guid><description>The users of floating-point arithmetic deserve one of these IQ bell curve memes — because this is how the relationship between it and most people typically proceeds:
-Beginner programmers use it everywhere as if it was some magic unlimited-precision data type. Then they discover that 0.1 + 0.2 != 0.3 or some other quirk like that, freak out, start thinking that some random error term is added to every computation, and for many years avoid any real data types completely.</description></item><item><title>IEEE 754 Floats</title><link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/</guid><description>When we designed our DIY floating-point type, we omitted quite a lot of important little details:
-How many bits do we dedicate for the mantissa and the exponent? Does a 0 sign bit mean +, or is it the other way around? How are these bits stored in memory? How do we represent 0? How exactly does rounding happen? What happens if we divide by zero? What happens if we take the square root of a negative number?</description></item><item><title>Rounding Errors</title><link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/</guid><description>The way rounding works in hardware floats is remarkably simple: it occurs if and only if the result of the operation is not representable exactly, and by default gets rounded to the nearest representable number (in case of a tie preferring the number that ends with a zero).
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Arithmetic on Algorithmica β</title>
+    <link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/</link>
+    <description>Recent content in Arithmetic on Algorithmica β</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Floating-Point Numbers</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/</guid>
+      <description>The users of floating-point arithmetic deserve one of these IQ bell curve memes — because this is how the relationship between it and most people typically proceeds:
+ Beginner programmers use it everywhere as if it was some magic unlimited-precision data type. Then they discover that 0.1 + 0.2 != 0.3 or some other quirk like that, freak out, start thinking that some random error term is added to every computation, and for many years avoid any real data types completely.</description>
+    </item>
+    
+    <item>
+      <title>IEEE 754 Floats</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/</guid>
+      <description>When we designed our DIY floating-point type, we omitted quite a lot of important little details:
+ How many bits do we dedicate for the mantissa and the exponent? Does a 0 sign bit mean +, or is it the other way around? How are these bits stored in memory? How do we represent 0? How exactly does rounding happen? What happens if we divide by zero? What happens if we take the square root of a negative number?</description>
+    </item>
+    
+    <item>
+      <title>Rounding Errors</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/</guid>
+      <description>The way rounding works in hardware floats is remarkably simple: it occurs if and only if the result of the operation is not representable exactly, and by default gets rounded to the nearest representable number (in case of a tie preferring the number that ends with a zero).
 Consider the following code snippet:
-float x = 0; for (int i = 0; i &amp;lt; (1 &amp;lt;&amp;lt; 25); i++) x++; printf(&amp;#34;%f\n&amp;#34;, x); Instead of printing $2^{25} = 33554432$ (what the result mathematically should be), it outputs $16777216 = 2^{24}$.</description></item><item><title>Newton's Method</title><link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/</guid><description>Reaching the maximum possible precision is rarely required from a practical algorithm. In real-world data, modeling and measurement errors are usually several orders of magnitude larger than the errors that come from rounding floating-point numbers and such, and we are often perfectly happy with picking an approximate method that trades off precision for speed.
-In this section, we introduce one of the most important building blocks in such approximate, numerical algorithms: Newton&amp;rsquo;s method.</description></item><item><title>Fast Inverse Square Root</title><link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/</guid><description>The inverse square root of a floating-point number $\frac{1}{\sqrt x}$ is used in calculating normalized vectors, which are in turn extensively used in various simulation scenarios such as computer graphics (e.g., to determine angles of incidence and reflection to simulate lighting).
+float x = 0; for (int i = 0; i &amp;lt; (1 &amp;lt;&amp;lt; 25); i++) x++; printf(&amp;#34;%f\n&amp;#34;, x); Instead of printing $2^{25} = 33554432$ (what the result mathematically should be), it outputs $16777216 = 2^{24}$.</description>
+    </item>
+    
+    <item>
+      <title>Newton&#39;s Method</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/</guid>
+      <description>Reaching the maximum possible precision is rarely required from a practical algorithm. In real-world data, modeling and measurement errors are usually several orders of magnitude larger than the errors that come from rounding floating-point numbers and such, and we are often perfectly happy with picking an approximate method that trades off precision for speed.
+In this section, we introduce one of the most important building blocks in such approximate, numerical algorithms: Newton&amp;rsquo;s method.</description>
+    </item>
+    
+    <item>
+      <title>Fast Inverse Square Root</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/</guid>
+      <description>The inverse square root of a floating-point number $\frac{1}{\sqrt x}$ is used in calculating normalized vectors, which are in turn extensively used in various simulation scenarios such as computer graphics (e.g., to determine angles of incidence and reflection to simulate lighting).
 $$ \hat{v} = \frac{\vec v}{\sqrt {v_x^2 + v_y^2 + v_z^2}} $$
-Calculating an inverse square root directly — by first calculating a square root and then dividing $1$ by it — is extremely slow because both of these operations are slow even though they are implemented in hardware.</description></item><item><title>Integer Numbers</title><link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/</guid><description>If you are reading this chapter sequentially from the beginning, you might be wondering: why would I introduce integer arithmetic after floating-point one? Isn&amp;rsquo;t it supposed to be easier?
-True: plain integer representations are simpler. But, counterintuitively, their simplicity allows for more possibilities for operations to be expressed in terms of others. And if floating-point representations are so unwieldy that most of their operations are implemented in hardware, efficiently manipulating integers requires much more creative use of the instruction set.</description></item><item><title>Integer Division</title><link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/</guid><description>Compared to other arithmetic operations, division works very poorly on x86 and computers in general. Both floating-point and integer division is notoriously hard to implement in hardware. The circuitry takes a lot of space in the ALU, the computation has a lot of stages, and as the result, div and its siblings routinely take 10-20 cycles to complete, with latency being slightly less on smaller data type sizes.
-#Division and Modulo in x86Since nobody wants to duplicate all this mess for a separate modulo operation, the div instruction serves both purposes.</description></item><item><title>Bit Manipulation</title><link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/</guid><description>This article is largely based on Bit Twiddling Hacks by Sean Eron Anderson. Some methods were added, and some removed due to being solved by hardware. Most of these are already optimized by compilers.
-A lot of it became obsolete on architectures where cmov is available.
-This also serves as an exercise.
-#Basic Operations&amp;gt;&amp;gt;
-Note that arithmetic shift shifts in 1 for negative numbers and in 0 for positive ones.</description></item><item><title>Data Compression</title><link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/</guid><description>Can we write a program that makes every file smaller?
+Calculating an inverse square root directly — by first calculating a square root and then dividing $1$ by it — is extremely slow because both of these operations are slow even though they are implemented in hardware.</description>
+    </item>
+    
+    <item>
+      <title>Integer Numbers</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/</guid>
+      <description>If you are reading this chapter sequentially from the beginning, you might be wondering: why would I introduce integer arithmetic after floating-point one? Isn&amp;rsquo;t it supposed to be easier?
+True: plain integer representations are simpler. But, counterintuitively, their simplicity allows for more possibilities for operations to be expressed in terms of others. And if floating-point representations are so unwieldy that most of their operations are implemented in hardware, efficiently manipulating integers requires much more creative use of the instruction set.</description>
+    </item>
+    
+    <item>
+      <title>Integer Division</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/</guid>
+      <description>Compared to other arithmetic operations, division works very poorly on x86 and computers in general. Both floating-point and integer division is notoriously hard to implement in hardware. The circuitry takes a lot of space in the ALU, the computation has a lot of stages, and as the result, div and its siblings routinely take 10-20 cycles to complete, with latency being slightly less on smaller data type sizes.
+ #Division and Modulo in x86Since nobody wants to duplicate all this mess for a separate modulo operation, the div instruction serves both purposes.</description>
+    </item>
+    
+    <item>
+      <title>Bit Manipulation</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/</guid>
+      <description>This article is largely based on Bit Twiddling Hacks by Sean Eron Anderson. Some methods were added, and some removed due to being solved by hardware. Most of these are already optimized by compilers.
+A lot of it became obsolete once compilers learned these identities and processors gained instructions such as popcnt, lzcnt, and cmov. This is good news: we can write the operation we mean and let the compiler choose an implementation for the target architecture.</description>
+    </item>
+    
+    <item>
+      <title>Data Compression</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/</guid>
+      <description>Can we write a program that makes every file smaller?
 There are $256^n$ byte strings of length $n$, but fewer than that many strings of length less than $n$:
 $$ 1+256+256^2+\cdots+256^{n-1}&amp;lt;256^n. $$
-If every input became shorter, at least two inputs would have to produce the same output, and the decompressor would not know which one to restore. Lossless compression can only work by making likely inputs shorter and sacrificing the unlikely ones.</description></item></channel></rss>
+If every input became shorter, at least two inputs would have to produce the same output, and the decompressor would not know which one to restore. Lossless compression can only work by making likely inputs shorter and sacrificing the unlikely ones.</description>
+    </item>
+    
+  </channel>
+</rss>

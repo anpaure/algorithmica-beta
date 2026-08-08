@@ -1,177 +1,1060 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><link rel=icon href=https://anpaure.github.io/algorithmica-beta/favicon.ico><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/beta.css><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00="><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/syntax.css id=syntax-theme><link rel=stylesheet type=text/css href=https://tikzjax.com/v1/fonts.css><script src=https://tikzjax.com/v1/tikzjax.js></script>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js></script>
-<link rel=stylesheet id=theme><script>function toggleSidebar(){console.log("Toggling sidebar visibility");var e=document.getElementById("sidebar"),t=document.getElementById("wrapper");(e.classList.contains("sidebar-toggled")||window.getComputedStyle(e).display=="block")&&(e.classList.toggle("sidebar-hidden"),t.classList.toggle("sidebar-hidden")),e.classList.add("sidebar-toggled"),t.classList.add("sidebar-toggled")}function switchTheme(e){console.log("Changing theme:",e),document.getElementById("theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css":"",document.getElementById("syntax-theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/syntax-dark.css":"https://anpaure.github.io/algorithmica-beta/syntax.css",localStorage.setItem("theme",e)}async function toggleSearch(){console.log("Toggling search");var e=document.getElementById("search");if(window.getComputedStyle(e).display=="none"?(e.style.display="block",window.scrollTo({top:0}),document.getElementById("search-bar").focus()):e.style.display="none",!index){console.log("Fetching index");const e=await fetch("https://anpaure.github.io/algorithmica-beta/searchindex.json"),t=await e.json();index=lunr(function(){this.use(lunr.multiLanguage("en","ru")),this.field("title",{boost:5}),this.field("content",{boost:1}),t.forEach(function(e){this.add(e),articles.push(e)},this)}),console.log("Ready to search")}}var articles=[],index=void 0;function search(){var e=document.getElementById("search-bar").value,n,s=document.getElementById("search-results"),o=document.getElementById("search-count");if(e==''){s.innerHTML='',o.innerHTML='';return}n=index.search(e),o.innerHTML="Found <b>"+n.length+"</b> pages";let t='';for(const a in n){const i=articles[n[a].ref];t+='<li><a href="'+i.path+'">'+i.title+"</a> <p>";const s=i.content,o=80;if(s.includes(e)){const n=s.indexOf(e);n>o&&(t+="…"),t+=s.substring(n-o,n)+"<b>"+e+"</b>"+s.substring(n+e.length,n+e.length+o)}else t+=s.substring(0,o*2);t+="…</p></li>"}s.innerHTML=t}localStorage.getItem("theme")=="dark"&&switchTheme("dark"),window.addEventListener("load",function(){var e=document.getElementById("active-element");e&&e.scrollIntoView({block:"center"})}),window.addEventListener("scroll",function(){var e=document.getElementById("menu");window.scrollY<120?e.classList.remove("scrolled"):e.classList.add("scrolled")}),window.addEventListener("keydown",function(e){if(e.altKey)return;if(document.activeElement.tagName=="INPUT")return;e.key=="ArrowLeft"?document.getElementById("prev-article").click():e.key=="ArrowRight"&&document.getElementById("next-article").click()})</script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin=anonymous></script>
-<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><title>Argmin with SIMD - Algorithmica β</title></head><body><nav id=sidebar><div class=title><a href=https://anpaure.github.io/algorithmica-beta/>Algorithmica β</a>
-<span class=slash>/</span>
-<a href=https://anpaure.github.io/algorithmica-beta/hpc/ class=divisionAbbr>HPC</a></div><ul><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/preface/>Preface</a></li><li class=part>Performance Engineering</li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/>Complexity Models</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/>Modern Hardware</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/>Programming Languages</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/>Models of Computation</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/>When to Optimize</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/>Computer Architecture</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/>Instruction Set Architectures</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/>Assembly Language</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/>Loops and Conditionals</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/>Functions and Recursion</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/>Indirect Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/>Virtualization</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/>Interrupts and System Calls</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/>Machine Code Layout</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/>Instruction-Level Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/>Pipeline Hazards</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/>The Cost of Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/>Branchless Programming</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/>Instruction Tables</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/>Instruction Scheduling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/>Throughput Computing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/>Theoretical Performance Limits</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/>Compilation</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/>Stages of Compilation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/>Flags and Targets</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/>Situational Optimizations</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/>Contract Programming</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/>Non-Zero-Cost Abstractions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/>Precomputation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/>Arithmetic Optimizations</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/>What Compilers Can and Can't Do</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/>Profiling</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/>Instrumentation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/>Statistical Profiling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/>Program Simulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/>Machine Code Analyzers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/>Benchmarking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/>Getting Accurate Results</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/>Arithmetic</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/>Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/>IEEE 754 Floats</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/>Rounding Errors</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/>Newton's Method</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/>Fast Inverse Square Root</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/>Integer Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/>Integer Division</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/>Bit Manipulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/>Data Compression</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/>Number Theory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/>Modular Arithmetic</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/>Binary Exponentiation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/>Extended Euclidean Algorithm</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/>Montgomery Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/>Finite Fields</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/>Error Correction</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/>Hashing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/>Cryptography</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/>Random Number Generation</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/>External Memory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/>Memory Hierarchy</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/>Virtual Memory</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/>External Memory Model</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/>External Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/>List Ranking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/>Eviction Policies</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/>Cache-Oblivious Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/>Spatial and Temporal Locality</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/>B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/>Sublinear Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/>Memory Management</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/>RAM & CPU Caches</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/>Memory Bandwidth</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/>Memory Latency</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/>Cache Lines</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/>Memory Sharing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/>Memory-Level Parallelism</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/>Prefetching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/>Alignment and Packing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/>Pointer Alternatives</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/>Cache Associativity</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/>Memory Paging</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/>AoS and SoA</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/>SIMD Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/>Intrinsics and Vector Types</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/>Moving Data</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/>Reductions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/>Masking and Blending</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/>In-Register Shuffles</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/>Auto-Vectorization and SPMD</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/>Algorithms Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/>Binary GCD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/>Prime Number Sieves</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/>Integer Factorization</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/>Big Integers and Karatsuba Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/>Optimizing Logistic Regression</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/>Fast Fourier Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/>Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/ id=active-element>Argmin with SIMD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/>Number-Theoretic Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/>Prefix Sum with SIMD</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/>Reading Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/>Writing Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/>Reading and Writing Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/>String Searching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/>Matrix Multiplication</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/>Data Structures Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/>Binary Search</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/>Static B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/>Search Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/>Segment Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/>Tries</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/>Bitmaps</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/>Range Minimum Query</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/>Hash Tables</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/>Probabilistic Filters</a></li></ol><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/summary/>Summary</a></li><li class=part>Appendix</li><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/stats/>Probability Theory Refresher</a></li></ul></nav><div id=wrapper><menu id=menu><div class=left><a><img src=https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg onclick=toggleSidebar() title="open table of contents"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg style=position:relative;top:-1px onclick='switchTheme(localStorage.getItem("theme")=="dark"?"light":"dark")' title="dark theme"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg onclick=toggleSearch() title=search></a></div><div class=title><span class=beta-brand>Algorithmica β</span>
-<span class=chapter-title>Argmin with SIMD</span></div><div class=right><a onclick=window.print()><img src=https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg title=print></a>
-<a href=https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2falgorithms%2fargmin.md><img src=https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg title=edit style=width:18px;position:relative;right:-2px;top:-1px></a>
-<a href=https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/algorithms/argmin.md class=github-main><img src=https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg title="view on github"></a></div></menu><main><div id=search><input id=search-bar type=search placeholder="Search this book…" oninput=search()><div id=search-count></div><div id=search-results></div></div><header><h1>Argmin with SIMD</h1><div class=info></div></header><article><p>Computing the <em>minimum</em> of an array is <a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction>easily vectorizable</a>, as it is not different from any other reduction: in AVX2, you just need to use a convenient <code>_mm256_min_epi32</code> intrinsic as the inner operation. It computes the minimum of two 8-element vectors in one cycle — even faster than in the scalar case, which requires at least a comparison and a conditional move.</p><p>Finding the <em>index</em> of that minimum element (<em>argmin</em>) is much harder, but it is still possible to vectorize very efficiently. In this section, we design an algorithm that computes the argmin (almost) at the speed of computing the minimum and ~15x faster than the naive scalar approach.</p><span class=anchor id=scalar-baseline></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/#scalar-baseline>#</a>Scalar Baseline</h3><p>For our benchmark, we create an array of random 32-bit integers, and then repeatedly try to find the index of the minimum among them (the first one if it isn&rsquo;t unique):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>N</span> <span class=o>=</span> <span class=p>(</span><span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=mi>16</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=k>alignas</span><span class=p>(</span><span class=mi>32</span><span class=p>)</span> <span class=kt>int</span> <span class=n>a</span><span class=p>[</span><span class=n>N</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>N</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>    <span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=n>rand</span><span class=p>();</span>
-</span></span></code></pre></div><p>For the sake of exposition, we assume that $N$ is a power of two, and run all our experiments for $N=2^{13}$ so that the <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth>memory bandwidth</a> is not a concern.</p><p>To implement argmin in the scalar case, we just need to maintain the index instead of the minimum value:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>argmin</span><span class=p>(</span><span class=kt>int</span> <span class=o>*</span><span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>a</span><span class=p>[</span><span class=n>k</span><span class=p>])</span>
-</span></span><span class=line><span class=cl>            <span class=n>k</span> <span class=o>=</span> <span class=n>i</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>k</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>It works at around 1.5 GFLOPS — meaning $1.5 \cdot 10^9$ values per second processed on average, or about 0.75 values per cycle (the CPU is clocked at 2GHz).</p><p>Let&rsquo;s compare it to <code>std::min_element</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>argmin</span><span class=p>(</span><span class=kt>int</span> <span class=o>*</span><span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=n>std</span><span class=o>::</span><span class=n>min_element</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>a</span> <span class=o>+</span> <span class=n>n</span><span class=p>)</span> <span class=o>-</span> <span class=n>a</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>k</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>The version from GCC gives ~0.28 GFLOPS — apparently, the compiler couldn&rsquo;t pierce through all the abstractions. Another reminder to never use STL.</p><span class=anchor id=vector-of-indices></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/#vector-of-indices>#</a>Vector of Indices</h3><p>The problem with vectorizing the scalar implementation is that there is a dependency between consequent iterations. When we optimized <a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction>array sum</a>, we faced the same problem, and we solved it by splitting the array into 8 slices, each representing a subset of its indices with the same remainder modulo 8. We can apply the same trick here, except that we also have to take array indices into account.</p><p>When we have the consecutive elements and their indices in vectors, we can process them in parallel using <a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless>predication</a>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>typedef</span> <span class=n>__m256i</span> <span class=n>reg</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>argmin</span><span class=p>(</span><span class=kt>int</span> <span class=o>*</span><span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=c1>// indices on the current iteration
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>reg</span> <span class=n>cur</span> <span class=o>=</span> <span class=n>_mm256_setr_epi32</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>4</span><span class=p>,</span> <span class=mi>5</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=mi>7</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=c1>// the current minimum for each slice
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>reg</span> <span class=n>min</span> <span class=o>=</span> <span class=n>_mm256_set1_epi32</span><span class=p>(</span><span class=n>INT_MAX</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=c1>// its index (argmin) for each slice
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>reg</span> <span class=n>idx</span> <span class=o>=</span> <span class=n>_mm256_setzero_si256</span><span class=p>();</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span> <span class=o>+=</span> <span class=mi>8</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=c1>// load a new SIMD block
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>reg</span> <span class=n>x</span> <span class=o>=</span> <span class=n>_mm256_load_si256</span><span class=p>((</span><span class=n>reg</span><span class=o>*</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>]);</span>
-</span></span><span class=line><span class=cl>        <span class=c1>// find the slices where the minimum is updated
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>reg</span> <span class=n>mask</span> <span class=o>=</span> <span class=n>_mm256_cmpgt_epi32</span><span class=p>(</span><span class=n>min</span><span class=p>,</span> <span class=n>x</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=c1>// update the indices
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>idx</span> <span class=o>=</span> <span class=n>_mm256_blendv_epi8</span><span class=p>(</span><span class=n>idx</span><span class=p>,</span> <span class=n>cur</span><span class=p>,</span> <span class=n>mask</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=c1>// update the minimum (can also similarly use a &#34;blend&#34; here, but min is faster)
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>min</span> <span class=o>=</span> <span class=n>_mm256_min_epi32</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>min</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=c1>// update the current indices
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=k>const</span> <span class=n>reg</span> <span class=n>eight</span> <span class=o>=</span> <span class=n>_mm256_set1_epi32</span><span class=p>(</span><span class=mi>8</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>cur</span> <span class=o>=</span> <span class=n>_mm256_add_epi32</span><span class=p>(</span><span class=n>cur</span><span class=p>,</span> <span class=n>eight</span><span class=p>);</span>       <span class=c1>// 
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=c1>// can also use a &#34;blend&#34; here, but min is faster
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=c1>// find the argmin in the &#34;min&#34; register and return its real index
-</span></span></span><span class=line><span class=cl><span class=c1></span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>min_arr</span><span class=p>[</span><span class=mi>8</span><span class=p>],</span> <span class=n>idx_arr</span><span class=p>[</span><span class=mi>8</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=n>_mm256_storeu_si256</span><span class=p>((</span><span class=n>reg</span><span class=o>*</span><span class=p>)</span> <span class=n>min_arr</span><span class=p>,</span> <span class=n>min</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=n>_mm256_storeu_si256</span><span class=p>((</span><span class=n>reg</span><span class=o>*</span><span class=p>)</span> <span class=n>idx_arr</span><span class=p>,</span> <span class=n>idx</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=mi>0</span><span class=p>,</span> <span class=n>m</span> <span class=o>=</span> <span class=n>min_arr</span><span class=p>[</span><span class=mi>0</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=mi>8</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>min_arr</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>m</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=n>m</span> <span class=o>=</span> <span class=n>min_arr</span><span class=p>[</span><span class=n>k</span> <span class=o>=</span> <span class=n>i</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>idx_arr</span><span class=p>[</span><span class=n>k</span><span class=p>];</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>It works at around 8-8.5 GFLOPS. There is still some inter-dependency between the iterations, so we can optimize it by considering more than 8 elements per iteration and taking advantage of the <a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction#instruction-level-parallelism>instruction-level parallelism</a>.</p><p>This would help performance a lot, but not enough to match the speed of computing the minimum (~24 GFLOPS) because there is another bottleneck. On each iteration, we need a load-fused comparison, a load-fused minimum, a blend, and an addition — that is 4 instructions in total to process 8 elements. Since the decode width of this CPU (Zen 2) is just 4, the performance will still be limited by 8 × 2 = 16 GFLOPS even if we somehow got rid of all the other bottlenecks.</p><p>Instead, we will switch to another approach that requires fewer instructions per element.</p><span class=anchor id=branches-arent-scary></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/#branches-arent-scary>#</a>Branches Aren&rsquo;t Scary</h3><p>When we run the scalar version, how often do we update the minimum?</p><p>Intuition tells us that, if all the values are drawn independently at random, then the event when the next element is less than all the previous ones shouldn&rsquo;t be frequent. More precisely, it equals the reciprocal of the number of processed elements. Therefore, the expected number of times the <code>a[i] &lt; a[k]</code> condition is satisfied equals the sum of the harmonic series:</p>$$
-\frac{1}{2} + \frac{1}{3} + \frac{1}{4} + \ldots + \frac{1}{n} = O(\ln(n))
-$$<p>So the minimum is updated around 5 times for a hundred-element array, 7 for a thousand-element, and just 14 for a million-element array — which isn&rsquo;t large at all when looked at as a fraction of all is-new-minimum checks.</p><p>The compiler probably couldn&rsquo;t figure it out on its own, so let&rsquo;s <a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational>explicitly provide</a> this information:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>argmin</span><span class=p>(</span><span class=kt>int</span> <span class=o>*</span><span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>a</span><span class=p>[</span><span class=n>k</span><span class=p>])</span> <span class=na>[[unlikely]]</span>
-</span></span><span class=line><span class=cl>            <span class=n>k</span> <span class=o>=</span> <span class=n>i</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>k</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>The compiler <a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout>optimized the machine code layout</a>, and the CPU is now able to execute the loop at around 2 GFLOPS — a slight but sizeable improvement from 1.5 GFLOPS of the non-hinted loop.</p><p>Here is the idea: if we are only updating the minimum a dozen or so times during the entire computation, we can ditch all the vector-blending and index updating and just maintain the minimum and regularly check if it has changed. Inside this check, we can use however slow method of updating the argmin we want because it will only be called a few times.</p><p>To implement it with SIMD, all we need to do on each iteration is a vector load, a comparison, and a test-if-zero:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>argmin</span><span class=p>(</span><span class=kt>int</span> <span class=o>*</span><span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>min</span> <span class=o>=</span> <span class=n>INT_MAX</span><span class=p>,</span> <span class=n>idx</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=n>reg</span> <span class=n>p</span> <span class=o>=</span> <span class=n>_mm256_set1_epi32</span><span class=p>(</span><span class=n>min</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span> <span class=o>+=</span> <span class=mi>8</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>reg</span> <span class=n>y</span> <span class=o>=</span> <span class=n>_mm256_load_si256</span><span class=p>((</span><span class=n>reg</span><span class=o>*</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>]);</span> 
-</span></span><span class=line><span class=cl>        <span class=n>reg</span> <span class=n>mask</span> <span class=o>=</span> <span class=n>_mm256_cmpgt_epi32</span><span class=p>(</span><span class=n>p</span><span class=p>,</span> <span class=n>y</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>_mm256_testz_si256</span><span class=p>(</span><span class=n>mask</span><span class=p>,</span> <span class=n>mask</span><span class=p>))</span> <span class=p>{</span> <span class=na>[[unlikely]]</span>
-</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=n>i</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>i</span> <span class=o>+</span> <span class=mi>8</span><span class=p>;</span> <span class=n>j</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=n>a</span><span class=p>[</span><span class=n>j</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>min</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>                    <span class=n>min</span> <span class=o>=</span> <span class=n>a</span><span class=p>[</span><span class=n>idx</span> <span class=o>=</span> <span class=n>j</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>            <span class=n>p</span> <span class=o>=</span> <span class=n>_mm256_set1_epi32</span><span class=p>(</span><span class=n>min</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>idx</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>It already performs at ~8.5 GFLOPS, but now the loop is bottlenecked by the <code>testz</code> instruction which only has a throughput of one. The solution is to load two consecutive SIMD blocks and use the minimum of them so that the <code>testz</code> effectively processes 16 elements in one go:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>argmin</span><span class=p>(</span><span class=kt>int</span> <span class=o>*</span><span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>min</span> <span class=o>=</span> <span class=n>INT_MAX</span><span class=p>,</span> <span class=n>idx</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=n>reg</span> <span class=n>p</span> <span class=o>=</span> <span class=n>_mm256_set1_epi32</span><span class=p>(</span><span class=n>min</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span> <span class=o>+=</span> <span class=mi>16</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>reg</span> <span class=n>y1</span> <span class=o>=</span> <span class=n>_mm256_load_si256</span><span class=p>((</span><span class=n>reg</span><span class=o>*</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>]);</span>
-</span></span><span class=line><span class=cl>        <span class=n>reg</span> <span class=n>y2</span> <span class=o>=</span> <span class=n>_mm256_load_si256</span><span class=p>((</span><span class=n>reg</span><span class=o>*</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>a</span><span class=p>[</span><span class=n>i</span> <span class=o>+</span> <span class=mi>8</span><span class=p>]);</span>
-</span></span><span class=line><span class=cl>        <span class=n>reg</span> <span class=n>y</span> <span class=o>=</span> <span class=n>_mm256_min_epi32</span><span class=p>(</span><span class=n>y1</span><span class=p>,</span> <span class=n>y2</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>reg</span> <span class=n>mask</span> <span class=o>=</span> <span class=n>_mm256_cmpgt_epi32</span><span class=p>(</span><span class=n>p</span><span class=p>,</span> <span class=n>y</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>_mm256_testz_si256</span><span class=p>(</span><span class=n>mask</span><span class=p>,</span> <span class=n>mask</span><span class=p>))</span> <span class=p>{</span> <span class=na>[[unlikely]]</span>
-</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=n>i</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>i</span> <span class=o>+</span> <span class=mi>16</span><span class=p>;</span> <span class=n>j</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=n>a</span><span class=p>[</span><span class=n>j</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>min</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>                    <span class=n>min</span> <span class=o>=</span> <span class=n>a</span><span class=p>[</span><span class=n>idx</span> <span class=o>=</span> <span class=n>j</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>            <span class=n>p</span> <span class=o>=</span> <span class=n>_mm256_set1_epi32</span><span class=p>(</span><span class=n>min</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>idx</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>This version works in ~10 GFLOPS. To remove the other obstacles, we can do two things:</p><ul><li>Increase the block size to 32 elements to allow for more instruction-level parallelism.</li><li>Optimize the local argmin: instead of calculating its exact location, we can just save the index of the block and then come back at the end and find it just once. This lets us only compute the minimum on each positive check and broadcast it to a vector, which is simpler and much faster.</li></ul><p>With these two optimizations implemented, the performance increases to a whopping ~22 GFLOPS:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>argmin</span><span class=p>(</span><span class=kt>int</span> <span class=o>*</span><span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>min</span> <span class=o>=</span> <span class=n>INT_MAX</span><span class=p>,</span> <span class=n>idx</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=n>reg</span> <span class=n>p</span> <span class=o>=</span> <span class=n>_mm256_set1_epi32</span><span class=p>(</span><span class=n>min</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span> <span class=o>+=</span> <span class=mi>32</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>reg</span> <span class=n>y1</span> <span class=o>=</span> <span class=n>_mm256_load_si256</span><span class=p>((</span><span class=n>reg</span><span class=o>*</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>]);</span>
-</span></span><span class=line><span class=cl>        <span class=n>reg</span> <span class=n>y2</span> <span class=o>=</span> <span class=n>_mm256_load_si256</span><span class=p>((</span><span class=n>reg</span><span class=o>*</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>a</span><span class=p>[</span><span class=n>i</span> <span class=o>+</span> <span class=mi>8</span><span class=p>]);</span>
-</span></span><span class=line><span class=cl>        <span class=n>reg</span> <span class=n>y3</span> <span class=o>=</span> <span class=n>_mm256_load_si256</span><span class=p>((</span><span class=n>reg</span><span class=o>*</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>a</span><span class=p>[</span><span class=n>i</span> <span class=o>+</span> <span class=mi>16</span><span class=p>]);</span>
-</span></span><span class=line><span class=cl>        <span class=n>reg</span> <span class=n>y4</span> <span class=o>=</span> <span class=n>_mm256_load_si256</span><span class=p>((</span><span class=n>reg</span><span class=o>*</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>a</span><span class=p>[</span><span class=n>i</span> <span class=o>+</span> <span class=mi>24</span><span class=p>]);</span>
-</span></span><span class=line><span class=cl>        <span class=n>y1</span> <span class=o>=</span> <span class=n>_mm256_min_epi32</span><span class=p>(</span><span class=n>y1</span><span class=p>,</span> <span class=n>y2</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>y3</span> <span class=o>=</span> <span class=n>_mm256_min_epi32</span><span class=p>(</span><span class=n>y3</span><span class=p>,</span> <span class=n>y4</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>y1</span> <span class=o>=</span> <span class=n>_mm256_min_epi32</span><span class=p>(</span><span class=n>y1</span><span class=p>,</span> <span class=n>y3</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>reg</span> <span class=n>mask</span> <span class=o>=</span> <span class=n>_mm256_cmpgt_epi32</span><span class=p>(</span><span class=n>p</span><span class=p>,</span> <span class=n>y1</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>_mm256_testz_si256</span><span class=p>(</span><span class=n>mask</span><span class=p>,</span> <span class=n>mask</span><span class=p>))</span> <span class=p>{</span> <span class=na>[[unlikely]]</span>
-</span></span><span class=line><span class=cl>            <span class=n>idx</span> <span class=o>=</span> <span class=n>i</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=n>i</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>i</span> <span class=o>+</span> <span class=mi>32</span><span class=p>;</span> <span class=n>j</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>                <span class=n>min</span> <span class=o>=</span> <span class=p>(</span><span class=n>a</span><span class=p>[</span><span class=n>j</span><span class=p>]</span> <span class=o>&lt;</span> <span class=n>min</span> <span class=o>?</span> <span class=n>a</span><span class=p>[</span><span class=n>j</span><span class=p>]</span> <span class=o>:</span> <span class=n>min</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>            <span class=n>p</span> <span class=o>=</span> <span class=n>_mm256_set1_epi32</span><span class=p>(</span><span class=n>min</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=n>idx</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>idx</span> <span class=o>+</span> <span class=mi>31</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>==</span> <span class=n>min</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>i</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>idx</span> <span class=o>+</span> <span class=mi>31</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>This is almost as high as it can get as just computing the minimum itself works at around 24-25 GFLOPS.</p><p>The only problem of all these branch-happy SIMD implementations is that they rely on the minimum being updated very infrequently. This is true for random input distributions, but not in the worst case. If we fill the array with a sequence of decreasing numbers, the performance of the last implementation drops to about 2.7 GFLOPS — almost 10 times as slow (although still faster than the scalar code because we only calculate the minimum on each block).</p><p>One way to fix this is to do the same thing that the quicksort-like randomized algorithms do: just shuffle the input yourself and iterate over the array in random order. This lets you avoid this worst-case penalty, but it is tricky to implement due to RNG- and <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching>memory</a>-related issues. There is a simpler solution.</p><span class=anchor id=find-the-minimum-then-find-the-index></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/#find-the-minimum-then-find-the-index>#</a>Find the Minimum, Then Find the Index</h3><p>We know how to <a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction>calculate the minimum of an array</a> fast and how to <a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/masking#searching>find an element in an array</a> fast — so why don&rsquo;t we just separately compute the minimum and then find it?</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>argmin</span><span class=p>(</span><span class=kt>int</span> <span class=o>*</span><span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>needle</span> <span class=o>=</span> <span class=n>min</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>n</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>idx</span> <span class=o>=</span> <span class=n>find</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>n</span><span class=p>,</span> <span class=n>needle</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>idx</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>If we implement the two subroutines optimally (check the linked articles), the performance will be ~18 GFLOPS for random arrays and ~12 GFLOPS for decreasing arrays — which makes sense as we are expected to read the array 1.5 and 2 times respectively. This isn&rsquo;t that bad by itself — at least we avoid the 10x worst-case performance penalty — but the problem is that this penalized performance also translates to larger arrays, when we are bottlenecked by the <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth>memory bandwidth</a> rather than compute.</p><p>Luckily, we already know how to fix it. We can split the array into blocks of fixed size $B$ and compute the minima on these blocks while also maintaining the global minimum. When the minimum on a new block is lower than the global minimum, we update it and also remember the block number of where the global minimum currently is. After we&rsquo;ve processed the entire array, we just return to that block and scan through its $B$ elements to find the argmin.</p><p>This way we only process $(N + B)$ elements and don&rsquo;t have to sacrifice neither ½ nor ⅓ of the performance:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>B</span> <span class=o>=</span> <span class=mi>256</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=c1>// returns the minimum and its first block
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>pair</span><span class=o>&lt;</span><span class=kt>int</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;</span> <span class=n>approx_argmin</span><span class=p>(</span><span class=kt>int</span> <span class=o>*</span><span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>res</span> <span class=o>=</span> <span class=n>INT_MAX</span><span class=p>,</span> <span class=n>idx</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span> <span class=o>+=</span> <span class=n>B</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>val</span> <span class=o>=</span> <span class=n>min</span><span class=p>(</span><span class=n>a</span> <span class=o>+</span> <span class=n>i</span><span class=p>,</span> <span class=n>B</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>val</span> <span class=o>&lt;</span> <span class=n>res</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>            <span class=n>res</span> <span class=o>=</span> <span class=n>val</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=n>idx</span> <span class=o>=</span> <span class=n>i</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=p>{</span><span class=n>res</span><span class=p>,</span> <span class=n>idx</span><span class=p>};</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>argmin</span><span class=p>(</span><span class=kt>int</span> <span class=o>*</span><span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>auto</span> <span class=p>[</span><span class=n>needle</span><span class=p>,</span> <span class=n>base</span><span class=p>]</span> <span class=o>=</span> <span class=n>approx_argmin</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>n</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>idx</span> <span class=o>=</span> <span class=n>find</span><span class=p>(</span><span class=n>a</span> <span class=o>+</span> <span class=n>base</span><span class=p>,</span> <span class=n>B</span><span class=p>,</span> <span class=n>needle</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>base</span> <span class=o>+</span> <span class=n>idx</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>This results for the final implementation are ~22 and ~19 GFLOPS for random and decreasing arrays respectively.</p><p>The full implementation, including both <code>min()</code> and <code>find()</code>, is about 100 lines long. <a href=https://github.com/sslotin/amh-code/blob/main/argmin/combined.cc>Take a look</a> if you want, although it is still far from being production-grade.</p><span class=anchor id=summary></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/#summary>#</a>Summary</h3><p>Here are the results combined for all implementations:</p><pre tabindex=0><code>algorithm    rand   decr   reason for the performance difference
+<!doctype html>
+<html lang='en-us'><head><meta charset="utf-8">
+  <link rel="icon" href="https://anpaure.github.io/algorithmica-beta/favicon.ico">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/beta.css">
+  
+
+  
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css" integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00=">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/syntax.css" id="syntax-theme">
+
+  <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+  <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js"></script>
+
+  
+  <link rel="stylesheet" id="theme">
+
+  <script>
+    function toggleSidebar() {
+      console.log("Toggling sidebar visibility")
+      var sidebar = document.getElementById('sidebar')
+      var wrapper = document.getElementById('wrapper')
+      if (sidebar.classList.contains('sidebar-toggled') || window.getComputedStyle(sidebar).display == 'block') { 
+        sidebar.classList.toggle('sidebar-hidden')
+        wrapper.classList.toggle('sidebar-hidden')
+      }
+      sidebar.classList.add('sidebar-toggled')
+      wrapper.classList.add('sidebar-toggled')
+    }
+
+    function switchTheme(theme) {
+      console.log("Changing theme:", theme)
+      document.getElementById('theme').href = (theme == 'dark' ? "https:\/\/anpaure.github.io\/algorithmica-beta\/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css" : "")
+      document.getElementById('syntax-theme').href = (theme == 'dark' ? 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax-dark.css' : 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax.css')
+      localStorage.setItem('theme', theme)
+    }
+
+    async function toggleSearch() {
+      console.log("Toggling search")
+      
+      var searchDiv = document.getElementById('search')
+      if (window.getComputedStyle(searchDiv).display == 'none') {
+        searchDiv.style.display = 'block'
+        window.scrollTo({ top: 0 });
+        document.getElementById('search-bar').focus()
+      } else {
+        searchDiv.style.display = 'none'  
+      }
+
+      if (!index) {
+        console.log("Fetching index")
+        const response = await fetch('https:\/\/anpaure.github.io\/algorithmica-beta\/searchindex.json')
+        const pages = await response.json()
+        index = lunr(function() {
+          this.use(lunr.multiLanguage('en', 'ru'))
+          this.field('title', {
+            boost: 5
+          })
+          this.field('content', {
+            boost: 1
+          })
+          pages.forEach(function(doc) {
+            this.add(doc)
+            articles.push(doc)
+          }, this)
+        })
+        console.log("Ready to search")
+      }
+    }
+
+    var articles = []
+    var index = undefined
+
+    function search() {
+      var query = document.getElementById('search-bar').value
+      var resultsDiv = document.getElementById('search-results')
+      var countDiv = document.getElementById('search-count')
+      
+      if (query == '') {
+        resultsDiv.innerHTML = ''
+        countDiv.innerHTML = ''
+        return
+      }
+      
+      var results = index.search(query)
+
+      countDiv.innerHTML = 'Found <b>' + results.length + '</b> pages'
+
+      let resultList = ''
+
+      for (const n in results) {
+        const item = articles[results[n].ref]
+        resultList += '<li><a href="' + item.path + '">' + item.title + '</a> <p>'
+        const text = item.content
+
+        const contextLimit = 80
+
+        if (text.includes(query)) {
+          const start = text.indexOf(query)
+          if (start > contextLimit)
+            resultList += '…'
+          resultList += text.substring(start - contextLimit, start)
+                      + '<b>' + query + '</b>' + text.substring(start + query.length, start + query.length + contextLimit)
+
+        } else {
+          resultList += text.substring(0, contextLimit * 2)
+        }
+        resultList += '…</p></li>'
+      }
+
+      resultsDiv.innerHTML = resultList
+    }
+
+    if (localStorage.getItem('theme') == 'dark') {
+      switchTheme('dark')
+    }
+
+    window.addEventListener('load', function() {
+      var el = document.getElementById("active-element")
+      
+      if (el) {
+        el.scrollIntoView({block: "center"})
+      }
+      
+
+    })
+
+    window.addEventListener('scroll', function() {
+      var menu = document.getElementById('menu')
+      if (window.scrollY < 120) {
+        
+        menu.classList.remove('scrolled')
+      } else {
+        
+        menu.classList.add('scrolled')
+      }
+    })
+
+    window.addEventListener('keydown', function(e) {
+      if (e.altKey) { return }
+      if (document.activeElement.tagName == 'INPUT') { return }
+      if (e.key == 'ArrowLeft') {
+        document.getElementById('prev-article').click()
+      } else if (e.key == 'ArrowRight') {
+        document.getElementById('next-article').click()
+      }
+    })
+  </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false}
+    ]
+  })"></script>
+
+  
+  <title>Argmin with SIMD - Algorithmica β</title>
+</head>
+<body><nav id='sidebar' >
+  
+  
+  <div class='title'>
+    <a href='https://anpaure.github.io/algorithmica-beta/'>Algorithmica β</a>
+    
+      
+        
+        <span class='slash'>/</span>
+        <a href='https://anpaure.github.io/algorithmica-beta/hpc/' class='divisionAbbr'
+           >
+          HPC
+        </a>
+      
+    
+  </div>
+  <ul>
+    
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/preface/'
+          
+          >Preface</a></li>
+        
+      
+        
+          <li class='part'>Performance Engineering</li>
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/'
+          
+          >Complexity Models</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/'
+                
+                >Modern Hardware</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/'
+                
+                >Programming Languages</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/'
+                
+                >Models of Computation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/'
+                
+                >When to Optimize</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/'
+          
+          >Computer Architecture</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/'
+                
+                >Instruction Set Architectures</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/'
+                
+                >Assembly Language</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/'
+                
+                >Loops and Conditionals</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/'
+                
+                >Functions and Recursion</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/'
+                
+                >Indirect Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/'
+                
+                >Machine Code Layout</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/'
+                
+                >Interrupts and System Calls</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/'
+                
+                >Virtualization</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/'
+          
+          >Instruction-Level Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/'
+                
+                >Pipeline Hazards</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/'
+                
+                >The Cost of Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/'
+                
+                >Branchless Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/'
+                
+                >Instruction Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/'
+                
+                >Instruction Scheduling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/'
+                
+                >Throughput Computing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/'
+                
+                >Theoretical Performance Limits</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/'
+          
+          >Compilation</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/'
+                
+                >Stages of Compilation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/'
+                
+                >Flags and Targets</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/'
+                
+                >Situational Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/'
+                
+                >Contract Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/'
+                
+                >Non-Zero-Cost Abstractions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/'
+                
+                >Precomputation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/'
+                
+                >Arithmetic Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/'
+                
+                >What Compilers Can and Can&#39;t Do</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/'
+          
+          >Profiling</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/'
+                
+                >Instrumentation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/'
+                
+                >Statistical Profiling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/'
+                
+                >Program Simulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/'
+                
+                >Machine Code Analyzers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/'
+                
+                >Benchmarking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/'
+                
+                >Getting Accurate Results</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/'
+          
+          >Arithmetic</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/'
+                
+                >Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/'
+                
+                >IEEE 754 Floats</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/'
+                
+                >Rounding Errors</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/'
+                
+                >Newton&#39;s Method</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/'
+                
+                >Fast Inverse Square Root</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/'
+                
+                >Integer Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/'
+                
+                >Integer Division</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/'
+                
+                >Bit Manipulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/'
+                
+                >Data Compression</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/'
+          
+          >Number Theory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/'
+                
+                >Modular Arithmetic</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/'
+                
+                >Binary Exponentiation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/'
+                
+                >Extended Euclidean Algorithm</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/'
+                
+                >Montgomery Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/'
+                
+                >Finite Fields</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/'
+                
+                >Error Correction</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/'
+                
+                >Cryptography</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/'
+                
+                >Hashing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/'
+                
+                >Random Number Generation</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/'
+          
+          >External Memory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/'
+                
+                >Memory Hierarchy</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/'
+                
+                >Virtual Memory</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/'
+                
+                >External Memory Model</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/'
+                
+                >External Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/'
+                
+                >List Ranking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/'
+                
+                >Eviction Policies</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/'
+                
+                >Cache-Oblivious Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/'
+                
+                >Spatial and Temporal Locality</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/'
+                
+                >B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/'
+                
+                >Sublinear Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/'
+                
+                >Memory Management</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/'
+          
+          >RAM &amp; CPU Caches</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/'
+                
+                >Memory Bandwidth</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/'
+                
+                >Memory Latency</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/'
+                
+                >Cache Lines</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/'
+                
+                >Memory Sharing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/'
+                
+                >Memory-Level Parallelism</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/'
+                
+                >Prefetching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/'
+                
+                >Alignment and Packing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/'
+                
+                >Pointer Alternatives</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/'
+                
+                >Cache Associativity</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/'
+                
+                >Memory Paging</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/'
+                
+                >AoS and SoA</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/'
+          
+          >SIMD Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/'
+                
+                >Intrinsics and Vector Types</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/'
+                
+                >Moving Data</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/'
+                
+                >Reductions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/'
+                
+                >Masking and Blending</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/'
+                
+                >In-Register Shuffles</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/'
+                
+                >Auto-Vectorization and SPMD</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/'
+          
+          >Algorithms Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/'
+                
+                >Binary GCD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/'
+                
+                >Prime Number Sieves</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/'
+                
+                >Integer Factorization</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/'
+                
+                >Optimizing Logistic Regression</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/'
+                
+                >Big Integers and Karatsuba Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/'
+                
+                >Fast Fourier Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/'
+                
+                >Number-Theoretic Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/'
+                id='active-element'
+                >Argmin with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/'
+                
+                >Prefix Sum with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/'
+                
+                >Reading Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/'
+                
+                >Writing Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/'
+                
+                >Reading and Writing Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/'
+                
+                >String Searching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/'
+                
+                >Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/'
+                
+                >Matrix Multiplication</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/'
+          
+          >Data Structures Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/'
+                
+                >Binary Search</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/'
+                
+                >Static B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/'
+                
+                >Search Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/'
+                
+                >Segment Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/'
+                
+                >Tries</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/'
+                
+                >Range Minimum Query</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/'
+                
+                >Hash Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/'
+                
+                >Bitmaps</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/'
+                
+                >Probabilistic Filters</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/summary/'
+          
+          >Summary</a></li>
+        
+      
+        
+          <li class='part'>Appendix</li>
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/stats/'
+          
+          >Probability Theory Refresher</a></li>
+        
+      
+    
+  </ul>
+</nav>
+<div id='wrapper' ><menu id='menu'>
+  
+  
+  
+  
+  <div class='left'>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg'
+           onclick='toggleSidebar()'
+           title='open table of contents'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg'
+           style='position: relative; top: -1px'
+           onclick='switchTheme(localStorage.getItem("theme") == "dark" ? "light" : "dark")'
+           title='dark theme'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg'
+           onclick='toggleSearch()'
+           title='search'>
+    </a>
+  </div>
+  <div class='title'>
+    
+      <span class='beta-brand'>Algorithmica β</span>
+      <span class='chapter-title'>Argmin with SIMD</span>
+    
+  </div>
+  <div class='right'>
+    <a onClick='window.print()'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg' title='print'>
+    </a>
+    <a href='https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2falgorithms%2fargmin.md'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg'
+           title='edit'
+           style='width: 18px; position: relative; right: -2px; top: -1px'>
+    </a>
+    <a href='https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/algorithms/argmin.md' class='github-main'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg' title='view on github'>
+    </a>
+  </div>
+</menu>
+<main>
+        <div id="search">
+    <input id="search-bar" type="search" placeholder='Search this book…' oninput="search()">
+    <div id="search-count"></div>
+    <div id="search-results">
+    </div>
+</div>
+<header>
+  
+  <h1>Argmin with SIMD</h1>
+  
+    <div class='info'></div>
+  
+</header>
+<article>
+  
+
+
+  
+    
+    
+      
+        <p>Computing the <em>minimum</em> of an array is <a href="https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction">easily vectorizable</a>, as it is not different from any other reduction: in AVX2, you just need to use a convenient <code>_mm256_min_epi32</code> intrinsic as the inner operation. It computes the minimum of two 8-element vectors in one cycle — even faster than in the scalar case, which requires at least a comparison and a conditional move.</p>
+<p>Finding the <em>index</em> of that minimum element (<em>argmin</em>) is much harder, but it is still possible to vectorize very efficiently. In this section, we design an algorithm that computes the argmin (almost) at the speed of computing the minimum and ~15x faster than the naive scalar approach.</p>
+<span class='anchor' id="scalar-baseline"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/#scalar-baseline">#</a>Scalar Baseline</h3><p>For our benchmark, we create an array of random 32-bit integers, and then repeatedly try to find the index of the minimum among them (the first one if it isn&rsquo;t unique):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">alignas</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span> <span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">();</span>
+</span></span></code></pre></div><p>For the sake of exposition, we assume that $N$ is a power of two, and run all our experiments for $N=2^{13}$ so that the <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth">memory bandwidth</a> is not a concern.</p>
+<p>To implement argmin in the scalar case, we just need to maintain the index instead of the minimum value:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">argmin</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">            <span class="n">k</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>It works at around 1.5 GFLOPS — meaning $1.5 \cdot 10^9$ values per second  processed on average, or about 0.75 values per cycle (the CPU is clocked at 2GHz).</p>
+<p>Let&rsquo;s compare it to <code>std::min_element</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">argmin</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">min_element</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><!--
+
+https://github.com/llvm-mirror/libcxx/blob/78d6a7767ed57b50122a161b91f59f19c9bd0d19/include/algorithm#L2489
+
+https://github.com/gcc-mirror/gcc/blob/16e2427f50c208dfe07d07f18009969502c25dc8/libstdc%2B%2B-v3/include/bits/stl_algo.h#L5606
+
+```nasm
+lea	r8, 24[rdx]	# __first,
+mov	r11d, DWORD PTR [rax]
+cmp	DWORD PTR 12[rdx], r11d
+cmovl	rax, r10	# __result,, __result, __first
+```
+
+```nasm
+cmp	eax, r12d	# prephitmp_103, _108	
+jle	.L36	#,	
+mov	eax, r12d	# prephitmp_103, _108	
+mov	ecx, ebp	# k, ivtmp.29	
+.L36:	
+lea	rdx, 4[r8]	# ivtmp.29,	
+```
+
+```nasm
+cmp	eax, r12d	# prephitmp_103, _108	
+jle	.L36	#,	
+mov	eax, r12d	# prephitmp_103, _108	
+mov	ecx, ebp	# k, ivtmp.29	
+.L36:	
+lea	rdx, 4[r8]	# ivtmp.29,	
+```
+
+-->
+<p>The version from GCC gives ~0.28 GFLOPS — apparently, the compiler couldn&rsquo;t pierce through all the abstractions. Another reminder to never use STL.</p>
+<span class='anchor' id="vector-of-indices"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/#vector-of-indices">#</a>Vector of Indices</h3><p>The problem with vectorizing the scalar implementation is that there is a dependency between consequent iterations. When we optimized <a href="https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction">array sum</a>, we faced the same problem, and we solved it by splitting the array into 8 slices, each representing a subset of its indices with the same remainder modulo 8. We can apply the same trick here, except that we also have to take array indices into account.</p>
+<p>When we have the consecutive elements and their indices in vectors, we can process them in parallel using <a href="https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless">predication</a>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="n">__m256i</span> <span class="n">reg</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">argmin</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// indices on the current iteration
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">reg</span> <span class="n">cur</span> <span class="o">=</span> <span class="n">_mm256_setr_epi32</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// the current minimum for each slice
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">reg</span> <span class="n">min</span> <span class="o">=</span> <span class="n">_mm256_set1_epi32</span><span class="p">(</span><span class="n">INT_MAX</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// its index (argmin) for each slice
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">reg</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">_mm256_setzero_si256</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="mi">8</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// load a new SIMD block
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">reg</span> <span class="n">x</span> <span class="o">=</span> <span class="n">_mm256_load_si256</span><span class="p">((</span><span class="n">reg</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// find the slices where the minimum is updated
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">reg</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">_mm256_cmpgt_epi32</span><span class="p">(</span><span class="n">min</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// update the indices
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">idx</span> <span class="o">=</span> <span class="n">_mm256_blendv_epi8</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">cur</span><span class="p">,</span> <span class="n">mask</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// update the minimum (can also similarly use a &#34;blend&#34; here, but min is faster)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">min</span> <span class="o">=</span> <span class="n">_mm256_min_epi32</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">min</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// update the current indices
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">const</span> <span class="n">reg</span> <span class="n">eight</span> <span class="o">=</span> <span class="n">_mm256_set1_epi32</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cur</span> <span class="o">=</span> <span class="n">_mm256_add_epi32</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">eight</span><span class="p">);</span>       <span class="c1">// 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// can also use a &#34;blend&#34; here, but min is faster
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// find the argmin in the &#34;min&#34; register and return its real index
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">min_arr</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">idx_arr</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">_mm256_storeu_si256</span><span class="p">((</span><span class="n">reg</span><span class="o">*</span><span class="p">)</span> <span class="n">min_arr</span><span class="p">,</span> <span class="n">min</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_mm256_storeu_si256</span><span class="p">((</span><span class="n">reg</span><span class="o">*</span><span class="p">)</span> <span class="n">idx_arr</span><span class="p">,</span> <span class="n">idx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="n">min_arr</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">min_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">m</span> <span class="o">=</span> <span class="n">min_arr</span><span class="p">[</span><span class="n">k</span> <span class="o">=</span> <span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">idx_arr</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>It works at around 8-8.5 GFLOPS. There is still some inter-dependency between the iterations, so we can optimize it by considering more than 8 elements per iteration and taking advantage of the <a href="https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction#instruction-level-parallelism">instruction-level parallelism</a>.</p>
+<p>This would help performance a lot, but not enough to match the speed of computing the minimum (~24 GFLOPS) because there is another bottleneck. On each iteration, we need a load-fused comparison, a load-fused minimum, a blend, and an addition — that is 4 instructions in total to process 8 elements. Since the decode width of this CPU (Zen 2) is just 4, the performance will still be limited by 8 × 2 = 16 GFLOPS even if we somehow got rid of all the other bottlenecks.</p>
+<p>Instead, we will switch to another approach that requires fewer instructions per element.</p>
+<span class='anchor' id="branches-arent-scary"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/#branches-arent-scary">#</a>Branches Aren&rsquo;t Scary</h3><p>When we run the scalar version, how often do we update the minimum?</p>
+<p>Intuition tells us that, if all the values are drawn independently at random, then the event when the next element is less than all the previous ones shouldn&rsquo;t be frequent. More precisely, it equals the reciprocal of the number of processed elements. Therefore, the expected number of times the <code>a[i] &lt; a[k]</code> condition is satisfied equals the sum of the harmonic series:</p>
+
+      
+    
+  
+
+  
+    $$
+    
+\frac{1}{2} &#43; \frac{1}{3} &#43; \frac{1}{4} &#43; \ldots &#43; \frac{1}{n} = O(\ln(n))
+
+    $$
+  
+
+  
+    
+    
+      
+        <p>So the minimum is updated around 5 times for a hundred-element array, 7 for a thousand-element, and just 14 for a million-element array — which isn&rsquo;t large at all when looked at as a fraction of all is-new-minimum checks.</p>
+<p>The compiler probably couldn&rsquo;t figure it out on its own, so let&rsquo;s <a href="https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational">explicitly provide</a> this information:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">argmin</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="na">[[unlikely]]</span>
+</span></span><span class="line"><span class="cl">            <span class="n">k</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>The compiler <a href="https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout">optimized the machine code layout</a>, and the CPU is now able to execute the loop at around 2 GFLOPS — a slight but sizeable improvement from 1.5 GFLOPS of the non-hinted loop.</p>
+<p>Here is the idea: if we are only updating the minimum a dozen or so times during the entire computation, we can ditch all the vector-blending and index updating and just maintain the minimum and regularly check if it has changed. Inside this check, we can use however slow method of updating the argmin we want because it will only be called a few times.</p>
+<p>To implement it with SIMD, all we need to do on each iteration is a vector load, a comparison, and a test-if-zero:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">argmin</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">min</span> <span class="o">=</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">reg</span> <span class="n">p</span> <span class="o">=</span> <span class="n">_mm256_set1_epi32</span><span class="p">(</span><span class="n">min</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="mi">8</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reg</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_mm256_load_si256</span><span class="p">((</span><span class="n">reg</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span> 
+</span></span><span class="line"><span class="cl">        <span class="n">reg</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">_mm256_cmpgt_epi32</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">y</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_mm256_testz_si256</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">mask</span><span class="p">))</span> <span class="p">{</span> <span class="na">[[unlikely]]</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">8</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">min</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">idx</span> <span class="o">=</span> <span class="n">j</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">            <span class="n">p</span> <span class="o">=</span> <span class="n">_mm256_set1_epi32</span><span class="p">(</span><span class="n">min</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">idx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>It already performs at ~8.5 GFLOPS, but now the loop is bottlenecked by the <code>testz</code> instruction which only has a throughput of one. The solution is to load two consecutive SIMD blocks and use the minimum of them so that the <code>testz</code> effectively processes 16 elements in one go:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">argmin</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">min</span> <span class="o">=</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">reg</span> <span class="n">p</span> <span class="o">=</span> <span class="n">_mm256_set1_epi32</span><span class="p">(</span><span class="n">min</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="mi">16</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reg</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">_mm256_load_si256</span><span class="p">((</span><span class="n">reg</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reg</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">_mm256_load_si256</span><span class="p">((</span><span class="n">reg</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">8</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reg</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_mm256_min_epi32</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reg</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">_mm256_cmpgt_epi32</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">y</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_mm256_testz_si256</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">mask</span><span class="p">))</span> <span class="p">{</span> <span class="na">[[unlikely]]</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">16</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">min</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">idx</span> <span class="o">=</span> <span class="n">j</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">            <span class="n">p</span> <span class="o">=</span> <span class="n">_mm256_set1_epi32</span><span class="p">(</span><span class="n">min</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">idx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>This version works in ~10 GFLOPS. To remove the other obstacles, we can do two things:</p>
+<ul>
+<li>Increase the block size to 32 elements to allow for more instruction-level parallelism.</li>
+<li>Optimize the local argmin: instead of calculating its exact location, we can just save the index of the block and then come back at the end and find it just once. This lets us only compute the minimum on each positive check and broadcast it to a vector, which is simpler and much faster.</li>
+</ul>
+<p>With these two optimizations implemented, the performance increases to a whopping ~22 GFLOPS:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">argmin</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">min</span> <span class="o">=</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">reg</span> <span class="n">p</span> <span class="o">=</span> <span class="n">_mm256_set1_epi32</span><span class="p">(</span><span class="n">min</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="mi">32</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reg</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">_mm256_load_si256</span><span class="p">((</span><span class="n">reg</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reg</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">_mm256_load_si256</span><span class="p">((</span><span class="n">reg</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">8</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reg</span> <span class="n">y3</span> <span class="o">=</span> <span class="n">_mm256_load_si256</span><span class="p">((</span><span class="n">reg</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">16</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reg</span> <span class="n">y4</span> <span class="o">=</span> <span class="n">_mm256_load_si256</span><span class="p">((</span><span class="n">reg</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">24</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">y1</span> <span class="o">=</span> <span class="n">_mm256_min_epi32</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">y3</span> <span class="o">=</span> <span class="n">_mm256_min_epi32</span><span class="p">(</span><span class="n">y3</span><span class="p">,</span> <span class="n">y4</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">y1</span> <span class="o">=</span> <span class="n">_mm256_min_epi32</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y3</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reg</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">_mm256_cmpgt_epi32</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">y1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_mm256_testz_si256</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">mask</span><span class="p">))</span> <span class="p">{</span> <span class="na">[[unlikely]]</span>
+</span></span><span class="line"><span class="cl">            <span class="n">idx</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">32</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">min</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min</span> <span class="o">?</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">:</span> <span class="n">min</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">p</span> <span class="o">=</span> <span class="n">_mm256_set1_epi32</span><span class="p">(</span><span class="n">min</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">idx</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">31</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">min</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">31</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>This is almost as high as it can get as just computing the minimum itself works at around 24-25 GFLOPS.</p>
+<p>The only problem of all these branch-happy SIMD implementations is that they rely on the minimum being updated very infrequently. This is true for random input distributions, but not in the worst case. If we fill the array with a sequence of decreasing numbers, the performance of the last implementation drops to about 2.7 GFLOPS — almost 10 times as slow (although still faster than the scalar code because we only calculate the minimum on each block).</p>
+<p>One way to fix this is to do the same thing that the quicksort-like randomized algorithms do: just shuffle the input yourself and iterate over the array in random order. This lets you avoid this worst-case penalty, but it is tricky to implement due to RNG- and <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching">memory</a>-related issues. There is a simpler solution.</p>
+<span class='anchor' id="find-the-minimum-then-find-the-index"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/#find-the-minimum-then-find-the-index">#</a>Find the Minimum, Then Find the Index</h3><p>We know how to <a href="https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction">calculate the minimum of an array</a> fast and how to <a href="https://anpaure.github.io/algorithmica-beta/hpc/simd/masking#searching">find an element in an array</a> fast — so why don&rsquo;t we just separately compute the minimum and then find it?</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">argmin</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">needle</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">needle</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">idx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>If we implement the two subroutines optimally (check the linked articles), the performance will be ~18 GFLOPS for random arrays and ~12 GFLOPS for decreasing arrays — which makes sense as we are expected to read the array 1.5 and 2 times respectively. This isn&rsquo;t that bad by itself — at least we avoid the 10x worst-case performance penalty — but the problem is that this penalized performance also translates to larger arrays, when we are bottlenecked by the <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth">memory bandwidth</a> rather than compute.</p>
+<p>Luckily, we already know how to fix it. We can split the array into blocks of fixed size $B$ and compute the minima on these blocks while also maintaining the global minimum. When the minimum on a new block is lower than the global minimum, we update it and also remember the block number of where the global minimum currently is. After we&rsquo;ve processed the entire array, we just return to that block and scan through its $B$ elements to find the argmin.</p>
+<p>This way we only process $(N + B)$ elements and don&rsquo;t have to sacrifice neither ½ nor ⅓ of the performance:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">int</span> <span class="n">B</span> <span class="o">=</span> <span class="mi">256</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// returns the minimum and its first block
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">approx_argmin</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="n">B</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">val</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="n">B</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">val</span> <span class="o">&lt;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">res</span> <span class="o">=</span> <span class="n">val</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">idx</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">{</span><span class="n">res</span><span class="p">,</span> <span class="n">idx</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">argmin</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="p">[</span><span class="n">needle</span><span class="p">,</span> <span class="n">base</span><span class="p">]</span> <span class="o">=</span> <span class="n">approx_argmin</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">base</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">needle</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">base</span> <span class="o">+</span> <span class="n">idx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>This results for the final implementation are ~22 and ~19 GFLOPS for random and decreasing arrays respectively.</p>
+<p>The full implementation, including both <code>min()</code> and <code>find()</code>, is about 100 lines long. <a href="https://github.com/sslotin/amh-code/blob/main/argmin/combined.cc">Take a look</a> if you want, although it is still far from being production-grade.</p>
+<span class='anchor' id="summary"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/#summary">#</a>Summary</h3><p>Here are the results combined for all implementations:</p>
+<pre tabindex="0"><code>algorithm    rand   decr   reason for the performance difference
 -----------  -----  -----  -------------------------------------------------------------
 std          0.28   0.28   
 scalar       1.54   1.89   efficient branch prediction
@@ -182,4 +1065,90 @@ simd         8.51   1.65   scalar-based argmin on each iteration
 + optimized  22.44  2.70   ^ same, but faster because there are less inter-dependencies
 min+find     18.21  12.92  find() has to scan the entire array
 + blocked    22.23  19.29  we still have an optional horizontal minimum every B elements
-</code></pre><p>Take these results with a grain of salt: the measurements are <a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise>quite noisy</a>, they were done for just for two input distributions, for a specific array size ($N=2^{13}$, the size of the L1 cache), for a specific architecture (Zen 2), and for a specific and slightly outdated compiler (GCC 9.3) — the compiler optimizations were also very fragile to little changes in the benchmarking code.</p><p>There are also still some minor things to optimize, but the potential improvement is less than 10% so I didn&rsquo;t bother. One day I may pluck up the courage, optimize the algorithm to the theoretical limit, handle the non-divisible-by-block-size array sizes and non-aligned memory cases, and then re-run the benchmarks properly on many architectures, with p-values and such. In case someone does it before me, please <a href=http://sereja.me/>ping me back</a>.</p><span class=anchor id=acknowledgements></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/#acknowledgements>#</a>Acknowledgements</h3><p>The first, index-based SIMD algorithm was <a href=http://0x80.pl/notesen/2018-10-03-simd-index-of-min.html>originally designed</a> by Wojciech Muła in 2018.</p><p>Thanks to Zach Wegner for <a href=https://twitter.com/zwegner/status/1491520929138151425>pointing out</a> that the performance of the Muła&rsquo;s algorithm is improved when implemented manually using intrinsics (I originally used the <a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/#gcc-vector-extensions>GCC vector types</a>).</p><p>After publication, I&rsquo;ve discovered that <a href=https://www.aplwiki.com/wiki/Marshall_Lochbaum>Marshall Lochbaum</a>, the creator of <a href=https://mlochbaum.github.io/BQN/>BQN</a>, designed a <a href="https://forums.dyalog.com/viewtopic.php?f=13&t=1579&sid=e2cbd69817a17a6e7b1f76c677b1f69e#p6239">very similar algorithm</a> while he was working on Dyalog APL in 2019. Pay more attention to the world of array programming languages!</p></article><div class=nextprev><div class=left><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/ id=prev-article>← Sorting</a></div><div class=right><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/ id=next-article>Number-Theoretic Transform →</a></div></div></main><footer>Copyright 2021–2022 Sergey Slotin<br></footer></div></body></html>
+</code></pre><p>Take these results with a grain of salt: the measurements are <a href="https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise">quite noisy</a>, they were done for just for two input distributions, for a specific array size ($N=2^{13}$, the size of the L1 cache), for a specific architecture (Zen 2), and for a specific and slightly outdated compiler (GCC 9.3) — the compiler optimizations were also very fragile to little changes in the benchmarking code.</p>
+<p>There are also still some minor things to optimize, but the potential improvement is less than 10% so I didn&rsquo;t bother. One day I may pluck up the courage, optimize the algorithm to the theoretical limit, handle the non-divisible-by-block-size array sizes and non-aligned memory cases, and then re-run the benchmarks properly on many architectures, with p-values and such. In case someone does it before me, please <a href="http://sereja.me/">ping me back</a>.</p>
+<span class='anchor' id="acknowledgements"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/#acknowledgements">#</a>Acknowledgements</h3><p>The first, index-based SIMD algorithm was <a href="http://0x80.pl/notesen/2018-10-03-simd-index-of-min.html">originally designed</a> by Wojciech Muła in 2018.</p>
+<p>Thanks to Zach Wegner for <a href="https://twitter.com/zwegner/status/1491520929138151425">pointing out</a> that the performance of the Muła&rsquo;s algorithm is improved when implemented manually using intrinsics (I originally used the <a href="https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/#gcc-vector-extensions">GCC vector types</a>).</p>
+<!--
+
+Thanks to Alexander Monakov for [being meticulous](https://twitter.com/_monoid/status/1491827976438231049) and pushing me to investigate the STL version.
+
+-->
+<p>After publication, I&rsquo;ve discovered that <a href="https://www.aplwiki.com/wiki/Marshall_Lochbaum">Marshall Lochbaum</a>, the creator of <a href="https://mlochbaum.github.io/BQN/">BQN</a>, designed a <a href="https://forums.dyalog.com/viewtopic.php?f=13&amp;t=1579&amp;sid=e2cbd69817a17a6e7b1f76c677b1f69e#p6239">very similar algorithm</a> while he was working on Dyalog APL in 2019. Pay more attention to the world of array programming languages!</p>
+
+      
+    
+  
+
+
+
+        </article>
+        <div class='nextprev'>
+  
+    
+      
+      
+
+      
+      
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+
+      
+        <div class='left'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/' id='prev-article'>← Number-Theoretic Transform</a>
+        
+        </div>
+        <div class='right'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/' id='next-article'>Prefix Sum with SIMD →</a>
+        
+        </div>
+      
+    
+  
+</div>
+
+      </main>
+      <footer>
+  Copyright 2021–2022 Sergey Slotin
+  <br>
+   
+</footer>
+
+    </div>
+  </body>
+</html>

@@ -1,36 +1,70 @@
-menu .title {
+body menu .title {
   opacity: 1;
 }
 
-menu .beta-brand {
+body menu .beta-brand {
   color: #111;
   white-space: nowrap;
 }
 
-menu .chapter-title {
+body menu .chapter-title {
   display: none;
 }
 
-menu.scrolled .beta-brand {
+body menu.scrolled .beta-brand {
   display: none;
 }
 
-menu.scrolled .chapter-title {
+body menu.scrolled .chapter-title {
   display: inline;
 }
 
 @media only screen and (max-width: 600px) {
-  menu .title {
+  body main {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+  }
+
+  body main .highlight,
+  body main .katex-display,
+  body main pre,
+  body main table {
+    box-sizing: border-box;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  body main table {
+    display: block;
+  }
+
+  body main article img,
+  body main article svg {
+    height: auto;
+    max-width: 100%;
+  }
+
+  body main article svg {
+    overflow: hidden;
+  }
+
+  body main article code:not(pre code) {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  body menu .title {
     display: block;
     font-size: 20px;
     margin-top: 0;
   }
 
-  menu.scrolled .beta-brand {
+  body menu.scrolled .beta-brand {
     display: inline;
   }
 
-  menu.scrolled .chapter-title {
+  body menu.scrolled .chapter-title {
     display: none;
   }
 }

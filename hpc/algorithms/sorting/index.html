@@ -1,41 +1,984 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><link rel=icon href=https://anpaure.github.io/algorithmica-beta/favicon.ico><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/beta.css><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00="><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/syntax.css id=syntax-theme><link rel=stylesheet type=text/css href=https://tikzjax.com/v1/fonts.css><script src=https://tikzjax.com/v1/tikzjax.js></script>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js></script>
-<link rel=stylesheet id=theme><script>function toggleSidebar(){console.log("Toggling sidebar visibility");var e=document.getElementById("sidebar"),t=document.getElementById("wrapper");(e.classList.contains("sidebar-toggled")||window.getComputedStyle(e).display=="block")&&(e.classList.toggle("sidebar-hidden"),t.classList.toggle("sidebar-hidden")),e.classList.add("sidebar-toggled"),t.classList.add("sidebar-toggled")}function switchTheme(e){console.log("Changing theme:",e),document.getElementById("theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css":"",document.getElementById("syntax-theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/syntax-dark.css":"https://anpaure.github.io/algorithmica-beta/syntax.css",localStorage.setItem("theme",e)}async function toggleSearch(){console.log("Toggling search");var e=document.getElementById("search");if(window.getComputedStyle(e).display=="none"?(e.style.display="block",window.scrollTo({top:0}),document.getElementById("search-bar").focus()):e.style.display="none",!index){console.log("Fetching index");const e=await fetch("https://anpaure.github.io/algorithmica-beta/searchindex.json"),t=await e.json();index=lunr(function(){this.use(lunr.multiLanguage("en","ru")),this.field("title",{boost:5}),this.field("content",{boost:1}),t.forEach(function(e){this.add(e),articles.push(e)},this)}),console.log("Ready to search")}}var articles=[],index=void 0;function search(){var e=document.getElementById("search-bar").value,n,s=document.getElementById("search-results"),o=document.getElementById("search-count");if(e==''){s.innerHTML='',o.innerHTML='';return}n=index.search(e),o.innerHTML="Found <b>"+n.length+"</b> pages";let t='';for(const a in n){const i=articles[n[a].ref];t+='<li><a href="'+i.path+'">'+i.title+"</a> <p>";const s=i.content,o=80;if(s.includes(e)){const n=s.indexOf(e);n>o&&(t+="…"),t+=s.substring(n-o,n)+"<b>"+e+"</b>"+s.substring(n+e.length,n+e.length+o)}else t+=s.substring(0,o*2);t+="…</p></li>"}s.innerHTML=t}localStorage.getItem("theme")=="dark"&&switchTheme("dark"),window.addEventListener("load",function(){var e=document.getElementById("active-element");e&&e.scrollIntoView({block:"center"})}),window.addEventListener("scroll",function(){var e=document.getElementById("menu");window.scrollY<120?e.classList.remove("scrolled"):e.classList.add("scrolled")}),window.addEventListener("keydown",function(e){if(e.altKey)return;if(document.activeElement.tagName=="INPUT")return;e.key=="ArrowLeft"?document.getElementById("prev-article").click():e.key=="ArrowRight"&&document.getElementById("next-article").click()})</script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin=anonymous></script>
-<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><title>Sorting - Algorithmica β</title></head><body><nav id=sidebar><div class=title><a href=https://anpaure.github.io/algorithmica-beta/>Algorithmica β</a>
-<span class=slash>/</span>
-<a href=https://anpaure.github.io/algorithmica-beta/hpc/ class=divisionAbbr>HPC</a></div><ul><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/preface/>Preface</a></li><li class=part>Performance Engineering</li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/>Complexity Models</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/>Modern Hardware</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/>Programming Languages</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/>Models of Computation</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/>When to Optimize</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/>Computer Architecture</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/>Instruction Set Architectures</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/>Assembly Language</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/>Loops and Conditionals</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/>Functions and Recursion</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/>Indirect Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/>Virtualization</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/>Interrupts and System Calls</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/>Machine Code Layout</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/>Instruction-Level Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/>Pipeline Hazards</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/>The Cost of Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/>Branchless Programming</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/>Instruction Tables</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/>Instruction Scheduling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/>Throughput Computing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/>Theoretical Performance Limits</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/>Compilation</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/>Stages of Compilation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/>Flags and Targets</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/>Situational Optimizations</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/>Contract Programming</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/>Non-Zero-Cost Abstractions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/>Precomputation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/>Arithmetic Optimizations</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/>What Compilers Can and Can't Do</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/>Profiling</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/>Instrumentation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/>Statistical Profiling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/>Program Simulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/>Machine Code Analyzers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/>Benchmarking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/>Getting Accurate Results</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/>Arithmetic</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/>Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/>IEEE 754 Floats</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/>Rounding Errors</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/>Newton's Method</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/>Fast Inverse Square Root</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/>Integer Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/>Integer Division</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/>Bit Manipulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/>Data Compression</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/>Number Theory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/>Modular Arithmetic</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/>Binary Exponentiation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/>Extended Euclidean Algorithm</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/>Montgomery Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/>Finite Fields</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/>Error Correction</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/>Hashing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/>Cryptography</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/>Random Number Generation</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/>External Memory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/>Memory Hierarchy</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/>Virtual Memory</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/>External Memory Model</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/>External Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/>List Ranking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/>Eviction Policies</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/>Cache-Oblivious Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/>Spatial and Temporal Locality</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/>B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/>Sublinear Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/>Memory Management</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/>RAM & CPU Caches</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/>Memory Bandwidth</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/>Memory Latency</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/>Cache Lines</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/>Memory Sharing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/>Memory-Level Parallelism</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/>Prefetching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/>Alignment and Packing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/>Pointer Alternatives</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/>Cache Associativity</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/>Memory Paging</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/>AoS and SoA</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/>SIMD Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/>Intrinsics and Vector Types</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/>Moving Data</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/>Reductions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/>Masking and Blending</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/>In-Register Shuffles</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/>Auto-Vectorization and SPMD</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/>Algorithms Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/>Binary GCD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/>Prime Number Sieves</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/>Integer Factorization</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/>Big Integers and Karatsuba Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/>Optimizing Logistic Regression</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/>Fast Fourier Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/ id=active-element>Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/>Argmin with SIMD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/>Number-Theoretic Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/>Prefix Sum with SIMD</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/>Reading Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/>Writing Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/>Reading and Writing Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/>String Searching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/>Matrix Multiplication</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/>Data Structures Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/>Binary Search</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/>Static B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/>Search Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/>Segment Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/>Tries</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/>Bitmaps</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/>Range Minimum Query</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/>Hash Tables</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/>Probabilistic Filters</a></li></ol><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/summary/>Summary</a></li><li class=part>Appendix</li><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/stats/>Probability Theory Refresher</a></li></ul></nav><div id=wrapper><menu id=menu><div class=left><a><img src=https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg onclick=toggleSidebar() title="open table of contents"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg style=position:relative;top:-1px onclick='switchTheme(localStorage.getItem("theme")=="dark"?"light":"dark")' title="dark theme"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg onclick=toggleSearch() title=search></a></div><div class=title><span class=beta-brand>Algorithmica β</span>
-<span class=chapter-title>Sorting</span></div><div class=right><a onclick=window.print()><img src=https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg title=print></a>
-<a href=https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2falgorithms%2fsorting.md><img src=https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg title=edit style=width:18px;position:relative;right:-2px;top:-1px></a>
-<a href=https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/algorithms/sorting.md class=github-main><img src=https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg title="view on github"></a></div></menu><main><div id=search><input id=search-bar type=search placeholder="Search this book…" oninput=search()><div id=search-count></div><div id=search-results></div></div><header><h1>Sorting</h1><div class=info></div></header><article><p>There is no fastest sorting algorithm in the same sense that there is no fastest vehicle.</p><p>If the elements are arbitrary objects and we can only compare them, we have one problem. If they are 32-bit integers, we have another. Stability, input distribution, record size, available memory, and what we do with the sorted data afterwards can all change the answer.</p><p>For general C++ objects, <code>std::sort</code> is a very strong baseline. Instead of trying to reproduce an entire standard-library sort, we will look at the one piece of information it cannot use: the bits of an integer key.</p><span class=anchor id=comparison-sorting></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#comparison-sorting>#</a>Comparison Sorting</h2><p>A comparison gives us at most one bit of information. To distinguish all $n!$ permutations of $n$ distinct values, a comparison sort needs at least</p>$$
+<!doctype html>
+<html lang='en-us'><head><meta charset="utf-8">
+  <link rel="icon" href="https://anpaure.github.io/algorithmica-beta/favicon.ico">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/beta.css">
+  
+
+  
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css" integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00=">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/syntax.css" id="syntax-theme">
+
+  <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+  <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js"></script>
+
+  
+  <link rel="stylesheet" id="theme">
+
+  <script>
+    function toggleSidebar() {
+      console.log("Toggling sidebar visibility")
+      var sidebar = document.getElementById('sidebar')
+      var wrapper = document.getElementById('wrapper')
+      if (sidebar.classList.contains('sidebar-toggled') || window.getComputedStyle(sidebar).display == 'block') { 
+        sidebar.classList.toggle('sidebar-hidden')
+        wrapper.classList.toggle('sidebar-hidden')
+      }
+      sidebar.classList.add('sidebar-toggled')
+      wrapper.classList.add('sidebar-toggled')
+    }
+
+    function switchTheme(theme) {
+      console.log("Changing theme:", theme)
+      document.getElementById('theme').href = (theme == 'dark' ? "https:\/\/anpaure.github.io\/algorithmica-beta\/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css" : "")
+      document.getElementById('syntax-theme').href = (theme == 'dark' ? 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax-dark.css' : 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax.css')
+      localStorage.setItem('theme', theme)
+    }
+
+    async function toggleSearch() {
+      console.log("Toggling search")
+      
+      var searchDiv = document.getElementById('search')
+      if (window.getComputedStyle(searchDiv).display == 'none') {
+        searchDiv.style.display = 'block'
+        window.scrollTo({ top: 0 });
+        document.getElementById('search-bar').focus()
+      } else {
+        searchDiv.style.display = 'none'  
+      }
+
+      if (!index) {
+        console.log("Fetching index")
+        const response = await fetch('https:\/\/anpaure.github.io\/algorithmica-beta\/searchindex.json')
+        const pages = await response.json()
+        index = lunr(function() {
+          this.use(lunr.multiLanguage('en', 'ru'))
+          this.field('title', {
+            boost: 5
+          })
+          this.field('content', {
+            boost: 1
+          })
+          pages.forEach(function(doc) {
+            this.add(doc)
+            articles.push(doc)
+          }, this)
+        })
+        console.log("Ready to search")
+      }
+    }
+
+    var articles = []
+    var index = undefined
+
+    function search() {
+      var query = document.getElementById('search-bar').value
+      var resultsDiv = document.getElementById('search-results')
+      var countDiv = document.getElementById('search-count')
+      
+      if (query == '') {
+        resultsDiv.innerHTML = ''
+        countDiv.innerHTML = ''
+        return
+      }
+      
+      var results = index.search(query)
+
+      countDiv.innerHTML = 'Found <b>' + results.length + '</b> pages'
+
+      let resultList = ''
+
+      for (const n in results) {
+        const item = articles[results[n].ref]
+        resultList += '<li><a href="' + item.path + '">' + item.title + '</a> <p>'
+        const text = item.content
+
+        const contextLimit = 80
+
+        if (text.includes(query)) {
+          const start = text.indexOf(query)
+          if (start > contextLimit)
+            resultList += '…'
+          resultList += text.substring(start - contextLimit, start)
+                      + '<b>' + query + '</b>' + text.substring(start + query.length, start + query.length + contextLimit)
+
+        } else {
+          resultList += text.substring(0, contextLimit * 2)
+        }
+        resultList += '…</p></li>'
+      }
+
+      resultsDiv.innerHTML = resultList
+    }
+
+    if (localStorage.getItem('theme') == 'dark') {
+      switchTheme('dark')
+    }
+
+    window.addEventListener('load', function() {
+      var el = document.getElementById("active-element")
+      
+      if (el) {
+        el.scrollIntoView({block: "center"})
+      }
+      
+
+    })
+
+    window.addEventListener('scroll', function() {
+      var menu = document.getElementById('menu')
+      if (window.scrollY < 120) {
+        
+        menu.classList.remove('scrolled')
+      } else {
+        
+        menu.classList.add('scrolled')
+      }
+    })
+
+    window.addEventListener('keydown', function(e) {
+      if (e.altKey) { return }
+      if (document.activeElement.tagName == 'INPUT') { return }
+      if (e.key == 'ArrowLeft') {
+        document.getElementById('prev-article').click()
+      } else if (e.key == 'ArrowRight') {
+        document.getElementById('next-article').click()
+      }
+    })
+  </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false}
+    ]
+  })"></script>
+
+  
+  <title>Sorting - Algorithmica β</title>
+</head>
+<body><nav id='sidebar' >
+  
+  
+  <div class='title'>
+    <a href='https://anpaure.github.io/algorithmica-beta/'>Algorithmica β</a>
+    
+      
+        
+        <span class='slash'>/</span>
+        <a href='https://anpaure.github.io/algorithmica-beta/hpc/' class='divisionAbbr'
+           >
+          HPC
+        </a>
+      
+    
+  </div>
+  <ul>
+    
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/preface/'
+          
+          >Preface</a></li>
+        
+      
+        
+          <li class='part'>Performance Engineering</li>
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/'
+          
+          >Complexity Models</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/'
+                
+                >Modern Hardware</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/'
+                
+                >Programming Languages</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/'
+                
+                >Models of Computation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/'
+                
+                >When to Optimize</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/'
+          
+          >Computer Architecture</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/'
+                
+                >Instruction Set Architectures</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/'
+                
+                >Assembly Language</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/'
+                
+                >Loops and Conditionals</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/'
+                
+                >Functions and Recursion</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/'
+                
+                >Indirect Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/'
+                
+                >Machine Code Layout</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/'
+                
+                >Interrupts and System Calls</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/'
+                
+                >Virtualization</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/'
+          
+          >Instruction-Level Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/'
+                
+                >Pipeline Hazards</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/'
+                
+                >The Cost of Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/'
+                
+                >Branchless Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/'
+                
+                >Instruction Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/'
+                
+                >Instruction Scheduling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/'
+                
+                >Throughput Computing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/'
+                
+                >Theoretical Performance Limits</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/'
+          
+          >Compilation</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/'
+                
+                >Stages of Compilation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/'
+                
+                >Flags and Targets</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/'
+                
+                >Situational Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/'
+                
+                >Contract Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/'
+                
+                >Non-Zero-Cost Abstractions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/'
+                
+                >Precomputation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/'
+                
+                >Arithmetic Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/'
+                
+                >What Compilers Can and Can&#39;t Do</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/'
+          
+          >Profiling</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/'
+                
+                >Instrumentation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/'
+                
+                >Statistical Profiling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/'
+                
+                >Program Simulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/'
+                
+                >Machine Code Analyzers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/'
+                
+                >Benchmarking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/'
+                
+                >Getting Accurate Results</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/'
+          
+          >Arithmetic</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/'
+                
+                >Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/'
+                
+                >IEEE 754 Floats</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/'
+                
+                >Rounding Errors</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/'
+                
+                >Newton&#39;s Method</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/'
+                
+                >Fast Inverse Square Root</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/'
+                
+                >Integer Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/'
+                
+                >Integer Division</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/'
+                
+                >Bit Manipulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/'
+                
+                >Data Compression</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/'
+          
+          >Number Theory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/'
+                
+                >Modular Arithmetic</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/'
+                
+                >Binary Exponentiation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/'
+                
+                >Extended Euclidean Algorithm</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/'
+                
+                >Montgomery Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/'
+                
+                >Finite Fields</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/'
+                
+                >Error Correction</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/'
+                
+                >Cryptography</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/'
+                
+                >Hashing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/'
+                
+                >Random Number Generation</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/'
+          
+          >External Memory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/'
+                
+                >Memory Hierarchy</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/'
+                
+                >Virtual Memory</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/'
+                
+                >External Memory Model</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/'
+                
+                >External Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/'
+                
+                >List Ranking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/'
+                
+                >Eviction Policies</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/'
+                
+                >Cache-Oblivious Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/'
+                
+                >Spatial and Temporal Locality</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/'
+                
+                >B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/'
+                
+                >Sublinear Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/'
+                
+                >Memory Management</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/'
+          
+          >RAM &amp; CPU Caches</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/'
+                
+                >Memory Bandwidth</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/'
+                
+                >Memory Latency</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/'
+                
+                >Cache Lines</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/'
+                
+                >Memory Sharing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/'
+                
+                >Memory-Level Parallelism</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/'
+                
+                >Prefetching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/'
+                
+                >Alignment and Packing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/'
+                
+                >Pointer Alternatives</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/'
+                
+                >Cache Associativity</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/'
+                
+                >Memory Paging</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/'
+                
+                >AoS and SoA</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/'
+          
+          >SIMD Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/'
+                
+                >Intrinsics and Vector Types</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/'
+                
+                >Moving Data</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/'
+                
+                >Reductions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/'
+                
+                >Masking and Blending</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/'
+                
+                >In-Register Shuffles</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/'
+                
+                >Auto-Vectorization and SPMD</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/'
+          
+          >Algorithms Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/'
+                
+                >Binary GCD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/'
+                
+                >Prime Number Sieves</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/'
+                
+                >Integer Factorization</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/'
+                
+                >Optimizing Logistic Regression</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/'
+                
+                >Big Integers and Karatsuba Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/'
+                
+                >Fast Fourier Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/'
+                
+                >Number-Theoretic Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/'
+                
+                >Argmin with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/'
+                
+                >Prefix Sum with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/'
+                
+                >Reading Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/'
+                
+                >Writing Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/'
+                
+                >Reading and Writing Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/'
+                
+                >String Searching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/'
+                id='active-element'
+                >Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/'
+                
+                >Matrix Multiplication</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/'
+          
+          >Data Structures Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/'
+                
+                >Binary Search</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/'
+                
+                >Static B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/'
+                
+                >Search Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/'
+                
+                >Segment Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/'
+                
+                >Tries</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/'
+                
+                >Range Minimum Query</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/'
+                
+                >Hash Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/'
+                
+                >Bitmaps</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/'
+                
+                >Probabilistic Filters</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/summary/'
+          
+          >Summary</a></li>
+        
+      
+        
+          <li class='part'>Appendix</li>
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/stats/'
+          
+          >Probability Theory Refresher</a></li>
+        
+      
+    
+  </ul>
+</nav>
+<div id='wrapper' ><menu id='menu'>
+  
+  
+  
+  
+  <div class='left'>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg'
+           onclick='toggleSidebar()'
+           title='open table of contents'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg'
+           style='position: relative; top: -1px'
+           onclick='switchTheme(localStorage.getItem("theme") == "dark" ? "light" : "dark")'
+           title='dark theme'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg'
+           onclick='toggleSearch()'
+           title='search'>
+    </a>
+  </div>
+  <div class='title'>
+    
+      <span class='beta-brand'>Algorithmica β</span>
+      <span class='chapter-title'>Sorting</span>
+    
+  </div>
+  <div class='right'>
+    <a onClick='window.print()'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg' title='print'>
+    </a>
+    <a href='https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2falgorithms%2fsorting.md'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg'
+           title='edit'
+           style='width: 18px; position: relative; right: -2px; top: -1px'>
+    </a>
+    <a href='https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/algorithms/sorting.md' class='github-main'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg' title='view on github'>
+    </a>
+  </div>
+</menu>
+<main>
+        <div id="search">
+    <input id="search-bar" type="search" placeholder='Search this book…' oninput="search()">
+    <div id="search-count"></div>
+    <div id="search-results">
+    </div>
+</div>
+<header>
+  
+  <h1>Sorting</h1>
+  
+    <div class='info'></div>
+  
+</header>
+<article>
+  
+
+
+  
+    
+    
+      
+        <p>There is no fastest sorting algorithm in the same sense that there is no fastest vehicle.</p>
+<p>If the elements are arbitrary objects and we can only compare them, we have one problem. If they are 32-bit integers, we have another. Stability, input distribution, record size, available memory, and what we do with the sorted data afterwards can all change the answer.</p>
+<p>For general C++ objects, <code>std::sort</code> is a very strong baseline. Instead of trying to reproduce an entire standard-library sort, we will look at the one piece of information it cannot use: the bits of an integer key.</p>
+<span class='anchor' id="comparison-sorting"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#comparison-sorting">#</a>Comparison Sorting</h2><p>A comparison gives us at most one bit of information. To distinguish all $n!$ permutations of $n$ distinct values, a comparison sort needs at least</p>
+
+      
+    
+  
+
+  
+    $$
+    
 \log_2(n!)=n\log_2n-O(n)
-$$<p>comparisons in the worst case.</p><p>Quicksort is usually fast because its partitioning pass is sequential and in-place, but careless pivot selection gives it a quadratic worst case. Heapsort has a guaranteed $O(n\log n)$ bound but poor locality. Insertion sort is quadratic and nevertheless excellent for tiny arrays. Most practical implementations combine ideas like these rather than remaining faithful to one textbook algorithm.</p><p>This already gives us two useful rules:</p><ol><li>Compare specialized code against <code>std::sort</code>, not against a naive quicksort.</li><li>If we want to escape $n\log n$, we need to use more information than comparisons reveal.</li></ol><p>Fixed-width integers give us all their bits.</p><span class=anchor id=counting-one-digit></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#counting-one-digit>#</a>Counting One Digit</h2><p>Counting sort works when keys come from a small range. Count how many elements have each key, calculate where every bucket begins, and then place the elements into their buckets.</p><p>A 32-bit integer has too many possible values for one counting array, but each of its bytes has only 256. We can stably counting-sort by one byte at a time. This is <em>radix sort</em>.</p><p>Suppose we first sort by the lowest byte, then by the next byte. After the second pass, values are ordered by their lowest 16 bits — but only if the second pass preserves the order of equal second bytes. This is why every pass has to be stable.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>void</span> <span class=nf>radix_sort</span><span class=p>(</span><span class=n>vector</span><span class=o>&lt;</span><span class=kt>uint32_t</span><span class=o>&gt;</span> <span class=o>&amp;</span><span class=n>a</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=kt>uint32_t</span><span class=o>&gt;</span> <span class=n>buffer</span><span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>size</span><span class=p>());</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>shift</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>shift</span> <span class=o>&lt;</span> <span class=mi>32</span><span class=p>;</span> <span class=n>shift</span> <span class=o>+=</span> <span class=mi>8</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>size_t</span> <span class=n>count</span><span class=p>[</span><span class=mi>256</span><span class=p>]</span> <span class=o>=</span> <span class=p>{};</span>
-</span></span><span class=line><span class=cl>        <span class=n>size_t</span> <span class=n>position</span><span class=p>[</span><span class=mi>256</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>uint32_t</span> <span class=nl>x</span> <span class=p>:</span> <span class=n>a</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=n>count</span><span class=p>[(</span><span class=n>x</span> <span class=o>&gt;&gt;</span> <span class=n>shift</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mi>255</span><span class=p>]</span><span class=o>++</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>        <span class=n>position</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>digit</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span> <span class=n>digit</span> <span class=o>&lt;</span> <span class=mi>256</span><span class=p>;</span> <span class=n>digit</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=n>position</span><span class=p>[</span><span class=n>digit</span><span class=p>]</span> <span class=o>=</span> <span class=n>position</span><span class=p>[</span><span class=n>digit</span> <span class=o>-</span> <span class=mi>1</span><span class=p>]</span> <span class=o>+</span> <span class=n>count</span><span class=p>[</span><span class=n>digit</span> <span class=o>-</span> <span class=mi>1</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>uint32_t</span> <span class=nl>x</span> <span class=p>:</span> <span class=n>a</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>            <span class=kt>int</span> <span class=n>digit</span> <span class=o>=</span> <span class=p>(</span><span class=n>x</span> <span class=o>&gt;&gt;</span> <span class=n>shift</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mi>255</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=n>buffer</span><span class=p>[</span><span class=n>position</span><span class=p>[</span><span class=n>digit</span><span class=p>]</span><span class=o>++</span><span class=p>]</span> <span class=o>=</span> <span class=n>x</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>        <span class=n>a</span><span class=p>.</span><span class=n>swap</span><span class=p>(</span><span class=n>buffer</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>There are four passes, each linear, so for 32-bit keys the running time is $O(n)$. More honestly, it is $O(4n+4\cdot256)$ with one auxiliary array of $n$ integers.</p><p>The four swaps do not move the elements — a <code>vector</code> swap only exchanges the two buffers. After each swap, <code>a</code> owns the output of the latest pass; after an even number of passes it even owns its original allocation again.</p><span class=anchor id=signed-integers></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#signed-integers>#</a>Signed integers</h3><p>Sorting the bit patterns of signed integers as unsigned places all negative numbers after the positive ones. On the usual two&rsquo;s-complement representation, flipping the sign bit fixes the order:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>uint32_t</span> <span class=nf>key</span><span class=p>(</span><span class=kt>int32_t</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=kt>uint32_t</span><span class=p>(</span><span class=n>x</span><span class=p>)</span> <span class=o>^</span> <span class=mh>0x80000000u</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>Use this transformed key only for selecting the digit; keep the original value as the payload. Floating-point numbers need a related but slightly more complicated transformation, plus an explicit policy for NaNs and signed zero.</p><span class=anchor id=choosing-the-radix></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#choosing-the-radix>#</a>Choosing the Radix</h2><p>Eight bits per pass is not sacred. With $r$ bits per digit, we perform roughly $32/r$ passes and need $2^r$ counters.</p><ul><li>Small digits mean more complete passes over the input.</li><li>Large digits mean a larger histogram that is slower to clear and may not fit in L1 cache.</li><li>A larger radix also creates more simultaneous output streams during distribution, which is harder for the cache and write-combining machinery.</li></ul><p>For example, a 16-bit digit reduces the algorithm to two passes but needs 65,536 counters. That histogram alone occupies hundreds of kilobytes, compared with just a few kilobytes for 256 <code>size_t</code> counters. Depending on the array size and processor, saving two passes may or may not compensate for losing the small hot histogram.</p><p>The count loop repeatedly increments locations in this histogram. A popular low-level optimization is to unroll the loop and maintain several independent histograms, merging them afterwards. This breaks the dependency chain when consecutive keys have the same digit, at the cost of more cache space and a final reduction. As always, it is useful only after the count phase has actually appeared in a profile.</p><span class=anchor id=the-memory-cost></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#the-memory-cost>#</a>The Memory Cost</h2><p>Radix sort avoids comparisons, but it moves a lot of data. Each pass reads the input once to build the histogram, reads it again to distribute the values, and writes an entire output array. For a large array, the algorithm is mostly a memory-bandwidth problem.</p><p>This is why radix sort is not automatically faster than <code>std::sort</code>:</p><ul><li>small arrays do not amortize clearing the histograms;</li><li>large records are expensive to copy on every pass;</li><li>allocating another full-size array may be unacceptable;</li><li>comparison sorting can be in-place and may finish in fewer memory passes;</li><li>an expensive comparison or a cheap integer key strongly favors radix sorting.</li></ul><p>For records, we can sort compact indices or key-pointer pairs instead of moving the entire payload. This reduces traffic during sorting but introduces an extra indirection when the result is consumed. Whether that is a win depends on the next stage of the program, not just the sort benchmark.</p><span class=anchor id=stability-and-records></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#stability-and-records>#</a>Stability and Records</h2><p>The implementation above is stable because it scans the input from left to right and advances each bucket position in the same order. For plain integers this property is invisible, but it matters for records with equal keys.</p><p>If stability is not required, other radix layouts can partition in place and save the auxiliary array. They usually become more complicated: we need to follow cycles between buckets, deal with small subranges, and retain good locality. The stable out-of-place version is a better starting point because every pass is a pair of simple streaming loops.</p><p>Comparison sorting has the opposite default in the C++ library: <code>std::sort</code> is not stable, while <code>std::stable_sort</code> is. Adding the original index as a tie-breaker changes both the key and the amount of data moved; stability is not free just because the final order can be described that way.</p><span class=anchor id=benchmarking-sorting></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#benchmarking-sorting>#</a>Benchmarking Sorting</h2><p>Never benchmark a sort by repeatedly sorting the same array. After the first iteration, the input distribution has changed. Generate or restore the data outside the timed region and verify that the result is ordered after every implementation.</p><p>At minimum, test:</p><ul><li>uniformly random full-width keys;</li><li>already sorted and reverse-sorted arrays;</li><li>many equal keys and a very small key range;</li><li>nearly sorted data;</li><li>the real distribution and record type from the application.</li></ul><p>Sweep the size across the cache hierarchy. Report whether allocation and copying the input are included, whether stability is required, and the key and record widths. “Elements per second” without these details is not a sorting result.</p><p>For correctness, compare the radix output with <code>std::sort</code> on random arrays and on values around <code>0</code>, <code>UINT32_MAX</code>, <code>INT32_MIN</code>, and <code>INT32_MAX</code>. To test a stable record sort, attach the original position and check that positions remain increasing within each equal-key group.</p><p>The lesson is not that radix sort beats comparison sorting. It is that the representation of the key is part of the algorithm. Once we are allowed to inspect a byte rather than ask a yes-or-no question, the complexity changes — and the bottleneck moves from branches and comparisons to cache lines and memory traffic.</p></article><div class=nextprev><div class=left><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/ id=prev-article>← Fast Fourier Transform</a></div><div class=right><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/ id=next-article>Argmin with SIMD →</a></div></div></main><footer>Copyright 2021–2022 Sergey Slotin<br></footer></div></body></html>
+
+    $$
+  
+
+  
+    
+    
+      
+        <p>comparisons in the worst case.</p>
+<p>Quicksort is usually fast because its partitioning pass is sequential and in-place, but careless pivot selection gives it a quadratic worst case. Heapsort has a guaranteed $O(n\log n)$ bound but poor locality. Insertion sort is quadratic and nevertheless excellent for tiny arrays. Most practical implementations combine ideas like these rather than remaining faithful to one textbook algorithm.</p>
+<p>This already gives us two useful rules:</p>
+<ol>
+<li>Compare specialized code against <code>std::sort</code>, not against a naive quicksort.</li>
+<li>If we want to escape $n\log n$, we need to use more information than comparisons reveal.</li>
+</ol>
+<p>Fixed-width integers give us all their bits.</p>
+<span class='anchor' id="counting-one-digit"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#counting-one-digit">#</a>Counting One Digit</h2><p>Counting sort works when keys come from a small range. Count how many elements have each key, calculate where every bucket begins, and then place the elements into their buckets.</p>
+<p>A 32-bit integer has too many possible values for one counting array, but each of its bytes has only 256. We can stably counting-sort by one byte at a time. This is <em>radix sort</em>.</p>
+<p>Suppose we first sort by the lowest byte, then by the next byte. After the second pass, values are ordered by their lowest 16 bits — but only if the second pass preserves the order of equal second bytes. This is why every pass has to be stable.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">radix_sort</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="o">&gt;</span> <span class="n">buffer</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">shift</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">shift</span> <span class="o">&lt;</span> <span class="mi">32</span><span class="p">;</span> <span class="n">shift</span> <span class="o">+=</span> <span class="mi">8</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">size_t</span> <span class="n">count</span><span class="p">[</span><span class="mi">256</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+</span></span><span class="line"><span class="cl">        <span class="n">size_t</span> <span class="n">position</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">uint32_t</span> <span class="nl">x</span> <span class="p">:</span> <span class="n">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">count</span><span class="p">[(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">digit</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">digit</span> <span class="o">&lt;</span> <span class="mi">256</span><span class="p">;</span> <span class="n">digit</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">position</span><span class="p">[</span><span class="n">digit</span><span class="p">]</span> <span class="o">=</span> <span class="n">position</span><span class="p">[</span><span class="n">digit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">count</span><span class="p">[</span><span class="n">digit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">uint32_t</span> <span class="nl">x</span> <span class="p">:</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="kt">int</span> <span class="n">digit</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">buffer</span><span class="p">[</span><span class="n">position</span><span class="p">[</span><span class="n">digit</span><span class="p">]</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">a</span><span class="p">.</span><span class="n">swap</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>There are four passes, each linear, so for 32-bit keys the running time is $O(n)$. More honestly, it is $O(4n+4\cdot256)$ with one auxiliary array of $n$ integers.</p>
+<p>The four swaps do not move the elements — a <code>vector</code> swap only exchanges the two buffers. After each swap, <code>a</code> owns the output of the latest pass; after an even number of passes it even owns its original allocation again.</p>
+<span class='anchor' id="signed-integers"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#signed-integers">#</a>Signed integers</h3><p>Sorting the bit patterns of signed integers as unsigned places all negative numbers after the positive ones. On the usual two&rsquo;s-complement representation, flipping the sign bit fixes the order:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">uint32_t</span> <span class="nf">key</span><span class="p">(</span><span class="kt">int32_t</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kt">uint32_t</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">^</span> <span class="mh">0x80000000u</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Use this transformed key only for selecting the digit; keep the original value as the payload. Floating-point numbers need a related but slightly more complicated transformation, plus an explicit policy for NaNs and signed zero.</p>
+<span class='anchor' id="choosing-the-radix"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#choosing-the-radix">#</a>Choosing the Radix</h2><p>Eight bits per pass is not sacred. With $r$ bits per digit, we perform roughly $32/r$ passes and need $2^r$ counters.</p>
+<ul>
+<li>Small digits mean more complete passes over the input.</li>
+<li>Large digits mean a larger histogram that is slower to clear and may not fit in L1 cache.</li>
+<li>A larger radix also creates more simultaneous output streams during distribution, which is harder for the cache and write-combining machinery.</li>
+</ul>
+<p>For example, a 16-bit digit reduces the algorithm to two passes but needs 65,536 counters. That histogram alone occupies hundreds of kilobytes, compared with just a few kilobytes for 256 <code>size_t</code> counters. Depending on the array size and processor, saving two passes may or may not compensate for losing the small hot histogram.</p>
+<p>The count loop repeatedly increments locations in this histogram. A popular low-level optimization is to unroll the loop and maintain several independent histograms, merging them afterwards. This breaks the dependency chain when consecutive keys have the same digit, at the cost of more cache space and a final reduction. As always, it is useful only after the count phase has actually appeared in a profile.</p>
+<span class='anchor' id="the-memory-cost"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#the-memory-cost">#</a>The Memory Cost</h2><p>Radix sort avoids comparisons, but it moves a lot of data. Each pass reads the input once to build the histogram, reads it again to distribute the values, and writes an entire output array. For a large array, the algorithm is mostly a memory-bandwidth problem.</p>
+<p>This is why radix sort is not automatically faster than <code>std::sort</code>:</p>
+<ul>
+<li>small arrays do not amortize clearing the histograms;</li>
+<li>large records are expensive to copy on every pass;</li>
+<li>allocating another full-size array may be unacceptable;</li>
+<li>comparison sorting can be in-place and may finish in fewer memory passes;</li>
+<li>an expensive comparison or a cheap integer key strongly favors radix sorting.</li>
+</ul>
+<p>For records, we can sort compact indices or key-pointer pairs instead of moving the entire payload. This reduces traffic during sorting but introduces an extra indirection when the result is consumed. Whether that is a win depends on the next stage of the program, not just the sort benchmark.</p>
+<span class='anchor' id="stability-and-records"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#stability-and-records">#</a>Stability and Records</h2><p>The implementation above is stable because it scans the input from left to right and advances each bucket position in the same order. For plain integers this property is invisible, but it matters for records with equal keys.</p>
+<p>If stability is not required, other radix layouts can partition in place and save the auxiliary array. They usually become more complicated: we need to follow cycles between buckets, deal with small subranges, and retain good locality. The stable out-of-place version is a better starting point because every pass is a pair of simple streaming loops.</p>
+<p>Comparison sorting has the opposite default in the C++ library: <code>std::sort</code> is not stable, while <code>std::stable_sort</code> is. Adding the original index as a tie-breaker changes both the key and the amount of data moved; stability is not free just because the final order can be described that way.</p>
+<span class='anchor' id="benchmarking-sorting"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/#benchmarking-sorting">#</a>Benchmarking Sorting</h2><p>Never benchmark a sort by repeatedly sorting the same array. After the first iteration, the input distribution has changed. Generate or restore the data outside the timed region and verify that the result is ordered after every implementation.</p>
+<p>At minimum, test:</p>
+<ul>
+<li>uniformly random full-width keys;</li>
+<li>already sorted and reverse-sorted arrays;</li>
+<li>many equal keys and a very small key range;</li>
+<li>nearly sorted data;</li>
+<li>the real distribution and record type from the application.</li>
+</ul>
+<p>Sweep the size across the cache hierarchy. Report whether allocation and copying the input are included, whether stability is required, and the key and record widths. “Elements per second” without these details is not a sorting result.</p>
+<p>For correctness, compare the radix output with <code>std::sort</code> on random arrays and on values around <code>0</code>, <code>UINT32_MAX</code>, <code>INT32_MIN</code>, and <code>INT32_MAX</code>. To test a stable record sort, attach the original position and check that positions remain increasing within each equal-key group.</p>
+<p>The lesson is not that radix sort beats comparison sorting. It is that the representation of the key is part of the algorithm. Once we are allowed to inspect a byte rather than ask a yes-or-no question, the complexity changes — and the bottleneck moves from branches and comparisons to cache lines and memory traffic.</p>
+
+      
+    
+  
+
+
+
+        </article>
+        <div class='nextprev'>
+  
+    
+      
+      
+
+      
+      
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+        
+      
+
+      
+        <div class='left'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/' id='prev-article'>← String Searching</a>
+        
+        </div>
+        <div class='right'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/' id='next-article'>Matrix Multiplication →</a>
+        
+        </div>
+      
+    
+  
+</div>
+
+      </main>
+      <footer>
+  Copyright 2021–2022 Sergey Slotin
+  <br>
+   
+</footer>
+
+    </div>
+  </body>
+</html>

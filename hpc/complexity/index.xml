@@ -1,5 +1,48 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Complexity Models on Algorithmica β</title><link>https://anpaure.github.io/algorithmica-beta/hpc/complexity/</link><description>Recent content in Complexity Models on Algorithmica β</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/complexity/index.xml" rel="self" type="application/rss+xml"/><item><title>Modern Hardware</title><link>https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/</guid><description>The main disadvantage of the supercomputers of the 1960s wasn&amp;rsquo;t that they were slow — relatively speaking, they weren&amp;rsquo;t — but that they were giant, complex to use, and so expensive that only the governments of the world superpowers could afford them. Their size was the reason they were so expensive: they required a lot of custom components that had to be very carefully assembled in the macro-world, by people holding advanced degrees in electrical engineering, in a process that couldn&amp;rsquo;t be scaled up for mass production.</description></item><item><title>Programming Languages</title><link>https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/</guid><description>If you are reading this book, then somewhere on your computer science journey you had a moment when you first started to care about the efficiency of your code.
-Mine was in high school, when I realized that making websites and doing useful programming won&amp;rsquo;t get you into a university, and entered the exciting world of algorithmic programming olympiads. I was an okay programmer, especially for a highschooler, but I had never really wondered how much time it took for my code to execute before.</description></item><item><title>Models of Computation</title><link>https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/</guid><description>In classical theoretical computer science, really exciting things stopped happening in the 70s; everything past that are just attempts to replace logarithms in the asymptotic with something slightly less than logarithms. If 50 years ago such algorithms had hope that eventually there will be enough computing power to process the large datasets for which they beat their asymptotically inferior, but practical counterparts, nowadays we know for certain that they never will.</description></item><item><title>When to Optimize</title><link>https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/</guid><description>Why do companies like Google ask to whiteboard-solve algorithm problems in their interviews?
-The reason is that organizations with more than 10000 engineers are very different from the outside world.
-Sure, as you progress through career, these coding questions get replaced with complex system design problems and assessments of managerial ability. It is just irrelevant yet, because you are not getting into a senior role straight out of college.
-This is mostly just my ramblings about career paths in performance engineering.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Complexity Models on Algorithmica β</title>
+    <link>https://anpaure.github.io/algorithmica-beta/hpc/complexity/</link>
+    <description>Recent content in Complexity Models on Algorithmica β</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/complexity/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Modern Hardware</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/</guid>
+      <description>The main disadvantage of the supercomputers of the 1960s wasn&amp;rsquo;t that they were slow — relatively speaking, they weren&amp;rsquo;t — but that they were giant, complex to use, and so expensive that only the governments of the world superpowers could afford them. Their size was the reason they were so expensive: they required a lot of custom components that had to be very carefully assembled in the macro-world, by people holding advanced degrees in electrical engineering, in a process that couldn&amp;rsquo;t be scaled up for mass production.</description>
+    </item>
+    
+    <item>
+      <title>Programming Languages</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/</guid>
+      <description>If you are reading this book, then somewhere on your computer science journey you had a moment when you first started to care about the efficiency of your code.
+Mine was in high school, when I realized that making websites and doing useful programming won&amp;rsquo;t get you into a university, and entered the exciting world of algorithmic programming olympiads. I was an okay programmer, especially for a highschooler, but I had never really wondered how much time it took for my code to execute before.</description>
+    </item>
+    
+    <item>
+      <title>Models of Computation</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/</guid>
+      <description>In classical theoretical computer science, really exciting things stopped happening in the 70s; everything past that are just attempts to replace logarithms in the asymptotic with something slightly less than logarithms. If 50 years ago such algorithms had hope that eventually there will be enough computing power to process the large datasets for which they beat their asymptotically inferior, but practical counterparts, nowadays we know for certain that they never will.</description>
+    </item>
+    
+    <item>
+      <title>When to Optimize</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/</guid>
+      <description>Why do companies like Google ask to whiteboard-solve algorithm problems in their interviews?
+The charitable explanation is that algorithm design is a compact proxy for several useful skills: turning an imprecise problem into a precise one, finding the part that determines scale, and writing code while explaining why it works. These abilities are particularly valuable in organizations with thousands of engineers and a great deal of in-house software. An asymptotic mistake copied into a widely used library can be expensive.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,14 +1,122 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>RAM &amp; CPU Caches on Algorithmica β</title><link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/</link><description>Recent content in RAM &amp; CPU Caches on Algorithmica β</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/index.xml" rel="self" type="application/rss+xml"/><item><title>Memory Bandwidth</title><link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/</guid><description>On the data path between the CPU registers and the RAM, there is a hierarchy of caches that exist to speed up access to frequently used data: the layers closer to the processor are faster but also smaller in size. The word &amp;ldquo;faster&amp;rdquo; here applies to two closely related but separate timings:
-The delay between the moment when a read or a write is initiated and when the data arrives (latency).</description></item><item><title>Memory Latency</title><link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/</guid><description>Despite that bandwidth is a more complicated concept, it is much easier to observe and measure than latency: you can simply execute a long series of independent read or write queries, and the scheduler, having access to them in advance, reorders and overlaps them, hiding their latency and maximizing the total throughput.
-To measure latency, we need to design an experiment where the CPU can&amp;rsquo;t cheat by knowing the memory locations we will request in advance.</description></item><item><title>Cache Lines</title><link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/</guid><description>The basic units of data transfer in the CPU cache system are not individual bits and bytes, but cache lines. On most architectures, the size of a cache line is 64 bytes, meaning that all memory is divided in blocks of 64 bytes, and whenever you request (read or write) a single byte, you are also fetching all its 63 cache line neighbors whether your want them or not.
-To demonstrate this, we add a &amp;ldquo;step&amp;rdquo; parameter to our incrementing loop.</description></item><item><title>Memory Sharing</title><link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/</guid><description>Starting at some level of the hierarchy, the cache becomes shared between different cores. This reduces the total die area and lets you add more cores on a single chip but also poses some &amp;ldquo;noisy neighbor&amp;rdquo; problems as it limits the effective cache size and bandwidth available to a single execution thread.
-On most CPUs, only the last layer of cache is shared, and not always in a uniform manner. On my machine, there are 8 physical cores, and the size of the L3 cache is 8M, but it is split into two halves: two groups of 4 cores have access to their own 4M region of the L3 cache, and not all of it.</description></item><item><title>Memory-Level Parallelism</title><link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/</guid><description>Memory requests can overlap in time: while you wait for a read request to complete, you can send a few others, which will be executed concurrently with it. This is the main reason why linear iteration is so much faster than pointer jumping: the CPU knows which memory locations it needs to fetch next and sends memory requests far ahead of time.
-The number of concurrent memory operations is large but limited, and it is different for different types of memory.</description></item><item><title>Prefetching</title><link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/</guid><description>Taking advantage of the free concurrency available in memory hardware, it can be beneficial to prefetch data that is likely to be accessed next if its location can be predicted. This is easy to do when there are no data of control hazards in the pipeline and the CPU can just run ahead of the instruction stream and execute memory operations out of order.
-But sometimes the memory locations aren&amp;rsquo;t in the instruction stream, and yet they can still be predicted with high probability.</description></item><item><title>Alignment and Packing</title><link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/</guid><description>The fact that the memory is partitioned into 64B cache lines makes it difficult to operate on data words that cross a cache line boundary. When you need to retrieve some primitive type, such as a 32-bit integer, you really want to have it located on a single cache line — both because retrieving two cache lines requires more memory bandwidth and stitching the results in hardware requires precious transistor space.</description></item><item><title>Pointer Alternatives</title><link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/</guid><description>In the pointer chasing benchmark, for simplicity, we didn&amp;rsquo;t use actual pointers, but integer indices relative to a base address:
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>RAM &amp; CPU Caches on Algorithmica β</title>
+    <link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/</link>
+    <description>Recent content in RAM &amp; CPU Caches on Algorithmica β</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Memory Bandwidth</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/</guid>
+      <description>On the data path between the CPU registers and the RAM, there is a hierarchy of caches that exist to speed up access to frequently used data: the layers closer to the processor are faster but also smaller in size. The word &amp;ldquo;faster&amp;rdquo; here applies to two closely related but separate timings:
+ The delay between the moment when a read or a write is initiated and when the data arrives (latency).</description>
+    </item>
+    
+    <item>
+      <title>Memory Latency</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/</guid>
+      <description>Despite that bandwidth is a more complicated concept, it is much easier to observe and measure than latency: you can simply execute a long series of independent read or write queries, and the scheduler, having access to them in advance, reorders and overlaps them, hiding their latency and maximizing the total throughput.
+To measure latency, we need to design an experiment where the CPU can&amp;rsquo;t cheat by knowing the memory locations we will request in advance.</description>
+    </item>
+    
+    <item>
+      <title>Cache Lines</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/</guid>
+      <description>The basic units of data transfer in the CPU cache system are not individual bits and bytes, but cache lines. On most architectures, the size of a cache line is 64 bytes, meaning that all memory is divided in blocks of 64 bytes, and whenever you request (read or write) a single byte, you are also fetching all its 63 cache line neighbors whether your want them or not.
+To demonstrate this, we add a &amp;ldquo;step&amp;rdquo; parameter to our incrementing loop.</description>
+    </item>
+    
+    <item>
+      <title>Memory Sharing</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/</guid>
+      <description>Starting at some level of the hierarchy, the cache becomes shared between different cores. This reduces the total die area and lets you add more cores on a single chip but also poses some &amp;ldquo;noisy neighbor&amp;rdquo; problems as it limits the effective cache size and bandwidth available to a single execution thread.
+On most CPUs, only the last layer of cache is shared, and not always in a uniform manner. On my machine, there are 8 physical cores, and the size of the L3 cache is 8M, but it is split into two halves: two groups of 4 cores have access to their own 4M region of the L3 cache, and not all of it.</description>
+    </item>
+    
+    <item>
+      <title>Memory-Level Parallelism</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/</guid>
+      <description>Memory requests can overlap in time: while you wait for a read request to complete, you can send a few others, which will be executed concurrently with it. This is the main reason why linear iteration is so much faster than pointer jumping: the CPU knows which memory locations it needs to fetch next and sends memory requests far ahead of time.
+The number of concurrent memory operations is large but limited, and it is different for different types of memory.</description>
+    </item>
+    
+    <item>
+      <title>Prefetching</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/</guid>
+      <description>Taking advantage of the free concurrency available in memory hardware, it can be beneficial to prefetch data that is likely to be accessed next if its location can be predicted. This is easy to do when there are no data of control hazards in the pipeline and the CPU can just run ahead of the instruction stream and execute memory operations out of order.
+But sometimes the memory locations aren&amp;rsquo;t in the instruction stream, and yet they can still be predicted with high probability.</description>
+    </item>
+    
+    <item>
+      <title>Alignment and Packing</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/</guid>
+      <description>The fact that the memory is partitioned into 64B cache lines makes it difficult to operate on data words that cross a cache line boundary. When you need to retrieve some primitive type, such as a 32-bit integer, you really want to have it located on a single cache line — both because retrieving two cache lines requires more memory bandwidth and stitching the results in hardware requires precious transistor space.</description>
+    </item>
+    
+    <item>
+      <title>Pointer Alternatives</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/</guid>
+      <description>In the pointer chasing benchmark, for simplicity, we didn&amp;rsquo;t use actual pointers, but integer indices relative to a base address:
 for (int i = 0; i &amp;lt; N; i++) k = q[k]; The memory addressing operator on x86 is fused with the address computation, so the k = q[k] line folds into just a single terse instruction that also does multiplication by 4 and addition under the hood:
-mov rax, DWORD PTR q[0+rax*4] Although fully fused, these additional computations add some delay to memory operations.</description></item><item><title>Cache Associativity</title><link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/</guid><description>Consider a strided incrementing loop over an array of size $N=2^{21}$ with a fixed step size of 256:
+mov rax, DWORD PTR q[0+rax*4] Although fully fused, these additional computations add some delay to memory operations.</description>
+    </item>
+    
+    <item>
+      <title>Cache Associativity</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/</guid>
+      <description>Consider a strided incrementing loop over an array of size $N=2^{21}$ with a fixed step size of 256:
 for (int i = 0; i &amp;lt; N; i += 256) a[i]++; And then this one, with the step size of 257:
 for (int i = 0; i &amp;lt; N; i += 257) a[i]++; Which one will be faster to finish? There are several considerations that come to mind:
-At first, you think that there shouldn&amp;rsquo;t be much difference, or maybe that the second loop is $\frac{257}{256}$ times faster or so because it does fewer iterations in total.</description></item><item><title>Memory Paging</title><link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/</guid><description>Consider yet again the strided incrementing loop:
-const int N = (1 &amp;lt;&amp;lt; 13); int a[D * N]; for (int i = 0; i &amp;lt; D * N; i += D) a[i] += 1; We change the stride $D$ and increase the array size proportionally so that the total number of iterations $N$ remains constant. As the total number of memory accesses also remains constant, for all $D \geq 16$, we should be fetching exactly $N$ cache lines — or $64 \cdot N = 2^6 \cdot 2^{13} = 2^{19}$ bytes, to be exact.</description></item><item><title>AoS and SoA</title><link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/</guid><description>It is often beneficial to group together the data you need to fetch at the same time: preferably, on the same or, if that isn&amp;rsquo;t possible, neighboring cache lines. This improves the spatial locality of your memory accesses, positively impacting the performance of memory-bound algorithms.
-To demonstrate the potential effect of doing this, we modify the pointer chasing benchmark so that the next pointer is computed using not one, but a variable number of fields ($D$).</description></item></channel></rss>
+ At first, you think that there shouldn&amp;rsquo;t be much difference, or maybe that the second loop is $\frac{257}{256}$ times faster or so because it does fewer iterations in total.</description>
+    </item>
+    
+    <item>
+      <title>Memory Paging</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/</guid>
+      <description>Consider yet again the strided incrementing loop:
+const int N = (1 &amp;lt;&amp;lt; 13); int a[D * N]; for (int i = 0; i &amp;lt; D * N; i += D) a[i] += 1; We change the stride $D$ and increase the array size proportionally so that the total number of iterations $N$ remains constant. As the total number of memory accesses also remains constant, for all $D \geq 16$, we should be fetching exactly $N$ cache lines — or $64 \cdot N = 2^6 \cdot 2^{13} = 2^{19}$ bytes, to be exact.</description>
+    </item>
+    
+    <item>
+      <title>AoS and SoA</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/</guid>
+      <description>It is often beneficial to group together the data you need to fetch at the same time: preferably, on the same or, if that isn&amp;rsquo;t possible, neighboring cache lines. This improves the spatial locality of your memory accesses, positively impacting the performance of memory-bound algorithms.
+To demonstrate the potential effect of doing this, we modify the pointer chasing benchmark so that the next pointer is computed using not one, but a variable number of fields ($D$).</description>
+    </item>
+    
+  </channel>
+</rss>

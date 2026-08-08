@@ -1,14 +1,976 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><link rel=icon href=https://anpaure.github.io/algorithmica-beta/favicon.ico><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/beta.css><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00="><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/syntax.css id=syntax-theme><link rel=stylesheet type=text/css href=https://tikzjax.com/v1/fonts.css><script src=https://tikzjax.com/v1/tikzjax.js></script>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js></script>
-<link rel=stylesheet id=theme><script>function toggleSidebar(){console.log("Toggling sidebar visibility");var e=document.getElementById("sidebar"),t=document.getElementById("wrapper");(e.classList.contains("sidebar-toggled")||window.getComputedStyle(e).display=="block")&&(e.classList.toggle("sidebar-hidden"),t.classList.toggle("sidebar-hidden")),e.classList.add("sidebar-toggled"),t.classList.add("sidebar-toggled")}function switchTheme(e){console.log("Changing theme:",e),document.getElementById("theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css":"",document.getElementById("syntax-theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/syntax-dark.css":"https://anpaure.github.io/algorithmica-beta/syntax.css",localStorage.setItem("theme",e)}async function toggleSearch(){console.log("Toggling search");var e=document.getElementById("search");if(window.getComputedStyle(e).display=="none"?(e.style.display="block",window.scrollTo({top:0}),document.getElementById("search-bar").focus()):e.style.display="none",!index){console.log("Fetching index");const e=await fetch("https://anpaure.github.io/algorithmica-beta/searchindex.json"),t=await e.json();index=lunr(function(){this.use(lunr.multiLanguage("en","ru")),this.field("title",{boost:5}),this.field("content",{boost:1}),t.forEach(function(e){this.add(e),articles.push(e)},this)}),console.log("Ready to search")}}var articles=[],index=void 0;function search(){var e=document.getElementById("search-bar").value,n,s=document.getElementById("search-results"),o=document.getElementById("search-count");if(e==''){s.innerHTML='',o.innerHTML='';return}n=index.search(e),o.innerHTML="Found <b>"+n.length+"</b> pages";let t='';for(const a in n){const i=articles[n[a].ref];t+='<li><a href="'+i.path+'">'+i.title+"</a> <p>";const s=i.content,o=80;if(s.includes(e)){const n=s.indexOf(e);n>o&&(t+="…"),t+=s.substring(n-o,n)+"<b>"+e+"</b>"+s.substring(n+e.length,n+e.length+o)}else t+=s.substring(0,o*2);t+="…</p></li>"}s.innerHTML=t}localStorage.getItem("theme")=="dark"&&switchTheme("dark"),window.addEventListener("load",function(){var e=document.getElementById("active-element");e&&e.scrollIntoView({block:"center"})}),window.addEventListener("scroll",function(){var e=document.getElementById("menu");window.scrollY<120?e.classList.remove("scrolled"):e.classList.add("scrolled")}),window.addEventListener("keydown",function(e){if(e.altKey)return;if(document.activeElement.tagName=="INPUT")return;e.key=="ArrowLeft"?document.getElementById("prev-article").click():e.key=="ArrowRight"&&document.getElementById("next-article").click()})</script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin=anonymous></script>
-<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><title>Summary - Algorithmica β</title></head><body><nav id=sidebar><div class=title><a href=https://anpaure.github.io/algorithmica-beta/>Algorithmica β</a>
-<span class=slash>/</span>
-<a href=https://anpaure.github.io/algorithmica-beta/hpc/ class=divisionAbbr>HPC</a></div><ul><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/preface/>Preface</a></li><li class=part>Performance Engineering</li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/>Complexity Models</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/>Modern Hardware</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/>Programming Languages</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/>Models of Computation</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/>When to Optimize</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/>Computer Architecture</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/>Instruction Set Architectures</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/>Assembly Language</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/>Loops and Conditionals</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/>Functions and Recursion</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/>Indirect Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/>Virtualization</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/>Interrupts and System Calls</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/>Machine Code Layout</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/>Instruction-Level Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/>Pipeline Hazards</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/>The Cost of Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/>Branchless Programming</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/>Instruction Tables</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/>Instruction Scheduling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/>Throughput Computing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/>Theoretical Performance Limits</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/>Compilation</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/>Stages of Compilation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/>Flags and Targets</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/>Situational Optimizations</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/>Contract Programming</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/>Non-Zero-Cost Abstractions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/>Precomputation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/>Arithmetic Optimizations</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/>What Compilers Can and Can't Do</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/>Profiling</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/>Instrumentation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/>Statistical Profiling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/>Program Simulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/>Machine Code Analyzers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/>Benchmarking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/>Getting Accurate Results</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/>Arithmetic</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/>Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/>IEEE 754 Floats</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/>Rounding Errors</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/>Newton's Method</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/>Fast Inverse Square Root</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/>Integer Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/>Integer Division</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/>Bit Manipulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/>Data Compression</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/>Number Theory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/>Modular Arithmetic</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/>Binary Exponentiation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/>Extended Euclidean Algorithm</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/>Montgomery Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/>Finite Fields</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/>Error Correction</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/>Hashing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/>Cryptography</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/>Random Number Generation</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/>External Memory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/>Memory Hierarchy</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/>Virtual Memory</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/>External Memory Model</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/>External Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/>List Ranking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/>Eviction Policies</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/>Cache-Oblivious Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/>Spatial and Temporal Locality</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/>B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/>Sublinear Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/>Memory Management</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/>RAM & CPU Caches</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/>Memory Bandwidth</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/>Memory Latency</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/>Cache Lines</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/>Memory Sharing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/>Memory-Level Parallelism</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/>Prefetching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/>Alignment and Packing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/>Pointer Alternatives</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/>Cache Associativity</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/>Memory Paging</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/>AoS and SoA</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/>SIMD Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/>Intrinsics and Vector Types</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/>Moving Data</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/>Reductions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/>Masking and Blending</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/>In-Register Shuffles</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/>Auto-Vectorization and SPMD</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/>Algorithms Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/>Binary GCD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/>Prime Number Sieves</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/>Integer Factorization</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/>Big Integers and Karatsuba Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/>Optimizing Logistic Regression</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/>Fast Fourier Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/>Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/>Argmin with SIMD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/>Number-Theoretic Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/>Prefix Sum with SIMD</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/>Reading Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/>Writing Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/>Reading and Writing Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/>String Searching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/>Matrix Multiplication</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/>Data Structures Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/>Binary Search</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/>Static B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/>Search Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/>Segment Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/>Tries</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/>Bitmaps</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/>Range Minimum Query</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/>Hash Tables</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/>Probabilistic Filters</a></li></ol><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/summary/ id=active-element>Summary</a></li><li class=part>Appendix</li><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/stats/>Probability Theory Refresher</a></li></ul></nav><div id=wrapper><menu id=menu><div class=left><a><img src=https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg onclick=toggleSidebar() title="open table of contents"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg style=position:relative;top:-1px onclick='switchTheme(localStorage.getItem("theme")=="dark"?"light":"dark")' title="dark theme"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg onclick=toggleSearch() title=search></a></div><div class=title><span class=beta-brand>Algorithmica β</span>
-<span class=chapter-title>Summary</span></div><div class=right><a onclick=window.print()><img src=https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg title=print></a>
-<a href=https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2fsummary.md><img src=https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg title=edit style=width:18px;position:relative;right:-2px;top:-1px></a>
-<a href=https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/summary.md class=github-main><img src=https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg title="view on github"></a></div></menu><main><div id=search><input id=search-bar type=search placeholder="Search this book…" oninput=search()><div id=search-count></div><div id=search-results></div></div><header><h1>Summary</h1><div class=info></div></header><article><p>Now we have enough information to summarize what we&rsquo;ve learned.</p><p>Loop unrolling.</p><p>Here is a checklist (from easiest to hardest):</p><ol start=0><li>Turn on optimization (<code>-march=native</code>, <code>-O3</code>, <code>-ffast-math</code>, <code>-funroll-loops</code>)</li><li>Determine whether the algorithm is memory-bound or compute-bound.</li><li>Blocking: try to split data in parts that fit cache</li><li>Memory access patterns: try to linearize every reads</li><li>Prefetching: if access pattern is not well predictable, or port is free, add a prefetching step</li><li>Branching: remove branching</li><li>Loop Unrolling: <code>#pragma GCC unroll n</code></li><li>Data Dependencies: consult and instruction table or llvm-mca</li><li>SIMD: simplify a loop</li><li>Arithmetic: use smallest type available and turn on <code>-ffast-math</code></li><li>Temporal locality</li><li>Allocations</li><li>Profile stuff</li></ol></article><div class=nextprev><div class=left><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/ id=prev-article>← Data Structures Case Studies</a></div><div class=right><a href=https://anpaure.github.io/algorithmica-beta/hpc/stats/ id=next-article>Probability Theory Refresher →</a></div></div></main><footer>Copyright 2021–2022 Sergey Slotin<br></footer></div></body></html>
+<!doctype html>
+<html lang='en-us'><head><meta charset="utf-8">
+  <link rel="icon" href="https://anpaure.github.io/algorithmica-beta/favicon.ico">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/beta.css">
+  
+
+  
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css" integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00=">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/syntax.css" id="syntax-theme">
+
+  <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+  <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js"></script>
+
+  
+  <link rel="stylesheet" id="theme">
+
+  <script>
+    function toggleSidebar() {
+      console.log("Toggling sidebar visibility")
+      var sidebar = document.getElementById('sidebar')
+      var wrapper = document.getElementById('wrapper')
+      if (sidebar.classList.contains('sidebar-toggled') || window.getComputedStyle(sidebar).display == 'block') { 
+        sidebar.classList.toggle('sidebar-hidden')
+        wrapper.classList.toggle('sidebar-hidden')
+      }
+      sidebar.classList.add('sidebar-toggled')
+      wrapper.classList.add('sidebar-toggled')
+    }
+
+    function switchTheme(theme) {
+      console.log("Changing theme:", theme)
+      document.getElementById('theme').href = (theme == 'dark' ? "https:\/\/anpaure.github.io\/algorithmica-beta\/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css" : "")
+      document.getElementById('syntax-theme').href = (theme == 'dark' ? 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax-dark.css' : 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax.css')
+      localStorage.setItem('theme', theme)
+    }
+
+    async function toggleSearch() {
+      console.log("Toggling search")
+      
+      var searchDiv = document.getElementById('search')
+      if (window.getComputedStyle(searchDiv).display == 'none') {
+        searchDiv.style.display = 'block'
+        window.scrollTo({ top: 0 });
+        document.getElementById('search-bar').focus()
+      } else {
+        searchDiv.style.display = 'none'  
+      }
+
+      if (!index) {
+        console.log("Fetching index")
+        const response = await fetch('https:\/\/anpaure.github.io\/algorithmica-beta\/searchindex.json')
+        const pages = await response.json()
+        index = lunr(function() {
+          this.use(lunr.multiLanguage('en', 'ru'))
+          this.field('title', {
+            boost: 5
+          })
+          this.field('content', {
+            boost: 1
+          })
+          pages.forEach(function(doc) {
+            this.add(doc)
+            articles.push(doc)
+          }, this)
+        })
+        console.log("Ready to search")
+      }
+    }
+
+    var articles = []
+    var index = undefined
+
+    function search() {
+      var query = document.getElementById('search-bar').value
+      var resultsDiv = document.getElementById('search-results')
+      var countDiv = document.getElementById('search-count')
+      
+      if (query == '') {
+        resultsDiv.innerHTML = ''
+        countDiv.innerHTML = ''
+        return
+      }
+      
+      var results = index.search(query)
+
+      countDiv.innerHTML = 'Found <b>' + results.length + '</b> pages'
+
+      let resultList = ''
+
+      for (const n in results) {
+        const item = articles[results[n].ref]
+        resultList += '<li><a href="' + item.path + '">' + item.title + '</a> <p>'
+        const text = item.content
+
+        const contextLimit = 80
+
+        if (text.includes(query)) {
+          const start = text.indexOf(query)
+          if (start > contextLimit)
+            resultList += '…'
+          resultList += text.substring(start - contextLimit, start)
+                      + '<b>' + query + '</b>' + text.substring(start + query.length, start + query.length + contextLimit)
+
+        } else {
+          resultList += text.substring(0, contextLimit * 2)
+        }
+        resultList += '…</p></li>'
+      }
+
+      resultsDiv.innerHTML = resultList
+    }
+
+    if (localStorage.getItem('theme') == 'dark') {
+      switchTheme('dark')
+    }
+
+    window.addEventListener('load', function() {
+      var el = document.getElementById("active-element")
+      
+      if (el) {
+        el.scrollIntoView({block: "center"})
+      }
+      
+
+    })
+
+    window.addEventListener('scroll', function() {
+      var menu = document.getElementById('menu')
+      if (window.scrollY < 120) {
+        
+        menu.classList.remove('scrolled')
+      } else {
+        
+        menu.classList.add('scrolled')
+      }
+    })
+
+    window.addEventListener('keydown', function(e) {
+      if (e.altKey) { return }
+      if (document.activeElement.tagName == 'INPUT') { return }
+      if (e.key == 'ArrowLeft') {
+        document.getElementById('prev-article').click()
+      } else if (e.key == 'ArrowRight') {
+        document.getElementById('next-article').click()
+      }
+    })
+  </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false}
+    ]
+  })"></script>
+
+  
+  <title>Summary - Algorithmica β</title>
+</head>
+<body><nav id='sidebar' >
+  
+  
+  <div class='title'>
+    <a href='https://anpaure.github.io/algorithmica-beta/'>Algorithmica β</a>
+    
+      
+        
+        <span class='slash'>/</span>
+        <a href='https://anpaure.github.io/algorithmica-beta/hpc/' class='divisionAbbr'
+           >
+          HPC
+        </a>
+      
+    
+  </div>
+  <ul>
+    
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/preface/'
+          
+          >Preface</a></li>
+        
+      
+        
+          <li class='part'>Performance Engineering</li>
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/'
+          
+          >Complexity Models</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/'
+                
+                >Modern Hardware</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/'
+                
+                >Programming Languages</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/'
+                
+                >Models of Computation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/'
+                
+                >When to Optimize</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/'
+          
+          >Computer Architecture</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/'
+                
+                >Instruction Set Architectures</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/'
+                
+                >Assembly Language</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/'
+                
+                >Loops and Conditionals</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/'
+                
+                >Functions and Recursion</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/'
+                
+                >Indirect Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/'
+                
+                >Machine Code Layout</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/'
+                
+                >Interrupts and System Calls</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/'
+                
+                >Virtualization</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/'
+          
+          >Instruction-Level Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/'
+                
+                >Pipeline Hazards</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/'
+                
+                >The Cost of Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/'
+                
+                >Branchless Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/'
+                
+                >Instruction Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/'
+                
+                >Instruction Scheduling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/'
+                
+                >Throughput Computing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/'
+                
+                >Theoretical Performance Limits</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/'
+          
+          >Compilation</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/'
+                
+                >Stages of Compilation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/'
+                
+                >Flags and Targets</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/'
+                
+                >Situational Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/'
+                
+                >Contract Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/'
+                
+                >Non-Zero-Cost Abstractions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/'
+                
+                >Precomputation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/'
+                
+                >Arithmetic Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/'
+                
+                >What Compilers Can and Can&#39;t Do</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/'
+          
+          >Profiling</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/'
+                
+                >Instrumentation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/'
+                
+                >Statistical Profiling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/'
+                
+                >Program Simulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/'
+                
+                >Machine Code Analyzers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/'
+                
+                >Benchmarking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/'
+                
+                >Getting Accurate Results</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/'
+          
+          >Arithmetic</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/'
+                
+                >Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/'
+                
+                >IEEE 754 Floats</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/'
+                
+                >Rounding Errors</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/'
+                
+                >Newton&#39;s Method</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/'
+                
+                >Fast Inverse Square Root</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/'
+                
+                >Integer Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/'
+                
+                >Integer Division</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/'
+                
+                >Bit Manipulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/'
+                
+                >Data Compression</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/'
+          
+          >Number Theory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/'
+                
+                >Modular Arithmetic</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/'
+                
+                >Binary Exponentiation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/'
+                
+                >Extended Euclidean Algorithm</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/'
+                
+                >Montgomery Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/'
+                
+                >Finite Fields</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/'
+                
+                >Error Correction</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/'
+                
+                >Cryptography</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/'
+                
+                >Hashing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/'
+                
+                >Random Number Generation</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/'
+          
+          >External Memory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/'
+                
+                >Memory Hierarchy</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/'
+                
+                >Virtual Memory</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/'
+                
+                >External Memory Model</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/'
+                
+                >External Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/'
+                
+                >List Ranking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/'
+                
+                >Eviction Policies</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/'
+                
+                >Cache-Oblivious Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/'
+                
+                >Spatial and Temporal Locality</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/'
+                
+                >B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/'
+                
+                >Sublinear Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/'
+                
+                >Memory Management</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/'
+          
+          >RAM &amp; CPU Caches</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/'
+                
+                >Memory Bandwidth</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/'
+                
+                >Memory Latency</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/'
+                
+                >Cache Lines</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/'
+                
+                >Memory Sharing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/'
+                
+                >Memory-Level Parallelism</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/'
+                
+                >Prefetching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/'
+                
+                >Alignment and Packing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/'
+                
+                >Pointer Alternatives</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/'
+                
+                >Cache Associativity</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/'
+                
+                >Memory Paging</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/'
+                
+                >AoS and SoA</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/'
+          
+          >SIMD Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/'
+                
+                >Intrinsics and Vector Types</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/'
+                
+                >Moving Data</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/'
+                
+                >Reductions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/'
+                
+                >Masking and Blending</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/'
+                
+                >In-Register Shuffles</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/'
+                
+                >Auto-Vectorization and SPMD</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/'
+          
+          >Algorithms Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/'
+                
+                >Binary GCD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/'
+                
+                >Prime Number Sieves</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/'
+                
+                >Integer Factorization</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/'
+                
+                >Optimizing Logistic Regression</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/'
+                
+                >Big Integers and Karatsuba Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/'
+                
+                >Fast Fourier Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/'
+                
+                >Number-Theoretic Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/'
+                
+                >Argmin with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/'
+                
+                >Prefix Sum with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/'
+                
+                >Reading Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/'
+                
+                >Writing Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/'
+                
+                >Reading and Writing Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/'
+                
+                >String Searching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/'
+                
+                >Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/'
+                
+                >Matrix Multiplication</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/'
+          
+          >Data Structures Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/'
+                
+                >Binary Search</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/'
+                
+                >Static B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/'
+                
+                >Search Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/'
+                
+                >Segment Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/'
+                
+                >Tries</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/'
+                
+                >Range Minimum Query</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/'
+                
+                >Hash Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/'
+                
+                >Bitmaps</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/'
+                
+                >Probabilistic Filters</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/summary/'
+          id='active-element'
+          >Summary</a></li>
+        
+      
+        
+          <li class='part'>Appendix</li>
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/stats/'
+          
+          >Probability Theory Refresher</a></li>
+        
+      
+    
+  </ul>
+</nav>
+<div id='wrapper' ><menu id='menu'>
+  
+  
+  
+  
+  <div class='left'>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg'
+           onclick='toggleSidebar()'
+           title='open table of contents'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg'
+           style='position: relative; top: -1px'
+           onclick='switchTheme(localStorage.getItem("theme") == "dark" ? "light" : "dark")'
+           title='dark theme'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg'
+           onclick='toggleSearch()'
+           title='search'>
+    </a>
+  </div>
+  <div class='title'>
+    
+      <span class='beta-brand'>Algorithmica β</span>
+      <span class='chapter-title'>Summary</span>
+    
+  </div>
+  <div class='right'>
+    <a onClick='window.print()'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg' title='print'>
+    </a>
+    <a href='https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2fsummary.md'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg'
+           title='edit'
+           style='width: 18px; position: relative; right: -2px; top: -1px'>
+    </a>
+    <a href='https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/summary.md' class='github-main'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg' title='view on github'>
+    </a>
+  </div>
+</menu>
+<main>
+        <div id="search">
+    <input id="search-bar" type="search" placeholder='Search this book…' oninput="search()">
+    <div id="search-count"></div>
+    <div id="search-results">
+    </div>
+</div>
+<header>
+  
+  <h1>Summary</h1>
+  
+    <div class='info'></div>
+  
+</header>
+<article>
+  
+
+
+  
+    
+    
+      
+        <p>Now we have enough information to summarize what we&rsquo;ve learned.</p>
+<p>Optimization is an experimental science. The machine is too complicated, and the compiler is too transformative, for source-level intuition to be reliable by itself. The central loop is therefore:</p>
+<ol>
+<li>define the workload and the metric;</li>
+<li>measure a baseline;</li>
+<li>locate the bottleneck;</li>
+<li>change one important thing;</li>
+<li>verify correctness and measure again.</li>
+</ol>
+<p>Every technique in this book belongs somewhere inside this loop. The difficult part is rarely knowing that SIMD or cache blocking exists. It is deciding which transformation the current bottleneck will reward.</p>
+<span class='anchor' id="start-with-the-problem"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/summary/#start-with-the-problem">#</a>Start with the Problem</h2><p>Before optimizing an implementation, make sure it is implementing the right algorithm and solving the right problem. Removing work dominates doing the same work faster.</p>
+<ul>
+<li>Avoid unnecessary computation, conversion, copying, and allocation.</li>
+<li>Choose an asymptotically appropriate algorithm.</li>
+<li>Batch operations when setup costs can be shared.</li>
+<li>Change the representation or interface if it removes an entire stage.</li>
+<li>Precompute results when the input domain and memory budget permit it.</li>
+</ul>
+<p>Keep a simple reference implementation. It defines the behavior, generates test answers, and gives the benchmark a meaningful baseline. For many case studies in this book, the final optimized kernel is less obviously correct than the original by-definition loop; having both is a feature, not duplication.</p>
+<span class='anchor' id="let-the-compiler-work"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/summary/#let-the-compiler-work">#</a>Let the Compiler Work</h2><p>Compile optimized code before optimizing it by hand. For local experiments, <code>-O3 -march=native</code> is a reasonable starting point. Production binaries may need a portable target or several runtime-dispatched versions instead of <code>-march=native</code>.</p>
+<p>Flags are contracts, not incantations. <code>-ffast-math</code> can enable important floating-point transformations, but it also permits the compiler to ignore NaNs, infinities, signed zero, rounding modes, and strict reassociation rules. Use it only when the algorithm allows those changes. Similarly, unrestricted aliasing, integer overflow, and alignment assumptions must be true in every execution, not merely in the benchmark.</p>
+<p>Inspect the generated assembly when a source-level change has a surprising effect. It answers basic questions quickly: was the loop removed, inlined, unrolled, or vectorized? Did a division become a multiplication? Did an abstraction introduce a branch or an indirect call? If the compiler already produced the instruction sequence you intended to write, intrinsics will not make it faster by virtue of being less readable.</p>
+<span class='anchor' id="find-the-limiting-resource"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/summary/#find-the-limiting-resource">#</a>Find the Limiting Resource</h2><p>The running time is normally constrained by one of a few resources:</p>
+<ul>
+<li>total work or instruction throughput;</li>
+<li>a dependency chain and instruction latency;</li>
+<li>branch prediction;</li>
+<li>cache or memory latency;</li>
+<li>cache or memory bandwidth;</li>
+<li>front-end decoding and code size;</li>
+<li>allocation, system calls, or other runtime services.</li>
+</ul>
+<p>A benchmark tells you <em>that</em> a version is slow. A profiler, hardware counters, and a small scaling experiment help explain <em>why</em>.</p>
+<p>Vary the input size. A sharp transition when the working set leaves a cache points to the memory hierarchy. Compare useful bytes per second with sustainable bandwidth. Compare useful operations per cycle with the execution resources listed in instruction tables. Use <a href="https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/">machine-code analyzers</a> for compact compute kernels, but remember that they cannot predict cache misses or an input-dependent branch predictor.</p>
+<p>The distinction between latency and throughput is fundamental. A dependent chain pays latency; independent operations can overlap and approach throughput. The same distinction applies to arithmetic instructions, cache misses, and even system calls.</p>
+<span class='anchor' id="transform-the-bottleneck"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/summary/#transform-the-bottleneck">#</a>Transform the Bottleneck</h2><p>Once the limiting resource is known, the candidate transformations become much narrower.</p>
+<span class='anchor' id="data-movement"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/summary/#data-movement">#</a>Data movement</h3><ul>
+<li>Store together the data that is consumed together.</li>
+<li>Traverse memory sequentially and make the common path predictable to the hardware prefetcher.</li>
+<li>Use <a href="https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/">blocking</a> so that reused data remains in the smallest practical cache.</li>
+<li>Prefer compact representations when they reduce traffic without adding more computation than they save.</li>
+<li>Choose <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/">AoS or SoA</a> according to the fields each operation actually needs.</li>
+<li>Replace pointers with indices, implicit layouts, or flat arrays when pointer chasing is the bottleneck.</li>
+<li>Add software prefetching only when accesses are predictable early enough, do not already prefetch well in hardware, and leave enough independent work to hide the latency.</li>
+</ul>
+<p>Temporal locality is not just &ldquo;using a cache.&rdquo; It is arranging the order of computation so that a value is reused before it is evicted. Spatial locality is arranging values so that most bytes fetched in a cache line are useful.</p>
+<span class='anchor' id="control-flow"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/summary/#control-flow">#</a>Control flow</h3><p>An unpredictable branch can be expensive because a misprediction discards speculative work. A predictable branch is usually cheap, and removing it can create extra instructions or memory traffic. Use branchless transformations when the branch is genuinely unpredictable or when straight-line code enables vectorization; do not remove branches as a ritual.</p>
+<p>Separate common and rare cases when this makes the hot path simpler. Tables, masks, conditional moves, and arithmetic identities can replace control dependencies with data dependencies, but the new dependency chain still has a cost.</p>
+<span class='anchor' id="dependencies-and-instruction-level-parallelism"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/summary/#dependencies-and-instruction-level-parallelism">#</a>Dependencies and instruction-level parallelism</h3><p>Break long dependency chains by keeping several independent accumulators or processing several independent inputs together. Loop unrolling can expose this parallelism and amortize loop overhead, but excessive unrolling increases code size and register pressure. Compilers usually make a good first attempt; pragmas and manual unrolling are hypotheses to benchmark, not mandatory decorations.</p>
+<p>Consult <a href="https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/">instruction tables</a> for latency, reciprocal throughput, and port usage. A loop may be limited by a single saturated execution port even when many other units are idle. Changing an instruction is useful only if it moves work away from the resource that is full.</p>
+<span class='anchor' id="simd"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/summary/#simd">#</a>SIMD</h3><p>Vectorization is profitable when the same operation applies to independent, regularly arranged data. First make the scalar loop simple: remove hidden aliases, calls, complex control flow, and ambiguous dependencies. Check the compiler&rsquo;s vectorization report. Use intrinsics when the required data movement or instruction is difficult to express in portable source.</p>
+<p>The nominal vector width is only an upper bound on speedup. Horizontal reductions, shuffles, masks, tails, conversions, cache bandwidth, and a scalar dependency chain all consume part of it. The best SIMD algorithm is often not a line-by-line translation of the best scalar algorithm.</p>
+<span class='anchor' id="arithmetic-and-representation"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/summary/#arithmetic-and-representation">#</a>Arithmetic and representation</h3><p>Use the narrowest type that represents every intermediate result—not merely every input. Narrow data can reduce memory traffic and fit more lanes in a vector, while a widened accumulator prevents overflow. Integer and floating-point transformations have contracts: prove the range, error, and exceptional cases before relying on them.</p>
+<p>Division by constants, repeated transcendentals, modular reduction, and format conversion are common targets for reciprocal multiplication, lookup tables, approximation, or precomputation. The right question is not whether an operation is &ldquo;slow,&rdquo; but whether it occupies the limiting resource and whether its replacement preserves the required result.</p>
+<span class='anchor' id="measure-without-lying-to-yourself"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/summary/#measure-without-lying-to-yourself">#</a>Measure Without Lying to Yourself</h2><p>Fast code is unusually easy to benchmark incorrectly. The compiler can delete an unused computation; the first run can include page faults and initialization; frequency scaling and other processes add noise; a synthetic input can make every branch predictable; an average can hide catastrophic outliers.</p>
+<p>A trustworthy benchmark:</p>
+<ul>
+<li>uses inputs and distributions representative of the real workload;</li>
+<li>keeps observable results so the compiler cannot remove the work;</li>
+<li>separates setup from the operation being measured;</li>
+<li>warms up relevant code and data when the application would;</li>
+<li>repeats enough times to report a distribution;</li>
+<li>records the compiler, flags, CPU, and relevant environment;</li>
+<li>checks the optimized result against the reference implementation.</li>
+</ul>
+<p>For small kernels, count cycles or nanoseconds per element rather than only total time. For memory-bound code, report useful bandwidth. For a service, tail latency may matter more than a microbenchmark median. Optimize the metric that belongs to the actual problem.</p>
+<span class='anchor' id="a-practical-checklist"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/summary/#a-practical-checklist">#</a>A Practical Checklist</h2><p>From highest leverage to lowest, ask:</p>
+<ol>
+<li>Can the operation be avoided, cached, batched, or moved out of the hot path?</li>
+<li>Is the algorithm appropriate for the input sizes and distributions?</li>
+<li>Is optimized compilation enabled under the contracts the program can guarantee?</li>
+<li>What does profiling identify as the dominant cost?</li>
+<li>Is the working set limited by bandwidth, latency, computation, dependencies, branches, or the front end?</li>
+<li>Can layout or traversal reduce data movement and improve locality?</li>
+<li>Can independent work overlap to hide latency?</li>
+<li>Can control flow be made predictable or vector-friendly without doing too much extra work?</li>
+<li>Can the compiler vectorize the loop; if not, what precisely prevents it?</li>
+<li>Can arithmetic or representation be simplified with a proved range and error bound?</li>
+<li>Did the change improve the real metric on all important inputs?</li>
+<li>Is the speedup worth the portability and maintenance cost?</li>
+</ol>
+<p>Then start again. Optimization is iterative because removing one bottleneck reveals the next one. The final program is not the one containing the largest number of tricks; it is the simplest version for which the remaining bottlenecks are either fundamental or no longer worth fixing.</p>
+
+      
+    
+  
+
+
+
+        </article>
+        <div class='nextprev'>
+  
+    
+      
+      
+
+      
+      
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+        
+      
+
+      
+        <div class='left'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/' id='prev-article'>← Data Structures Case Studies</a>
+        
+        </div>
+        <div class='right'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/stats/' id='next-article'>Probability Theory Refresher →</a>
+        
+        </div>
+      
+    
+  
+</div>
+
+      </main>
+      <footer>
+  Copyright 2021–2022 Sergey Slotin
+  <br>
+   
+</footer>
+
+    </div>
+  </body>
+</html>

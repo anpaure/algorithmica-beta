@@ -1,7 +1,42 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Algorithms for Modern Hardware on Algorithmica β</title><link>https://anpaure.github.io/algorithmica-beta/hpc/</link><description>Recent content in Algorithms for Modern Hardware on Algorithmica β</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/index.xml" rel="self" type="application/rss+xml"/><item><title>Preface</title><link>https://anpaure.github.io/algorithmica-beta/hpc/preface/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/preface/</guid><description>There are two influential textbooks on computer science: one was written 30 years ago, and the other was written 50 years ago. Computers were very different back then.
-A lot of this book discusses hardware. I am a software developer with no formal training in hardware, so on some occasions I might be misleading or wrong. All I am trying to do is to help you build a useful mental model.</description></item><item><title>Summary</title><link>https://anpaure.github.io/algorithmica-beta/hpc/summary/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/summary/</guid><description>Now we have enough information to summarize what we&amp;rsquo;ve learned.
-Loop unrolling.
-Here is a checklist (from easiest to hardest):
-Turn on optimization (-march=native, -O3, -ffast-math, -funroll-loops) Determine whether the algorithm is memory-bound or compute-bound. Blocking: try to split data in parts that fit cache Memory access patterns: try to linearize every reads Prefetching: if access pattern is not well predictable, or port is free, add a prefetching step Branching: remove branching Loop Unrolling: #pragma GCC unroll n Data Dependencies: consult and instruction table or llvm-mca SIMD: simplify a loop Arithmetic: use smallest type available and turn on -ffast-math Temporal locality Allocations Profile stuff</description></item><item><title>Probability Theory Refresher</title><link>https://anpaure.github.io/algorithmica-beta/hpc/stats/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/stats/</guid><description>Throughout this book, we will extensively use probability theory both to design faster algorithms and assess them. This section is a brief refresher on statistics for computer science.
-It is designed to take you all the way from definitions of random variables to statistical significance and modelling without leaving any proofs behind in about 40 minutes or so.
-#BasicsA random variable is any variable whose value depends on an outcome of a random event.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Algorithms for Modern Hardware on Algorithmica β</title>
+    <link>https://anpaure.github.io/algorithmica-beta/hpc/</link>
+    <description>Recent content in Algorithms for Modern Hardware on Algorithmica β</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Preface</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/preface/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/preface/</guid>
+      <description>There are two influential textbooks on computer science: one was written 30 years ago, and the other was written 50 years ago. Computers were very different back then.
+Their central abstraction—counting elementary operations and ignoring how a machine performs them—remains one of the most useful ideas in computer science. It is also no longer sufficient by itself. Modern processors get much of their speed from parallelism, speculation, vector instructions, and a deep memory hierarchy.</description>
+    </item>
+    
+    <item>
+      <title>Summary</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/summary/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/summary/</guid>
+      <description>Now we have enough information to summarize what we&amp;rsquo;ve learned.
+Optimization is an experimental science. The machine is too complicated, and the compiler is too transformative, for source-level intuition to be reliable by itself. The central loop is therefore:
+ define the workload and the metric; measure a baseline; locate the bottleneck; change one important thing; verify correctness and measure again.  Every technique in this book belongs somewhere inside this loop.</description>
+    </item>
+    
+    <item>
+      <title>Probability Theory Refresher</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/stats/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/stats/</guid>
+      <description>Throughout this book, we will extensively use probability theory both to design faster algorithms and assess them. This section is a brief refresher on statistics for computer science.
+It is designed to take you from definitions of random variables to statistical significance and modelling, deriving the results we will use, in about 40 minutes or so.
+ #BasicsA random variable is a function that assigns a value to each outcome of a random experiment.</description>
+    </item>
+    
+  </channel>
+</rss>

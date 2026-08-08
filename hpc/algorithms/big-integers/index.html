@@ -1,106 +1,1131 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><link rel=icon href=https://anpaure.github.io/algorithmica-beta/favicon.ico><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/beta.css><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00="><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/syntax.css id=syntax-theme><link rel=stylesheet type=text/css href=https://tikzjax.com/v1/fonts.css><script src=https://tikzjax.com/v1/tikzjax.js></script>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js></script>
-<link rel=stylesheet id=theme><script>function toggleSidebar(){console.log("Toggling sidebar visibility");var e=document.getElementById("sidebar"),t=document.getElementById("wrapper");(e.classList.contains("sidebar-toggled")||window.getComputedStyle(e).display=="block")&&(e.classList.toggle("sidebar-hidden"),t.classList.toggle("sidebar-hidden")),e.classList.add("sidebar-toggled"),t.classList.add("sidebar-toggled")}function switchTheme(e){console.log("Changing theme:",e),document.getElementById("theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css":"",document.getElementById("syntax-theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/syntax-dark.css":"https://anpaure.github.io/algorithmica-beta/syntax.css",localStorage.setItem("theme",e)}async function toggleSearch(){console.log("Toggling search");var e=document.getElementById("search");if(window.getComputedStyle(e).display=="none"?(e.style.display="block",window.scrollTo({top:0}),document.getElementById("search-bar").focus()):e.style.display="none",!index){console.log("Fetching index");const e=await fetch("https://anpaure.github.io/algorithmica-beta/searchindex.json"),t=await e.json();index=lunr(function(){this.use(lunr.multiLanguage("en","ru")),this.field("title",{boost:5}),this.field("content",{boost:1}),t.forEach(function(e){this.add(e),articles.push(e)},this)}),console.log("Ready to search")}}var articles=[],index=void 0;function search(){var e=document.getElementById("search-bar").value,n,s=document.getElementById("search-results"),o=document.getElementById("search-count");if(e==''){s.innerHTML='',o.innerHTML='';return}n=index.search(e),o.innerHTML="Found <b>"+n.length+"</b> pages";let t='';for(const a in n){const i=articles[n[a].ref];t+='<li><a href="'+i.path+'">'+i.title+"</a> <p>";const s=i.content,o=80;if(s.includes(e)){const n=s.indexOf(e);n>o&&(t+="…"),t+=s.substring(n-o,n)+"<b>"+e+"</b>"+s.substring(n+e.length,n+e.length+o)}else t+=s.substring(0,o*2);t+="…</p></li>"}s.innerHTML=t}localStorage.getItem("theme")=="dark"&&switchTheme("dark"),window.addEventListener("load",function(){var e=document.getElementById("active-element");e&&e.scrollIntoView({block:"center"})}),window.addEventListener("scroll",function(){var e=document.getElementById("menu");window.scrollY<120?e.classList.remove("scrolled"):e.classList.add("scrolled")}),window.addEventListener("keydown",function(e){if(e.altKey)return;if(document.activeElement.tagName=="INPUT")return;e.key=="ArrowLeft"?document.getElementById("prev-article").click():e.key=="ArrowRight"&&document.getElementById("next-article").click()})</script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin=anonymous></script>
-<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><title>Big Integers and Karatsuba Multiplication - Algorithmica β</title></head><body><nav id=sidebar><div class=title><a href=https://anpaure.github.io/algorithmica-beta/>Algorithmica β</a>
-<span class=slash>/</span>
-<a href=https://anpaure.github.io/algorithmica-beta/hpc/ class=divisionAbbr>HPC</a></div><ul><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/preface/>Preface</a></li><li class=part>Performance Engineering</li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/>Complexity Models</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/>Modern Hardware</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/>Programming Languages</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/>Models of Computation</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/>When to Optimize</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/>Computer Architecture</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/>Instruction Set Architectures</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/>Assembly Language</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/>Loops and Conditionals</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/>Functions and Recursion</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/>Indirect Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/>Virtualization</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/>Interrupts and System Calls</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/>Machine Code Layout</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/>Instruction-Level Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/>Pipeline Hazards</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/>The Cost of Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/>Branchless Programming</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/>Instruction Tables</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/>Instruction Scheduling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/>Throughput Computing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/>Theoretical Performance Limits</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/>Compilation</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/>Stages of Compilation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/>Flags and Targets</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/>Situational Optimizations</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/>Contract Programming</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/>Non-Zero-Cost Abstractions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/>Precomputation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/>Arithmetic Optimizations</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/>What Compilers Can and Can't Do</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/>Profiling</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/>Instrumentation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/>Statistical Profiling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/>Program Simulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/>Machine Code Analyzers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/>Benchmarking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/>Getting Accurate Results</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/>Arithmetic</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/>Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/>IEEE 754 Floats</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/>Rounding Errors</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/>Newton's Method</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/>Fast Inverse Square Root</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/>Integer Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/>Integer Division</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/>Bit Manipulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/>Data Compression</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/>Number Theory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/>Modular Arithmetic</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/>Binary Exponentiation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/>Extended Euclidean Algorithm</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/>Montgomery Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/>Finite Fields</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/>Error Correction</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/>Hashing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/>Cryptography</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/>Random Number Generation</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/>External Memory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/>Memory Hierarchy</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/>Virtual Memory</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/>External Memory Model</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/>External Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/>List Ranking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/>Eviction Policies</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/>Cache-Oblivious Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/>Spatial and Temporal Locality</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/>B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/>Sublinear Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/>Memory Management</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/>RAM & CPU Caches</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/>Memory Bandwidth</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/>Memory Latency</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/>Cache Lines</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/>Memory Sharing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/>Memory-Level Parallelism</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/>Prefetching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/>Alignment and Packing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/>Pointer Alternatives</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/>Cache Associativity</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/>Memory Paging</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/>AoS and SoA</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/>SIMD Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/>Intrinsics and Vector Types</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/>Moving Data</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/>Reductions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/>Masking and Blending</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/>In-Register Shuffles</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/>Auto-Vectorization and SPMD</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/>Algorithms Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/>Binary GCD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/>Prime Number Sieves</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/>Integer Factorization</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/ id=active-element>Big Integers and Karatsuba Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/>Optimizing Logistic Regression</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/>Fast Fourier Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/>Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/>Argmin with SIMD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/>Number-Theoretic Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/>Prefix Sum with SIMD</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/>Reading Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/>Writing Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/>Reading and Writing Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/>String Searching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/>Matrix Multiplication</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/>Data Structures Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/>Binary Search</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/>Static B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/>Search Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/>Segment Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/>Tries</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/>Bitmaps</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/>Range Minimum Query</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/>Hash Tables</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/>Probabilistic Filters</a></li></ol><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/summary/>Summary</a></li><li class=part>Appendix</li><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/stats/>Probability Theory Refresher</a></li></ul></nav><div id=wrapper><menu id=menu><div class=left><a><img src=https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg onclick=toggleSidebar() title="open table of contents"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg style=position:relative;top:-1px onclick='switchTheme(localStorage.getItem("theme")=="dark"?"light":"dark")' title="dark theme"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg onclick=toggleSearch() title=search></a></div><div class=title><span class=beta-brand>Algorithmica β</span>
-<span class=chapter-title>Big Integers and Karatsuba Multiplication</span></div><div class=right><a onclick=window.print()><img src=https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg title=print></a>
-<a href=https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2falgorithms%2fbig-integers.md><img src=https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg title=edit style=width:18px;position:relative;right:-2px;top:-1px></a>
-<a href=https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/algorithms/big-integers.md class=github-main><img src=https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg title="view on github"></a></div></menu><main><div id=search><input id=search-bar type=search placeholder="Search this book…" oninput=search()><div id=search-count></div><div id=search-results></div></div><header><h1>Big Integers and Karatsuba Multiplication</h1><div class=info></div></header><article><p>In 1960, Andrey Kolmogorov organized a seminar where he conjectured that multiplying two $n$-digit numbers necessarily takes $\Omega(n^2)$ time. The usual long multiplication had survived for a few thousand years, so this was not an unreasonable guess.</p><p>One week later, a 23-year-old student named Anatoly Karatsuba found a faster algorithm.</p><p>Apart from being a nice story, Karatsuba multiplication is a useful performance case study. The asymptotically faster method is not faster for small numbers, and most of the work needed to make it practical is not in the algebra but in representation, memory allocation, and choosing the right base case.</p><span class=anchor id=representing-large-integers></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/#representing-large-integers>#</a>Representing Large Integers</h2><p>We can store a nonnegative integer as an array of digits in some base $B$:</p>$$
-x=x_0+x_1B+x_2B^2+\cdots+x_{n-1}B^{n-1}.
-$$<p>The least significant digit goes first because carries then move forward through memory. A decimal-friendly choice is $B=10^4$: every array element contains four decimal digits, and printing only requires padding all but the last group with zeros.</p><p>The usual multiplication algorithm is just a convolution of the digit arrays:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>base</span> <span class=o>=</span> <span class=mi>10000</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>schoolbook</span><span class=p>(</span><span class=k>const</span> <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=o>&amp;</span><span class=n>a</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>                             <span class=k>const</span> <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=o>&amp;</span><span class=n>b</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>c</span><span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>size</span><span class=p>()</span> <span class=o>+</span> <span class=n>b</span><span class=p>.</span><span class=n>size</span><span class=p>());</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>a</span><span class=p>.</span><span class=n>size</span><span class=p>();</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>b</span><span class=p>.</span><span class=n>size</span><span class=p>();</span> <span class=n>j</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=n>c</span><span class=p>[</span><span class=n>i</span> <span class=o>+</span> <span class=n>j</span><span class=p>]</span> <span class=o>+=</span> <span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>*</span> <span class=n>b</span><span class=p>[</span><span class=n>j</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>c</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>We postpone carrying until after the multiplication. This keeps the hot loop to one multiply and one add, and lets the compiler <a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization>unroll and vectorize</a> parts of it. The accumulator type must be wide enough: for $n$ base-$B$ digits, a coefficient can be as large as roughly $n(B-1)^2$.</p><p>The algorithm performs $nm$ digit products for operands of lengths $n$ and $m$. It is quadratic for equally sized inputs, but it has excellent locality and very little overhead. We will keep it — just not for every input size.</p><span class=anchor id=karatsubas-trick></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/#karatsubas-trick>#</a>Karatsuba&rsquo;s Trick</h2><p>Assume for now that both arrays have the same even length $n=2k$. Split the corresponding numbers in half:</p>$$
-x=x_0+B^kx_1,\qquad y=y_0+B^ky_1.
-$$
-Expanding the product in the obvious way needs four half-size multiplications:
-$$
-xy=x_0y_0+B^k(x_0y_1+x_1y_0)+B^{2k}x_1y_1.
-$$
-The middle term is the annoying one. Karatsuba observed that it can be recovered from one additional product:
-$$
-(x_0+x_1)(y_0+y_1)-x_0y_0-x_1y_1=x_0y_1+x_1y_0.
-$$
-So we only need three recursive multiplications instead of four. If additions take linear time, the recurrence becomes
-$$
-T(n)=3T(n/2)+O(n),
-$$
-which solves to
-$$
+<!doctype html>
+<html lang='en-us'><head><meta charset="utf-8">
+  <link rel="icon" href="https://anpaure.github.io/algorithmica-beta/favicon.ico">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/beta.css">
+  
+
+  
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css" integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00=">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/syntax.css" id="syntax-theme">
+
+  <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+  <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js"></script>
+
+  
+  <link rel="stylesheet" id="theme">
+
+  <script>
+    function toggleSidebar() {
+      console.log("Toggling sidebar visibility")
+      var sidebar = document.getElementById('sidebar')
+      var wrapper = document.getElementById('wrapper')
+      if (sidebar.classList.contains('sidebar-toggled') || window.getComputedStyle(sidebar).display == 'block') { 
+        sidebar.classList.toggle('sidebar-hidden')
+        wrapper.classList.toggle('sidebar-hidden')
+      }
+      sidebar.classList.add('sidebar-toggled')
+      wrapper.classList.add('sidebar-toggled')
+    }
+
+    function switchTheme(theme) {
+      console.log("Changing theme:", theme)
+      document.getElementById('theme').href = (theme == 'dark' ? "https:\/\/anpaure.github.io\/algorithmica-beta\/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css" : "")
+      document.getElementById('syntax-theme').href = (theme == 'dark' ? 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax-dark.css' : 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax.css')
+      localStorage.setItem('theme', theme)
+    }
+
+    async function toggleSearch() {
+      console.log("Toggling search")
+      
+      var searchDiv = document.getElementById('search')
+      if (window.getComputedStyle(searchDiv).display == 'none') {
+        searchDiv.style.display = 'block'
+        window.scrollTo({ top: 0 });
+        document.getElementById('search-bar').focus()
+      } else {
+        searchDiv.style.display = 'none'  
+      }
+
+      if (!index) {
+        console.log("Fetching index")
+        const response = await fetch('https:\/\/anpaure.github.io\/algorithmica-beta\/searchindex.json')
+        const pages = await response.json()
+        index = lunr(function() {
+          this.use(lunr.multiLanguage('en', 'ru'))
+          this.field('title', {
+            boost: 5
+          })
+          this.field('content', {
+            boost: 1
+          })
+          pages.forEach(function(doc) {
+            this.add(doc)
+            articles.push(doc)
+          }, this)
+        })
+        console.log("Ready to search")
+      }
+    }
+
+    var articles = []
+    var index = undefined
+
+    function search() {
+      var query = document.getElementById('search-bar').value
+      var resultsDiv = document.getElementById('search-results')
+      var countDiv = document.getElementById('search-count')
+      
+      if (query == '') {
+        resultsDiv.innerHTML = ''
+        countDiv.innerHTML = ''
+        return
+      }
+      
+      var results = index.search(query)
+
+      countDiv.innerHTML = 'Found <b>' + results.length + '</b> pages'
+
+      let resultList = ''
+
+      for (const n in results) {
+        const item = articles[results[n].ref]
+        resultList += '<li><a href="' + item.path + '">' + item.title + '</a> <p>'
+        const text = item.content
+
+        const contextLimit = 80
+
+        if (text.includes(query)) {
+          const start = text.indexOf(query)
+          if (start > contextLimit)
+            resultList += '…'
+          resultList += text.substring(start - contextLimit, start)
+                      + '<b>' + query + '</b>' + text.substring(start + query.length, start + query.length + contextLimit)
+
+        } else {
+          resultList += text.substring(0, contextLimit * 2)
+        }
+        resultList += '…</p></li>'
+      }
+
+      resultsDiv.innerHTML = resultList
+    }
+
+    if (localStorage.getItem('theme') == 'dark') {
+      switchTheme('dark')
+    }
+
+    window.addEventListener('load', function() {
+      var el = document.getElementById("active-element")
+      
+      if (el) {
+        el.scrollIntoView({block: "center"})
+      }
+      
+
+    })
+
+    window.addEventListener('scroll', function() {
+      var menu = document.getElementById('menu')
+      if (window.scrollY < 120) {
+        
+        menu.classList.remove('scrolled')
+      } else {
+        
+        menu.classList.add('scrolled')
+      }
+    })
+
+    window.addEventListener('keydown', function(e) {
+      if (e.altKey) { return }
+      if (document.activeElement.tagName == 'INPUT') { return }
+      if (e.key == 'ArrowLeft') {
+        document.getElementById('prev-article').click()
+      } else if (e.key == 'ArrowRight') {
+        document.getElementById('next-article').click()
+      }
+    })
+  </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false}
+    ]
+  })"></script>
+
+  
+  <title>Big Integers and Karatsuba Multiplication - Algorithmica β</title>
+</head>
+<body><nav id='sidebar' >
+  
+  
+  <div class='title'>
+    <a href='https://anpaure.github.io/algorithmica-beta/'>Algorithmica β</a>
+    
+      
+        
+        <span class='slash'>/</span>
+        <a href='https://anpaure.github.io/algorithmica-beta/hpc/' class='divisionAbbr'
+           >
+          HPC
+        </a>
+      
+    
+  </div>
+  <ul>
+    
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/preface/'
+          
+          >Preface</a></li>
+        
+      
+        
+          <li class='part'>Performance Engineering</li>
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/'
+          
+          >Complexity Models</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/'
+                
+                >Modern Hardware</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/'
+                
+                >Programming Languages</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/'
+                
+                >Models of Computation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/'
+                
+                >When to Optimize</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/'
+          
+          >Computer Architecture</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/'
+                
+                >Instruction Set Architectures</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/'
+                
+                >Assembly Language</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/'
+                
+                >Loops and Conditionals</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/'
+                
+                >Functions and Recursion</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/'
+                
+                >Indirect Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/'
+                
+                >Machine Code Layout</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/'
+                
+                >Interrupts and System Calls</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/'
+                
+                >Virtualization</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/'
+          
+          >Instruction-Level Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/'
+                
+                >Pipeline Hazards</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/'
+                
+                >The Cost of Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/'
+                
+                >Branchless Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/'
+                
+                >Instruction Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/'
+                
+                >Instruction Scheduling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/'
+                
+                >Throughput Computing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/'
+                
+                >Theoretical Performance Limits</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/'
+          
+          >Compilation</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/'
+                
+                >Stages of Compilation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/'
+                
+                >Flags and Targets</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/'
+                
+                >Situational Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/'
+                
+                >Contract Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/'
+                
+                >Non-Zero-Cost Abstractions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/'
+                
+                >Precomputation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/'
+                
+                >Arithmetic Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/'
+                
+                >What Compilers Can and Can&#39;t Do</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/'
+          
+          >Profiling</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/'
+                
+                >Instrumentation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/'
+                
+                >Statistical Profiling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/'
+                
+                >Program Simulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/'
+                
+                >Machine Code Analyzers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/'
+                
+                >Benchmarking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/'
+                
+                >Getting Accurate Results</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/'
+          
+          >Arithmetic</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/'
+                
+                >Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/'
+                
+                >IEEE 754 Floats</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/'
+                
+                >Rounding Errors</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/'
+                
+                >Newton&#39;s Method</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/'
+                
+                >Fast Inverse Square Root</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/'
+                
+                >Integer Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/'
+                
+                >Integer Division</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/'
+                
+                >Bit Manipulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/'
+                
+                >Data Compression</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/'
+          
+          >Number Theory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/'
+                
+                >Modular Arithmetic</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/'
+                
+                >Binary Exponentiation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/'
+                
+                >Extended Euclidean Algorithm</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/'
+                
+                >Montgomery Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/'
+                
+                >Finite Fields</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/'
+                
+                >Error Correction</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/'
+                
+                >Cryptography</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/'
+                
+                >Hashing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/'
+                
+                >Random Number Generation</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/'
+          
+          >External Memory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/'
+                
+                >Memory Hierarchy</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/'
+                
+                >Virtual Memory</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/'
+                
+                >External Memory Model</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/'
+                
+                >External Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/'
+                
+                >List Ranking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/'
+                
+                >Eviction Policies</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/'
+                
+                >Cache-Oblivious Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/'
+                
+                >Spatial and Temporal Locality</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/'
+                
+                >B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/'
+                
+                >Sublinear Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/'
+                
+                >Memory Management</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/'
+          
+          >RAM &amp; CPU Caches</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/'
+                
+                >Memory Bandwidth</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/'
+                
+                >Memory Latency</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/'
+                
+                >Cache Lines</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/'
+                
+                >Memory Sharing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/'
+                
+                >Memory-Level Parallelism</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/'
+                
+                >Prefetching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/'
+                
+                >Alignment and Packing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/'
+                
+                >Pointer Alternatives</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/'
+                
+                >Cache Associativity</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/'
+                
+                >Memory Paging</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/'
+                
+                >AoS and SoA</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/'
+          
+          >SIMD Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/'
+                
+                >Intrinsics and Vector Types</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/'
+                
+                >Moving Data</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/'
+                
+                >Reductions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/'
+                
+                >Masking and Blending</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/'
+                
+                >In-Register Shuffles</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/'
+                
+                >Auto-Vectorization and SPMD</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/'
+          
+          >Algorithms Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/'
+                
+                >Binary GCD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/'
+                
+                >Prime Number Sieves</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/'
+                
+                >Integer Factorization</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/'
+                
+                >Optimizing Logistic Regression</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/'
+                id='active-element'
+                >Big Integers and Karatsuba Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/'
+                
+                >Fast Fourier Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/'
+                
+                >Number-Theoretic Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/'
+                
+                >Argmin with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/'
+                
+                >Prefix Sum with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/'
+                
+                >Reading Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/'
+                
+                >Writing Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/'
+                
+                >Reading and Writing Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/'
+                
+                >String Searching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/'
+                
+                >Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/'
+                
+                >Matrix Multiplication</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/'
+          
+          >Data Structures Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/'
+                
+                >Binary Search</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/'
+                
+                >Static B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/'
+                
+                >Search Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/'
+                
+                >Segment Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/'
+                
+                >Tries</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/'
+                
+                >Range Minimum Query</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/'
+                
+                >Hash Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/'
+                
+                >Bitmaps</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/'
+                
+                >Probabilistic Filters</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/summary/'
+          
+          >Summary</a></li>
+        
+      
+        
+          <li class='part'>Appendix</li>
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/stats/'
+          
+          >Probability Theory Refresher</a></li>
+        
+      
+    
+  </ul>
+</nav>
+<div id='wrapper' ><menu id='menu'>
+  
+  
+  
+  
+  <div class='left'>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg'
+           onclick='toggleSidebar()'
+           title='open table of contents'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg'
+           style='position: relative; top: -1px'
+           onclick='switchTheme(localStorage.getItem("theme") == "dark" ? "light" : "dark")'
+           title='dark theme'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg'
+           onclick='toggleSearch()'
+           title='search'>
+    </a>
+  </div>
+  <div class='title'>
+    
+      <span class='beta-brand'>Algorithmica β</span>
+      <span class='chapter-title'>Big Integers and Karatsuba Multiplication</span>
+    
+  </div>
+  <div class='right'>
+    <a onClick='window.print()'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg' title='print'>
+    </a>
+    <a href='https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2falgorithms%2fbig-integers.md'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg'
+           title='edit'
+           style='width: 18px; position: relative; right: -2px; top: -1px'>
+    </a>
+    <a href='https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/algorithms/big-integers.md' class='github-main'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg' title='view on github'>
+    </a>
+  </div>
+</menu>
+<main>
+        <div id="search">
+    <input id="search-bar" type="search" placeholder='Search this book…' oninput="search()">
+    <div id="search-count"></div>
+    <div id="search-results">
+    </div>
+</div>
+<header>
+  
+  <h1>Big Integers and Karatsuba Multiplication</h1>
+  
+    <div class='info'></div>
+  
+</header>
+<article>
+  
+
+
+  
+    
+    
+      
+        <p>In 1960, Andrey Kolmogorov organized a seminar where he conjectured that multiplying two $n$-digit numbers necessarily takes $\Omega(n^2)$ time. The usual long multiplication had survived for a few thousand years, so this was not an unreasonable guess.</p>
+<p>One week later, a 23-year-old student named Anatoly Karatsuba found a faster algorithm.</p>
+<p>Apart from being a nice story, Karatsuba multiplication is a useful performance case study. The asymptotically faster method is not faster for small numbers, and most of the work needed to make it practical is not in the algebra but in representation, memory allocation, and choosing the right base case.</p>
+<span class='anchor' id="representing-large-integers"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/#representing-large-integers">#</a>Representing Large Integers</h2><p>We can store a nonnegative integer as an array of digits in some base $B$:</p>
+
+      
+    
+  
+
+  
+    $$
+    
+x=x_0&#43;x_1B&#43;x_2B^2&#43;\cdots&#43;x_{n-1}B^{n-1}.
+
+    $$
+  
+
+  
+    
+    
+      
+        <p>The least significant digit goes first because carries then move forward through memory. A decimal-friendly choice is $B=10^4$: every array element contains four decimal digits, and printing only requires padding all but the last group with zeros.</p>
+<p>The usual multiplication algorithm is just a convolution of the digit arrays:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">int</span> <span class="n">base</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">schoolbook</span><span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                             <span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">c</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">+</span> <span class="n">b</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">c</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>We postpone carrying until after the multiplication. This keeps the hot loop to one multiply and one add, and lets the compiler <a href="https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization">unroll and vectorize</a> parts of it. The accumulator type must be wide enough: for $n$ base-$B$ digits, a coefficient can be as large as roughly $n(B-1)^2$.</p>
+<p>The algorithm performs $nm$ digit products for operands of lengths $n$ and $m$. It is quadratic for equally sized inputs, but it has excellent locality and very little overhead. We will keep it — just not for every input size.</p>
+<span class='anchor' id="karatsubas-trick"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/#karatsubas-trick">#</a>Karatsuba&rsquo;s Trick</h2><p>Assume for now that both arrays have the same even length $n=2k$. Split the corresponding numbers in half:</p>
+
+      
+    
+  
+
+  
+    $$
+    
+x=x_0&#43;B^kx_1,\qquad y=y_0&#43;B^ky_1.
+
+    $$
+  
+
+  
+    
+    
+      
+        Expanding the product in the obvious way needs four half-size multiplications:
+      
+    
+  
+
+  
+    $$
+    
+xy=x_0y_0&#43;B^k(x_0y_1&#43;x_1y_0)&#43;B^{2k}x_1y_1.
+
+    $$
+  
+
+  
+    
+    
+      
+        The middle term is the annoying one. Karatsuba observed that it can be recovered from one additional product:
+      
+    
+  
+
+  
+    $$
+    
+(x_0&#43;x_1)(y_0&#43;y_1)-x_0y_0-x_1y_1=x_0y_1&#43;x_1y_0.
+
+    $$
+  
+
+  
+    
+    
+      
+        So we only need three recursive multiplications instead of four. If additions take linear time, the recurrence becomes
+      
+    
+  
+
+  
+    $$
+    
+T(n)=3T(n/2)&#43;O(n),
+
+    $$
+  
+
+  
+    
+    
+      
+        which solves to
+      
+    
+  
+
+  
+    $$
+    
 T(n)=O(n^{\log_2 3})\approx O(n^{1.585}).
-$$<p>Here is a direct implementation for polynomial coefficients. The input length must be a power of two; we will fix that in the wrapper.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>cutoff</span> <span class=o>=</span> <span class=mi>32</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>karatsuba</span><span class=p>(</span><span class=k>const</span> <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=o>&amp;</span><span class=n>a</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>                            <span class=k>const</span> <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=o>&amp;</span><span class=n>b</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>n</span> <span class=o>=</span> <span class=n>a</span><span class=p>.</span><span class=n>size</span><span class=p>();</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>n</span> <span class=o>&lt;=</span> <span class=n>cutoff</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>schoolbook</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=n>n</span> <span class=o>/</span> <span class=mi>2</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>a0</span><span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>begin</span><span class=p>(),</span> <span class=n>a</span><span class=p>.</span><span class=n>begin</span><span class=p>()</span> <span class=o>+</span> <span class=n>k</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>a1</span><span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>begin</span><span class=p>()</span> <span class=o>+</span> <span class=n>k</span><span class=p>,</span> <span class=n>a</span><span class=p>.</span><span class=n>end</span><span class=p>());</span>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>b0</span><span class=p>(</span><span class=n>b</span><span class=p>.</span><span class=n>begin</span><span class=p>(),</span> <span class=n>b</span><span class=p>.</span><span class=n>begin</span><span class=p>()</span> <span class=o>+</span> <span class=n>k</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>b1</span><span class=p>(</span><span class=n>b</span><span class=p>.</span><span class=n>begin</span><span class=p>()</span> <span class=o>+</span> <span class=n>k</span><span class=p>,</span> <span class=n>b</span><span class=p>.</span><span class=n>end</span><span class=p>());</span>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>as</span><span class=p>(</span><span class=n>k</span><span class=p>),</span> <span class=n>bs</span><span class=p>(</span><span class=n>k</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>k</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>as</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=n>a0</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>+</span> <span class=n>a1</span><span class=p>[</span><span class=n>i</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>        <span class=n>bs</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=n>b0</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>+</span> <span class=n>b1</span><span class=p>[</span><span class=n>i</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>low</span>  <span class=o>=</span> <span class=n>karatsuba</span><span class=p>(</span><span class=n>a0</span><span class=p>,</span> <span class=n>b0</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>high</span> <span class=o>=</span> <span class=n>karatsuba</span><span class=p>(</span><span class=n>a1</span><span class=p>,</span> <span class=n>b1</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>mid</span>  <span class=o>=</span> <span class=n>karatsuba</span><span class=p>(</span><span class=n>as</span><span class=p>,</span> <span class=n>bs</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>c</span><span class=p>(</span><span class=mi>2</span> <span class=o>*</span> <span class=n>n</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>c</span><span class=p>[</span><span class=n>i</span><span class=p>]</span>     <span class=o>+=</span> <span class=n>low</span><span class=p>[</span><span class=n>i</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>        <span class=n>c</span><span class=p>[</span><span class=n>k</span> <span class=o>+</span> <span class=n>i</span><span class=p>]</span> <span class=o>+=</span> <span class=n>mid</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>-</span> <span class=n>low</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>-</span> <span class=n>high</span><span class=p>[</span><span class=n>i</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>        <span class=n>c</span><span class=p>[</span><span class=n>n</span> <span class=o>+</span> <span class=n>i</span><span class=p>]</span> <span class=o>+=</span> <span class=n>high</span><span class=p>[</span><span class=n>i</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>c</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>This is almost a literal translation of the formula. It also makes the main practical problem painfully visible: every recursive call slices four arrays and allocates several more.</p><span class=anchor id=turning-coefficients-back-into-digits></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/#turning-coefficients-back-into-digits>#</a>Turning Coefficients Back Into Digits</h2><p>Before calling <code>karatsuba</code>, we pad both operands with zeroes to the same power-of-two length. Afterwards, we propagate the carries once:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>vector</span><span class=o>&lt;</span><span class=kt>int</span><span class=o>&gt;</span> <span class=n>multiply</span><span class=p>(</span><span class=n>vector</span><span class=o>&lt;</span><span class=kt>int</span><span class=o>&gt;</span> <span class=n>a</span><span class=p>,</span> <span class=n>vector</span><span class=o>&lt;</span><span class=kt>int</span><span class=o>&gt;</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>empty</span><span class=p>()</span> <span class=o>||</span> <span class=n>b</span><span class=p>.</span><span class=n>empty</span><span class=p>())</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=p>{};</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>n</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>n</span> <span class=o>&lt;</span> <span class=n>max</span><span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>size</span><span class=p>(),</span> <span class=n>b</span><span class=p>.</span><span class=n>size</span><span class=p>()))</span>
-</span></span><span class=line><span class=cl>        <span class=n>n</span> <span class=o>*=</span> <span class=mi>2</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>x</span><span class=p>(</span><span class=n>n</span><span class=p>),</span> <span class=n>y</span><span class=p>(</span><span class=n>n</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=n>copy</span><span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>begin</span><span class=p>(),</span> <span class=n>a</span><span class=p>.</span><span class=n>end</span><span class=p>(),</span> <span class=n>x</span><span class=p>.</span><span class=n>begin</span><span class=p>());</span>
-</span></span><span class=line><span class=cl>    <span class=n>copy</span><span class=p>(</span><span class=n>b</span><span class=p>.</span><span class=n>begin</span><span class=p>(),</span> <span class=n>b</span><span class=p>.</span><span class=n>end</span><span class=p>(),</span> <span class=n>y</span><span class=p>.</span><span class=n>begin</span><span class=p>());</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=kt>long</span> <span class=kt>long</span><span class=o>&gt;</span> <span class=n>c</span> <span class=o>=</span> <span class=n>karatsuba</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>+</span> <span class=mi>1</span> <span class=o>&lt;</span> <span class=n>c</span><span class=p>.</span><span class=n>size</span><span class=p>();</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>c</span><span class=p>[</span><span class=n>i</span> <span class=o>+</span> <span class=mi>1</span><span class=p>]</span> <span class=o>+=</span> <span class=n>c</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>/</span> <span class=n>base</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=n>c</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>%=</span> <span class=n>base</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>c</span><span class=p>.</span><span class=n>size</span><span class=p>()</span> <span class=o>&gt;</span> <span class=mi>1</span> <span class=o>&amp;&amp;</span> <span class=n>c</span><span class=p>.</span><span class=n>back</span><span class=p>()</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=n>c</span><span class=p>.</span><span class=n>pop_back</span><span class=p>();</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>vector</span><span class=o>&lt;</span><span class=kt>int</span><span class=o>&gt;</span><span class=p>(</span><span class=n>c</span><span class=p>.</span><span class=n>begin</span><span class=p>(),</span> <span class=n>c</span><span class=p>.</span><span class=n>end</span><span class=p>());</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>This code assumes that every input digit is in $[0,B)$ and that all intermediate polynomial coefficients fit in <code>long long</code>. These are representation constraints, not properties of Karatsuba itself. A real big-integer implementation selects the limb width together with a sufficiently wide accumulator — often 32-bit binary limbs with 64- or 128-bit products.</p><p>Padding to a power of two can almost double the input length. This is acceptable for a compact implementation, but large libraries use uneven splits and several multiplication algorithms so they do not spend most of their time multiplying zeroes.</p><span class=anchor id=the-crossover></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/#the-crossover>#</a>The Crossover</h2><p>Recursing down to one digit is a classic asymptotic mistake. Karatsuba saves multiplications, but it adds array passes, function calls, temporary storage, and subtractions. For small inputs, the quadratic loop wins by a lot.</p><p>This is why the code switches to schoolbook multiplication at <code>cutoff</code>. The value 32 is only a starting point. The best threshold depends on the digit base, the schoolbook kernel, allocation strategy, compiler, and processor, and should be found by benchmarking a sweep of operand sizes rather than one conveniently large example.</p><p>Strongly unbalanced operands are another bad case. Splitting a very long number against a short one creates mostly empty recursive halves. It is usually better to use schoolbook multiplication or split the longer operand into blocks when the lengths are far apart.</p><span class=anchor id=removing-the-allocations></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/#removing-the-allocations>#</a>Removing the Allocations</h2><p>The simple recursive version is useful for checking the algebra, but it should not be the final benchmark. All temporary arrays needed by one recursion branch can share a workspace, because the other branches are evaluated sequentially. A fast interface looks more like this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>void</span> <span class=nf>karatsuba</span><span class=p>(</span><span class=k>const</span> <span class=kt>long</span> <span class=kt>long</span> <span class=o>*</span><span class=n>a</span><span class=p>,</span> <span class=k>const</span> <span class=kt>long</span> <span class=kt>long</span> <span class=o>*</span><span class=n>b</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>               <span class=kt>long</span> <span class=kt>long</span> <span class=o>*</span><span class=n>c</span><span class=p>,</span> <span class=kt>long</span> <span class=kt>long</span> <span class=o>*</span><span class=n>scratch</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span><span class=p>);</span>
-</span></span></code></pre></div><p>The wrapper allocates <code>c</code> and <code>scratch</code> once. Each call divides both buffers among its three products and the two arrays of sums. This removes allocator traffic and also avoids copying the low and high halves: they are already contiguous subarrays of <code>a</code> and <code>b</code>.</p><p>The remaining linear loops — forming <code>a0 + a1</code>, forming <code>b0 + b1</code>, and combining the three products — are independent elementwise operations and are good candidates for SIMD. The schoolbook loop is harder: each product contributes to a shifted output range, and carry propagation is a dependency chain. Optimizing this base case often moves the Karatsuba crossover <em>up</em>, because the allegedly slow algorithm has just become faster.</p><p>Other useful special cases include squaring, where the cross-products are symmetric, and multiplication by one limb. At still larger sizes, Toom–Cook and FFT-based methods continue the same hierarchy. There is no single “big integer multiplication algorithm”; there is a dispatcher between kernels that win in different size ranges.</p><span class=anchor id=testing-and-benchmarking></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/#testing-and-benchmarking>#</a>Testing and Benchmarking</h2><p>Compare the result against an established arbitrary-precision library, not only against the same code with a different cutoff. Important inputs include zero, one, digits equal to <code>base - 1</code>, sizes just below and above powers of two, unequal lengths, and sizes around the crossover.</p><p>For benchmarks, separate decimal parsing and printing from multiplication. Report both operand lengths, their balance, the digit base, cutoff, and whether temporary memory is reused. The useful plot shows schoolbook and Karatsuba over a wide range of sizes: the crossing point is the result, not a magic constant to be copied into every program.</p></article><div class=nextprev><div class=left><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/ id=prev-article>← Integer Factorization</a></div><div class=right><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/ id=next-article>Optimizing Logistic Regression →</a></div></div></main><footer>Copyright 2021–2022 Sergey Slotin<br></footer></div></body></html>
+
+    $$
+  
+
+  
+    
+    
+      
+        <p>Here is a direct implementation for polynomial coefficients. The input length must be a power of two; we will fix that in the wrapper.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">int</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="mi">32</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">karatsuba</span><span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                            <span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;=</span> <span class="n">cutoff</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">schoolbook</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">a0</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">a</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span> <span class="o">+</span> <span class="n">k</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">a1</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">b0</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">b</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span> <span class="o">+</span> <span class="n">k</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">b1</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">as</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">bs</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">k</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">as</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">a1</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b1</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">low</span>  <span class="o">=</span> <span class="n">karatsuba</span><span class="p">(</span><span class="n">a0</span><span class="p">,</span> <span class="n">b0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">high</span> <span class="o">=</span> <span class="n">karatsuba</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">b1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">mid</span>  <span class="o">=</span> <span class="n">karatsuba</span><span class="p">(</span><span class="n">as</span><span class="p">,</span> <span class="n">bs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">c</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>     <span class="o">+=</span> <span class="n">low</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="n">c</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">mid</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">low</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">high</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="n">c</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">high</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>This is almost a literal translation of the formula. It also makes the main practical problem painfully visible: every recursive call slices four arrays and allocates several more.</p>
+<span class='anchor' id="turning-coefficients-back-into-digits"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/#turning-coefficients-back-into-digits">#</a>Turning Coefficients Back Into Digits</h2><p>Before calling <code>karatsuba</code>, we pad both operands with zeroes to the same power-of-two length. Afterwards, we propagate the carries once:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">multiply</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">||</span> <span class="n">b</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="p">{};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="n">max</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">b</span><span class="p">.</span><span class="n">size</span><span class="p">()))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">n</span> <span class="o">*=</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">x</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">y</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">copy</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">a</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">x</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">    <span class="n">copy</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">b</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">y</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">karatsuba</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">c</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">c</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">base</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">%=</span> <span class="n">base</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">c</span><span class="p">.</span><span class="n">back</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">c</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">c</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>This code assumes that every input digit is in $[0,B)$ and that all intermediate polynomial coefficients fit in <code>long long</code>. These are representation constraints, not properties of Karatsuba itself. A real big-integer implementation selects the limb width together with a sufficiently wide accumulator — often 32-bit binary limbs with 64- or 128-bit products.</p>
+<p>Padding to a power of two can almost double the input length. This is acceptable for a compact implementation, but large libraries use uneven splits and several multiplication algorithms so they do not spend most of their time multiplying zeroes.</p>
+<span class='anchor' id="the-crossover"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/#the-crossover">#</a>The Crossover</h2><p>Recursing down to one digit is a classic asymptotic mistake. Karatsuba saves multiplications, but it adds array passes, function calls, temporary storage, and subtractions. For small inputs, the quadratic loop wins by a lot.</p>
+<p>This is why the code switches to schoolbook multiplication at <code>cutoff</code>. The value 32 is only a starting point. The best threshold depends on the digit base, the schoolbook kernel, allocation strategy, compiler, and processor, and should be found by benchmarking a sweep of operand sizes rather than one conveniently large example.</p>
+<p>Strongly unbalanced operands are another bad case. Splitting a very long number against a short one creates mostly empty recursive halves. It is usually better to use schoolbook multiplication or split the longer operand into blocks when the lengths are far apart.</p>
+<span class='anchor' id="removing-the-allocations"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/#removing-the-allocations">#</a>Removing the Allocations</h2><p>The simple recursive version is useful for checking the algebra, but it should not be the final benchmark. All temporary arrays needed by one recursion branch can share a workspace, because the other branches are evaluated sequentially.</p>
+<p>The following version writes its $2n$ output coefficients to <code>c</code> and requires <code>scratch</code> to contain at least $4n$ elements. As before, $n$ is a power of two, both input arrays have length $n$, and the four buffers do not overlap:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">schoolbook</span><span class="p">(</span><span class="k">const</span> <span class="kt">long</span> <span class="kt">long</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="kt">long</span> <span class="kt">long</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="kt">long</span> <span class="kt">long</span> <span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">c</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">karatsuba</span><span class="p">(</span><span class="k">const</span> <span class="kt">long</span> <span class="kt">long</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="kt">long</span> <span class="kt">long</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">               <span class="kt">long</span> <span class="kt">long</span> <span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="kt">long</span> <span class="kt">long</span> <span class="o">*</span><span class="n">scratch</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;=</span> <span class="n">cutoff</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">schoolbook</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Store the low and high products directly in their final ranges.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">karatsuba</span><span class="p">(</span><span class="n">a</span><span class="p">,</span>     <span class="n">b</span><span class="p">,</span>     <span class="n">c</span><span class="p">,</span>     <span class="n">scratch</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">karatsuba</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">c</span> <span class="o">+</span> <span class="n">n</span><span class="p">,</span> <span class="n">scratch</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// The first 2n workspace elements belong to this recursion level.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">long</span> <span class="kt">long</span> <span class="o">*</span><span class="n">as</span> <span class="o">=</span> <span class="n">scratch</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">long</span> <span class="kt">long</span> <span class="o">*</span><span class="n">bs</span> <span class="o">=</span> <span class="n">as</span> <span class="o">+</span> <span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">long</span> <span class="kt">long</span> <span class="o">*</span><span class="n">mid</span> <span class="o">=</span> <span class="n">bs</span> <span class="o">+</span> <span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">long</span> <span class="kt">long</span> <span class="o">*</span><span class="n">next</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="n">n</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">k</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">as</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">karatsuba</span><span class="p">(</span><span class="n">as</span><span class="p">,</span> <span class="n">bs</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">next</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mid</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">c</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">mid</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>The low and high recursive calls reuse the same workspace. After they finish, the current call reserves $2n$ elements for the two half-size sums and the $n$-element middle product, leaving $2n=4(n/2)$ elements for its recursive call. This proves by induction that $4n$ scratch elements are sufficient.</p>
+<p>In the <code>multiply</code> wrapper, the allocating recursive call can now be replaced with two allocations made once at the top level:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">c</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">scratch</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">karatsuba</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span> <span class="n">y</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span> <span class="n">c</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span> <span class="n">scratch</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span> <span class="n">n</span><span class="p">);</span>
+</span></span></code></pre></div><p>This removes allocator traffic and also avoids copying the low and high halves: they are already contiguous subarrays of <code>a</code> and <code>b</code>.</p>
+<p>The remaining linear loops — forming <code>a0 + a1</code>, forming <code>b0 + b1</code>, and combining the three products — are independent elementwise operations and are good candidates for SIMD. The schoolbook loop is harder: each product contributes to a shifted output range, and carry propagation is a dependency chain. Optimizing this base case often moves the Karatsuba crossover <em>up</em>, because the allegedly slow algorithm has just become faster.</p>
+<p>Other useful special cases include squaring, where the cross-products are symmetric, and multiplication by one limb. At still larger sizes, Toom–Cook and FFT-based methods continue the same hierarchy. There is no single “big integer multiplication algorithm”; there is a dispatcher between kernels that win in different size ranges.</p>
+<span class='anchor' id="testing-and-benchmarking"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/#testing-and-benchmarking">#</a>Testing and Benchmarking</h2><p>Compare the result against an established arbitrary-precision library, not only against the same code with a different cutoff. Important inputs include zero, one, digits equal to <code>base - 1</code>, sizes just below and above powers of two, unequal lengths, and sizes around the crossover.</p>
+<p>For benchmarks, separate decimal parsing and printing from multiplication. Report both operand lengths, their balance, the digit base, cutoff, and whether temporary memory is reused. The useful plot shows schoolbook and Karatsuba over a wide range of sizes: the crossing point is the result, not a magic constant to be copied into every program.</p>
+
+      
+    
+  
+
+
+
+        </article>
+        <div class='nextprev'>
+  
+    
+      
+      
+
+      
+      
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+
+      
+        <div class='left'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/' id='prev-article'>← Optimizing Logistic Regression</a>
+        
+        </div>
+        <div class='right'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/' id='next-article'>Fast Fourier Transform →</a>
+        
+        </div>
+      
+    
+  
+</div>
+
+      </main>
+      <footer>
+  Copyright 2021–2022 Sergey Slotin
+  <br>
+   
+</footer>
+
+    </div>
+  </body>
+</html>

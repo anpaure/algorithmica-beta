@@ -1,63 +1,1108 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><link rel=icon href=https://anpaure.github.io/algorithmica-beta/favicon.ico><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/beta.css><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00="><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/syntax.css id=syntax-theme><link rel=stylesheet type=text/css href=https://tikzjax.com/v1/fonts.css><script src=https://tikzjax.com/v1/tikzjax.js></script>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js></script>
-<link rel=stylesheet id=theme><script>function toggleSidebar(){console.log("Toggling sidebar visibility");var e=document.getElementById("sidebar"),t=document.getElementById("wrapper");(e.classList.contains("sidebar-toggled")||window.getComputedStyle(e).display=="block")&&(e.classList.toggle("sidebar-hidden"),t.classList.toggle("sidebar-hidden")),e.classList.add("sidebar-toggled"),t.classList.add("sidebar-toggled")}function switchTheme(e){console.log("Changing theme:",e),document.getElementById("theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css":"",document.getElementById("syntax-theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/syntax-dark.css":"https://anpaure.github.io/algorithmica-beta/syntax.css",localStorage.setItem("theme",e)}async function toggleSearch(){console.log("Toggling search");var e=document.getElementById("search");if(window.getComputedStyle(e).display=="none"?(e.style.display="block",window.scrollTo({top:0}),document.getElementById("search-bar").focus()):e.style.display="none",!index){console.log("Fetching index");const e=await fetch("https://anpaure.github.io/algorithmica-beta/searchindex.json"),t=await e.json();index=lunr(function(){this.use(lunr.multiLanguage("en","ru")),this.field("title",{boost:5}),this.field("content",{boost:1}),t.forEach(function(e){this.add(e),articles.push(e)},this)}),console.log("Ready to search")}}var articles=[],index=void 0;function search(){var e=document.getElementById("search-bar").value,n,s=document.getElementById("search-results"),o=document.getElementById("search-count");if(e==''){s.innerHTML='',o.innerHTML='';return}n=index.search(e),o.innerHTML="Found <b>"+n.length+"</b> pages";let t='';for(const a in n){const i=articles[n[a].ref];t+='<li><a href="'+i.path+'">'+i.title+"</a> <p>";const s=i.content,o=80;if(s.includes(e)){const n=s.indexOf(e);n>o&&(t+="…"),t+=s.substring(n-o,n)+"<b>"+e+"</b>"+s.substring(n+e.length,n+e.length+o)}else t+=s.substring(0,o*2);t+="…</p></li>"}s.innerHTML=t}localStorage.getItem("theme")=="dark"&&switchTheme("dark"),window.addEventListener("load",function(){var e=document.getElementById("active-element");e&&e.scrollIntoView({block:"center"})}),window.addEventListener("scroll",function(){var e=document.getElementById("menu");window.scrollY<120?e.classList.remove("scrolled"):e.classList.add("scrolled")}),window.addEventListener("keydown",function(e){if(e.altKey)return;if(document.activeElement.tagName=="INPUT")return;e.key=="ArrowLeft"?document.getElementById("prev-article").click():e.key=="ArrowRight"&&document.getElementById("next-article").click()})</script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin=anonymous></script>
-<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><title>Rounding Errors - Algorithmica β</title></head><body><nav id=sidebar><div class=title><a href=https://anpaure.github.io/algorithmica-beta/>Algorithmica β</a>
-<span class=slash>/</span>
-<a href=https://anpaure.github.io/algorithmica-beta/hpc/ class=divisionAbbr>HPC</a></div><ul><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/preface/>Preface</a></li><li class=part>Performance Engineering</li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/>Complexity Models</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/>Modern Hardware</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/>Programming Languages</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/>Models of Computation</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/>When to Optimize</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/>Computer Architecture</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/>Instruction Set Architectures</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/>Assembly Language</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/>Loops and Conditionals</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/>Functions and Recursion</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/>Indirect Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/>Virtualization</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/>Interrupts and System Calls</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/>Machine Code Layout</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/>Instruction-Level Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/>Pipeline Hazards</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/>The Cost of Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/>Branchless Programming</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/>Instruction Tables</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/>Instruction Scheduling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/>Throughput Computing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/>Theoretical Performance Limits</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/>Compilation</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/>Stages of Compilation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/>Flags and Targets</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/>Situational Optimizations</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/>Contract Programming</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/>Non-Zero-Cost Abstractions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/>Precomputation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/>Arithmetic Optimizations</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/>What Compilers Can and Can't Do</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/>Profiling</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/>Instrumentation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/>Statistical Profiling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/>Program Simulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/>Machine Code Analyzers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/>Benchmarking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/>Getting Accurate Results</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/>Arithmetic</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/>Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/>IEEE 754 Floats</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/ id=active-element>Rounding Errors</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/>Newton's Method</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/>Fast Inverse Square Root</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/>Integer Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/>Integer Division</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/>Bit Manipulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/>Data Compression</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/>Number Theory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/>Modular Arithmetic</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/>Binary Exponentiation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/>Extended Euclidean Algorithm</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/>Montgomery Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/>Finite Fields</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/>Error Correction</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/>Hashing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/>Cryptography</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/>Random Number Generation</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/>External Memory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/>Memory Hierarchy</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/>Virtual Memory</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/>External Memory Model</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/>External Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/>List Ranking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/>Eviction Policies</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/>Cache-Oblivious Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/>Spatial and Temporal Locality</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/>B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/>Sublinear Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/>Memory Management</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/>RAM & CPU Caches</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/>Memory Bandwidth</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/>Memory Latency</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/>Cache Lines</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/>Memory Sharing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/>Memory-Level Parallelism</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/>Prefetching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/>Alignment and Packing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/>Pointer Alternatives</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/>Cache Associativity</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/>Memory Paging</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/>AoS and SoA</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/>SIMD Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/>Intrinsics and Vector Types</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/>Moving Data</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/>Reductions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/>Masking and Blending</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/>In-Register Shuffles</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/>Auto-Vectorization and SPMD</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/>Algorithms Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/>Binary GCD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/>Prime Number Sieves</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/>Integer Factorization</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/>Big Integers and Karatsuba Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/>Optimizing Logistic Regression</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/>Fast Fourier Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/>Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/>Argmin with SIMD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/>Number-Theoretic Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/>Prefix Sum with SIMD</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/>Reading Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/>Writing Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/>Reading and Writing Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/>String Searching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/>Matrix Multiplication</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/>Data Structures Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/>Binary Search</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/>Static B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/>Search Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/>Segment Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/>Tries</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/>Bitmaps</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/>Range Minimum Query</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/>Hash Tables</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/>Probabilistic Filters</a></li></ol><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/summary/>Summary</a></li><li class=part>Appendix</li><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/stats/>Probability Theory Refresher</a></li></ul></nav><div id=wrapper><menu id=menu><div class=left><a><img src=https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg onclick=toggleSidebar() title="open table of contents"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg style=position:relative;top:-1px onclick='switchTheme(localStorage.getItem("theme")=="dark"?"light":"dark")' title="dark theme"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg onclick=toggleSearch() title=search></a></div><div class=title><span class=beta-brand>Algorithmica β</span>
-<span class=chapter-title>Rounding Errors</span></div><div class=right><a onclick=window.print()><img src=https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg title=print></a>
-<a href=https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2farithmetic%2ferrors.md><img src=https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg title=edit style=width:18px;position:relative;right:-2px;top:-1px></a>
-<a href=https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/arithmetic/errors.md class=github-main><img src=https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg title="view on github"></a></div></menu><main><div id=search><input id=search-bar type=search placeholder="Search this book…" oninput=search()><div id=search-count></div><div id=search-results></div></div><header><h1>Rounding Errors</h1><div class=info></div></header><article><p>The way rounding works in hardware floats is remarkably simple: it occurs if and only if the result of the operation is not representable exactly, and by default gets rounded to the nearest representable number (in case of a tie preferring the number that ends with a zero).</p><p>Consider the following code snippet:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>float</span> <span class=n>x</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=p>(</span><span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=mi>25</span><span class=p>);</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>    <span class=n>x</span><span class=o>++</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=n>printf</span><span class=p>(</span><span class=s>&#34;%f</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>x</span><span class=p>);</span>
-</span></span></code></pre></div><p>Instead of printing $2^{25} = 33554432$ (what the result mathematically should be), it outputs $16777216 = 2^{24}$. Why?</p><p>When we repeatedly increment a floating-point number $x$, we eventually hit a point where it becomes so big that $(x + 1)$ gets rounded back to $x$. The first such number is $2^{24}$ (the number of mantissa bits plus one) because</p>$$
-2^{24} + 1 = 2^{24} \cdot 1.\underbrace{0\ldots0}_{\times 23} 1
-$$<p>has the exact same distance from $2^{24}$ and $(2^{24} + 1)$ but gets rounded down to $2^{24}$ by the above-stated tie-breaker rule. At the same time, the increment of everything lower than that can be represented exactly, so no rounding happens in the first place.</p><span class=anchor id=rounding-errors-and-operation-order></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/#rounding-errors-and-operation-order>#</a>Rounding Errors and Operation Order</h3><p>The result of a floating-point computation may depend on the order of operations despite being algebraically correct.</p><p>For example, while the operations of addition and multiplication are commutative and associative in the pure mathematical sense, their rounding errors are not: when we have three floating-point variables $x$, $y$, and $z$, the result of $(x+y+z)$ depends on the order of summation. The same non-commutativity principle applies to most if not all other floating-point operations.</p><p>Compilers are not allowed to produce <a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/>non-spec-compliant</a> results, so this annoying nuance disables some potential optimizations that involve rearranging operands in arithmetic. You can disable this strict compliance with the <code>-ffast-math</code> flag in GCC and Clang. If we add it and re-compile the code snippet above, it runs <a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction>considerably faster</a> and also happens to output the correct result, 33554432 (although you need to be aware that the compiler also could have chosen a less precise computation path).</p><span class=anchor id=rounding-modes></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/#rounding-modes>#</a>Rounding Modes</h3><p>Apart from the default mode (also known as Banker&rsquo;s rounding), you can <a href=https://www.cplusplus.com/reference/cfenv/fesetround/>set</a> other rounding logic with 4 more modes:</p><ul><li>round to nearest, with perfect ties always rounding &ldquo;away&rdquo; from zero;</li><li>round up (toward $+∞$; negative results thus round toward zero);</li><li>round down (toward $-∞$; negative results thus round away from zero);</li><li>round toward zero (a truncation of the binary result).</li></ul><p>For example, if you call <code>fesetround(FE_UPWARD)</code> before running the loop above, it outputs not $2^{24}$, and not even $2^{25}$, but $67108864 = 2^{26}$. This happens because when we get to $2^{24}$, $(x + 1)$ starts rounding to the next nearest representable number $(x + 2)$, and we reach $2^{25}$ in half the time, and after that, $(x + 1)$ rounds up to $(x+4)$, and we start going four times as fast.</p><p>One of the uses for the alternative rounding modes is for diagnosing numerical instability. If the results of an algorithm substantially vary when switching between rounding to the positive and negative infinities, it indicates susceptibility to round-off errors.</p><p>This test is often better than switching all computations to lower precision and checking whether the result changed by too much because the default round-to-nearest policy converges to the correct “expected” value given enough averaging: half of the time the errors are rounding up, and the other they are rounding down — so, statistically, they cancel each other.</p><span class=anchor id=measuring-errors></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/#measuring-errors>#</a>Measuring Errors</h3><p>It seems surprising to expect this guarantee from hardware that performs complex calculations such as natural logarithms and square roots, but this is it: you are guaranteed to get the highest precision possible from all operations. This makes it remarkably easy to analyze round-off errors, as we will see in a bit.</p><p>There are two natural ways to measure computational errors:</p><ul><li>The engineers who create hardware or spec-compliant exact software are concerned with <em>units in the last place</em> (ulps), which is the distance between two numbers in terms of how many representable numbers can fit between the precise real value and the actual result of the computation.</li><li>People that are working on numerical algorithms care about <em>relative precision</em>, which is the absolute value of the approximation error divided by the real answer: $|\frac{v-v^\prime}{v}|$.</li></ul><p>In either case, the usual tactic to analyze errors is to assume the worst case and simply bound them.</p><p>If you perform a single basic arithmetic operation, then the worst thing that can happen is the result rounding to the nearest representable number, meaning that the error does not exceed 0.5 ulps. To reason about relative errors the same way, we can define a number $\epsilon$ called <em>machine epsilon</em>, equal to the difference between $1$ and the next representable value (which should be equal to 2 to the negative power of however many bits are dedicated to mantissa).</p><p>This means that if after a single arithmetic operation you get result $x$, then the real value is somewhere in the range</p>$$
-[x \cdot (1-\epsilon),\; x \cdot (1 + \epsilon)]
-$$<p>The omnipresence of errors is especially important to remember when making discrete &ldquo;yes or no&rdquo; decisions based on the results of floating-point calculations. For example, here is how you should check for equality:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>const</span> <span class=kt>float</span> <span class=n>eps</span> <span class=o>=</span> <span class=n>std</span><span class=o>::</span><span class=n>numeric_limits</span><span class=o>&lt;</span><span class=kt>float</span><span class=o>&gt;::</span><span class=n>epsilon</span><span class=p>;</span> <span class=c1>// ~2^(-23)
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kt>bool</span> <span class=nf>eq</span><span class=p>(</span><span class=kt>float</span> <span class=n>a</span><span class=p>,</span> <span class=kt>float</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>abs</span><span class=p>(</span><span class=n>a</span> <span class=o>-</span> <span class=n>b</span><span class=p>)</span> <span class=o>&lt;=</span> <span class=n>eps</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>The value of <code>eps</code> should depend on the application: the one above — the machine epsilon for <code>float</code> — is only good for no more than one floating-point operation.</p><span class=anchor id=interval-arithmetic></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/#interval-arithmetic>#</a>Interval Arithmetic</h3><p>An algorithm is called <em>numerically stable</em> if its error, whatever its cause, does not grow much larger during the calculation. This can only happen if the problem itself is <em>well-conditioned</em>, meaning that the solution changes only by a small amount if the input data are changed by a small amount.</p><p>When analyzing numerical algorithms, it is often useful to adopt the same method that is used in experimental physics: instead of working with unknown real values, we will work with the intervals where they may be in.</p><p>For example, consider a chain of operations where we consecutively multiply a variable by arbitrary real numbers:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=kt>float</span> <span class=n>x</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>    <span class=n>x</span> <span class=o>*=</span> <span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>];</span>
-</span></span></code></pre></div><p>After the first multiplication, the value of $x$ relative to the value of the real product is bounded by $(1 + \epsilon)$, and after each additional multiplication, this upper bound is multiplied by another $(1 + \epsilon)$. By induction, after $n$ multiplications, the computed value is bound by $(1 + \epsilon)^n = 1 + n \epsilon + O(\epsilon^2)$ and a similar lower bound.</p><p>This implies that the relative error is $O(n \epsilon)$, which is sort of okay, because usually $n \ll \frac{1}{\epsilon}$.</p><p>For example of a numerically <em>unstable</em> computation, consider the function</p>$$
+<!doctype html>
+<html lang='en-us'><head><meta charset="utf-8">
+  <link rel="icon" href="https://anpaure.github.io/algorithmica-beta/favicon.ico">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/beta.css">
+  
+
+  
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css" integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00=">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/syntax.css" id="syntax-theme">
+
+  <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+  <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js"></script>
+
+  
+  <link rel="stylesheet" id="theme">
+
+  <script>
+    function toggleSidebar() {
+      console.log("Toggling sidebar visibility")
+      var sidebar = document.getElementById('sidebar')
+      var wrapper = document.getElementById('wrapper')
+      if (sidebar.classList.contains('sidebar-toggled') || window.getComputedStyle(sidebar).display == 'block') { 
+        sidebar.classList.toggle('sidebar-hidden')
+        wrapper.classList.toggle('sidebar-hidden')
+      }
+      sidebar.classList.add('sidebar-toggled')
+      wrapper.classList.add('sidebar-toggled')
+    }
+
+    function switchTheme(theme) {
+      console.log("Changing theme:", theme)
+      document.getElementById('theme').href = (theme == 'dark' ? "https:\/\/anpaure.github.io\/algorithmica-beta\/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css" : "")
+      document.getElementById('syntax-theme').href = (theme == 'dark' ? 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax-dark.css' : 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax.css')
+      localStorage.setItem('theme', theme)
+    }
+
+    async function toggleSearch() {
+      console.log("Toggling search")
+      
+      var searchDiv = document.getElementById('search')
+      if (window.getComputedStyle(searchDiv).display == 'none') {
+        searchDiv.style.display = 'block'
+        window.scrollTo({ top: 0 });
+        document.getElementById('search-bar').focus()
+      } else {
+        searchDiv.style.display = 'none'  
+      }
+
+      if (!index) {
+        console.log("Fetching index")
+        const response = await fetch('https:\/\/anpaure.github.io\/algorithmica-beta\/searchindex.json')
+        const pages = await response.json()
+        index = lunr(function() {
+          this.use(lunr.multiLanguage('en', 'ru'))
+          this.field('title', {
+            boost: 5
+          })
+          this.field('content', {
+            boost: 1
+          })
+          pages.forEach(function(doc) {
+            this.add(doc)
+            articles.push(doc)
+          }, this)
+        })
+        console.log("Ready to search")
+      }
+    }
+
+    var articles = []
+    var index = undefined
+
+    function search() {
+      var query = document.getElementById('search-bar').value
+      var resultsDiv = document.getElementById('search-results')
+      var countDiv = document.getElementById('search-count')
+      
+      if (query == '') {
+        resultsDiv.innerHTML = ''
+        countDiv.innerHTML = ''
+        return
+      }
+      
+      var results = index.search(query)
+
+      countDiv.innerHTML = 'Found <b>' + results.length + '</b> pages'
+
+      let resultList = ''
+
+      for (const n in results) {
+        const item = articles[results[n].ref]
+        resultList += '<li><a href="' + item.path + '">' + item.title + '</a> <p>'
+        const text = item.content
+
+        const contextLimit = 80
+
+        if (text.includes(query)) {
+          const start = text.indexOf(query)
+          if (start > contextLimit)
+            resultList += '…'
+          resultList += text.substring(start - contextLimit, start)
+                      + '<b>' + query + '</b>' + text.substring(start + query.length, start + query.length + contextLimit)
+
+        } else {
+          resultList += text.substring(0, contextLimit * 2)
+        }
+        resultList += '…</p></li>'
+      }
+
+      resultsDiv.innerHTML = resultList
+    }
+
+    if (localStorage.getItem('theme') == 'dark') {
+      switchTheme('dark')
+    }
+
+    window.addEventListener('load', function() {
+      var el = document.getElementById("active-element")
+      
+      if (el) {
+        el.scrollIntoView({block: "center"})
+      }
+      
+
+    })
+
+    window.addEventListener('scroll', function() {
+      var menu = document.getElementById('menu')
+      if (window.scrollY < 120) {
+        
+        menu.classList.remove('scrolled')
+      } else {
+        
+        menu.classList.add('scrolled')
+      }
+    })
+
+    window.addEventListener('keydown', function(e) {
+      if (e.altKey) { return }
+      if (document.activeElement.tagName == 'INPUT') { return }
+      if (e.key == 'ArrowLeft') {
+        document.getElementById('prev-article').click()
+      } else if (e.key == 'ArrowRight') {
+        document.getElementById('next-article').click()
+      }
+    })
+  </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false}
+    ]
+  })"></script>
+
+  
+  <title>Rounding Errors - Algorithmica β</title>
+</head>
+<body><nav id='sidebar' >
+  
+  
+  <div class='title'>
+    <a href='https://anpaure.github.io/algorithmica-beta/'>Algorithmica β</a>
+    
+      
+        
+        <span class='slash'>/</span>
+        <a href='https://anpaure.github.io/algorithmica-beta/hpc/' class='divisionAbbr'
+           >
+          HPC
+        </a>
+      
+    
+  </div>
+  <ul>
+    
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/preface/'
+          
+          >Preface</a></li>
+        
+      
+        
+          <li class='part'>Performance Engineering</li>
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/'
+          
+          >Complexity Models</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/'
+                
+                >Modern Hardware</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/'
+                
+                >Programming Languages</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/'
+                
+                >Models of Computation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/'
+                
+                >When to Optimize</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/'
+          
+          >Computer Architecture</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/'
+                
+                >Instruction Set Architectures</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/'
+                
+                >Assembly Language</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/'
+                
+                >Loops and Conditionals</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/'
+                
+                >Functions and Recursion</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/'
+                
+                >Indirect Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/'
+                
+                >Machine Code Layout</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/'
+                
+                >Interrupts and System Calls</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/'
+                
+                >Virtualization</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/'
+          
+          >Instruction-Level Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/'
+                
+                >Pipeline Hazards</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/'
+                
+                >The Cost of Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/'
+                
+                >Branchless Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/'
+                
+                >Instruction Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/'
+                
+                >Instruction Scheduling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/'
+                
+                >Throughput Computing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/'
+                
+                >Theoretical Performance Limits</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/'
+          
+          >Compilation</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/'
+                
+                >Stages of Compilation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/'
+                
+                >Flags and Targets</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/'
+                
+                >Situational Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/'
+                
+                >Contract Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/'
+                
+                >Non-Zero-Cost Abstractions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/'
+                
+                >Precomputation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/'
+                
+                >Arithmetic Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/'
+                
+                >What Compilers Can and Can&#39;t Do</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/'
+          
+          >Profiling</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/'
+                
+                >Instrumentation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/'
+                
+                >Statistical Profiling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/'
+                
+                >Program Simulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/'
+                
+                >Machine Code Analyzers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/'
+                
+                >Benchmarking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/'
+                
+                >Getting Accurate Results</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/'
+          
+          >Arithmetic</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/'
+                
+                >Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/'
+                
+                >IEEE 754 Floats</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/'
+                id='active-element'
+                >Rounding Errors</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/'
+                
+                >Newton&#39;s Method</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/'
+                
+                >Fast Inverse Square Root</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/'
+                
+                >Integer Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/'
+                
+                >Integer Division</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/'
+                
+                >Bit Manipulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/'
+                
+                >Data Compression</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/'
+          
+          >Number Theory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/'
+                
+                >Modular Arithmetic</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/'
+                
+                >Binary Exponentiation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/'
+                
+                >Extended Euclidean Algorithm</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/'
+                
+                >Montgomery Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/'
+                
+                >Finite Fields</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/'
+                
+                >Error Correction</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/'
+                
+                >Cryptography</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/'
+                
+                >Hashing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/'
+                
+                >Random Number Generation</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/'
+          
+          >External Memory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/'
+                
+                >Memory Hierarchy</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/'
+                
+                >Virtual Memory</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/'
+                
+                >External Memory Model</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/'
+                
+                >External Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/'
+                
+                >List Ranking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/'
+                
+                >Eviction Policies</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/'
+                
+                >Cache-Oblivious Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/'
+                
+                >Spatial and Temporal Locality</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/'
+                
+                >B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/'
+                
+                >Sublinear Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/'
+                
+                >Memory Management</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/'
+          
+          >RAM &amp; CPU Caches</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/'
+                
+                >Memory Bandwidth</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/'
+                
+                >Memory Latency</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/'
+                
+                >Cache Lines</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/'
+                
+                >Memory Sharing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/'
+                
+                >Memory-Level Parallelism</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/'
+                
+                >Prefetching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/'
+                
+                >Alignment and Packing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/'
+                
+                >Pointer Alternatives</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/'
+                
+                >Cache Associativity</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/'
+                
+                >Memory Paging</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/'
+                
+                >AoS and SoA</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/'
+          
+          >SIMD Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/'
+                
+                >Intrinsics and Vector Types</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/'
+                
+                >Moving Data</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/'
+                
+                >Reductions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/'
+                
+                >Masking and Blending</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/'
+                
+                >In-Register Shuffles</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/'
+                
+                >Auto-Vectorization and SPMD</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/'
+          
+          >Algorithms Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/'
+                
+                >Binary GCD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/'
+                
+                >Prime Number Sieves</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/'
+                
+                >Integer Factorization</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/'
+                
+                >Optimizing Logistic Regression</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/'
+                
+                >Big Integers and Karatsuba Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/'
+                
+                >Fast Fourier Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/'
+                
+                >Number-Theoretic Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/'
+                
+                >Argmin with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/'
+                
+                >Prefix Sum with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/'
+                
+                >Reading Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/'
+                
+                >Writing Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/'
+                
+                >Reading and Writing Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/'
+                
+                >String Searching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/'
+                
+                >Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/'
+                
+                >Matrix Multiplication</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/'
+          
+          >Data Structures Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/'
+                
+                >Binary Search</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/'
+                
+                >Static B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/'
+                
+                >Search Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/'
+                
+                >Segment Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/'
+                
+                >Tries</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/'
+                
+                >Range Minimum Query</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/'
+                
+                >Hash Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/'
+                
+                >Bitmaps</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/'
+                
+                >Probabilistic Filters</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/summary/'
+          
+          >Summary</a></li>
+        
+      
+        
+          <li class='part'>Appendix</li>
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/stats/'
+          
+          >Probability Theory Refresher</a></li>
+        
+      
+    
+  </ul>
+</nav>
+<div id='wrapper' ><menu id='menu'>
+  
+  
+  
+  
+  <div class='left'>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg'
+           onclick='toggleSidebar()'
+           title='open table of contents'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg'
+           style='position: relative; top: -1px'
+           onclick='switchTheme(localStorage.getItem("theme") == "dark" ? "light" : "dark")'
+           title='dark theme'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg'
+           onclick='toggleSearch()'
+           title='search'>
+    </a>
+  </div>
+  <div class='title'>
+    
+      <span class='beta-brand'>Algorithmica β</span>
+      <span class='chapter-title'>Rounding Errors</span>
+    
+  </div>
+  <div class='right'>
+    <a onClick='window.print()'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg' title='print'>
+    </a>
+    <a href='https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2farithmetic%2ferrors.md'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg'
+           title='edit'
+           style='width: 18px; position: relative; right: -2px; top: -1px'>
+    </a>
+    <a href='https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/arithmetic/errors.md' class='github-main'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg' title='view on github'>
+    </a>
+  </div>
+</menu>
+<main>
+        <div id="search">
+    <input id="search-bar" type="search" placeholder='Search this book…' oninput="search()">
+    <div id="search-count"></div>
+    <div id="search-results">
+    </div>
+</div>
+<header>
+  
+  <h1>Rounding Errors</h1>
+  
+    <div class='info'></div>
+  
+</header>
+<article>
+  
+
+
+  
+    
+    
+      
+        <p>The way rounding works in hardware floats is remarkably simple: it occurs if and only if the result of the operation is not representable exactly, and by default gets rounded to the nearest representable number (in case of a tie preferring the number that ends with a zero).</p>
+<p>Consider the following code snippet:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">float</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">25</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">printf</span><span class="p">(</span><span class="s">&#34;%f</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+</span></span></code></pre></div><p>Instead of printing $2^{25} = 33554432$ (what the result mathematically should be), it outputs $16777216 = 2^{24}$. Why?</p>
+<p>When we repeatedly increment a floating-point number $x$, we eventually hit a point where it becomes so big that $(x + 1)$ gets rounded back to $x$. The first such number is $2^{24}$ (the number of mantissa bits plus one) because</p>
+
+      
+    
+  
+
+  
+    $$
+    2^{24} &#43; 1 = 2^{24} \cdot 1.\underbrace{0\ldots0}_{\times 23} 1
+    $$
+  
+
+  
+    
+    
+      
+        <p>has the exact same distance from $2^{24}$ and $(2^{24} + 1)$ but gets rounded down to $2^{24}$ by the above-stated tie-breaker rule. At the same time, the increment of everything lower than that can be represented exactly, so no rounding happens in the first place.</p>
+<span class='anchor' id="rounding-errors-and-operation-order"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/#rounding-errors-and-operation-order">#</a>Rounding Errors and Operation Order</h3><p>The result of a floating-point computation may depend on the order of operations despite being algebraically correct.</p>
+<p>For example, while the operations of addition and multiplication are commutative and associative in the pure mathematical sense, their rounding errors are not: when we have three floating-point variables $x$, $y$, and $z$, the result of $(x+y+z)$ depends on the order of summation. The same non-commutativity principle applies to most if not all other floating-point operations.</p>
+<p>Compilers are not allowed to produce <a href="https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/">non-spec-compliant</a> results, so this annoying nuance disables some potential optimizations that involve rearranging operands in arithmetic. You can disable this strict compliance with the <code>-ffast-math</code> flag in GCC and Clang. If we add it and re-compile the code snippet above, it runs <a href="https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction">considerably faster</a> and also happens to output the correct result, 33554432 (although you need to be aware that the compiler also could have chosen a less precise computation path).</p>
+<span class='anchor' id="rounding-modes"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/#rounding-modes">#</a>Rounding Modes</h3><p>Apart from the default mode (also known as Banker&rsquo;s rounding), you can <a href="https://www.cplusplus.com/reference/cfenv/fesetround/">set</a> other rounding logic with 4 more modes:</p>
+<ul>
+<li>round to nearest, with perfect ties always rounding &ldquo;away&rdquo; from zero;</li>
+<li>round up (toward $+∞$; negative results thus round toward zero);</li>
+<li>round down (toward $-∞$; negative results thus round away from zero);</li>
+<li>round toward zero (a truncation of the binary result).</li>
+</ul>
+<p>For example, if you call <code>fesetround(FE_UPWARD)</code> before running the loop above, it outputs not $2^{24}$, and not even $2^{25}$, but $67108864 = 2^{26}$. This happens because when we get to $2^{24}$, $(x + 1)$ starts rounding to the next nearest representable number $(x + 2)$, and we reach $2^{25}$ in half the time, and after that, $(x + 1)$ rounds up to $(x+4)$, and we start going four times as fast.</p>
+<p>One of the uses for the alternative rounding modes is for diagnosing numerical instability. If the results of an algorithm substantially vary when switching between rounding to the positive and negative infinities, it indicates susceptibility to round-off errors.</p>
+<p>This test is often better than switching all computations to lower precision and checking whether the result changed by too much because the default round-to-nearest policy converges to the correct “expected” value given enough averaging: half of the time the errors are rounding up, and the other they are rounding down — so, statistically, they cancel each other.</p>
+<span class='anchor' id="measuring-errors"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/#measuring-errors">#</a>Measuring Errors</h3><p>It seems surprising to expect this guarantee from hardware that performs complex calculations such as natural logarithms and square roots, but this is it: you are guaranteed to get the highest precision possible from all operations. This makes it remarkably easy to analyze round-off errors, as we will see in a bit.</p>
+<p>There are two natural ways to measure computational errors:</p>
+<ul>
+<li>The engineers who create hardware or spec-compliant exact software are concerned with <em>units in the last place</em> (ulps), which is the distance between two numbers in terms of how many representable numbers can fit between the precise real value and the actual result of the computation.</li>
+<li>People that are working on numerical algorithms care about <em>relative precision</em>, which is the absolute value of the approximation error divided by the real answer: $|\frac{v-v^\prime}{v}|$.</li>
+</ul>
+<p>In either case, the usual tactic to analyze errors is to assume the worst case and simply bound them.</p>
+<p>If you perform a single basic arithmetic operation, then the worst thing that can happen is the result rounding to the nearest representable number, meaning that the error does not exceed 0.5 ulps. To reason about relative errors the same way, we can define a number $\epsilon$ called <em>machine epsilon</em>, equal to the difference between $1$ and the next representable value (which should be equal to 2 to the negative power of however many bits are dedicated to mantissa).</p>
+<p>This means that if after a single arithmetic operation you get result $x$, then the real value is somewhere in the range</p>
+
+      
+    
+  
+
+  
+    $$
+    
+[x \cdot (1-\epsilon),\; x \cdot (1 &#43; \epsilon)]
+
+    $$
+  
+
+  
+    
+    
+      
+        <p>The omnipresence of errors is especially important to remember when making discrete &ldquo;yes or no&rdquo; decisions based on the results of floating-point calculations. For example, here is how you should check for equality:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">float</span> <span class="n">eps</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;::</span><span class="n">epsilon</span><span class="p">;</span> <span class="c1">// ~2^(-23)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">bool</span> <span class="nf">eq</span><span class="p">(</span><span class="kt">float</span> <span class="n">a</span><span class="p">,</span> <span class="kt">float</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">eps</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>The value of <code>eps</code> should depend on the application: the one above — the machine epsilon for <code>float</code> — is only good for no more than one floating-point operation.</p>
+<span class='anchor' id="interval-arithmetic"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/#interval-arithmetic">#</a>Interval Arithmetic</h3><p>An algorithm is called <em>numerically stable</em> if its error, whatever its cause, does not grow much larger during the calculation. This can only happen if the problem itself is <em>well-conditioned</em>, meaning that the solution changes only by a small amount if the input data are changed by a small amount.</p>
+<p>When analyzing numerical algorithms, it is often useful to adopt the same method that is used in experimental physics: instead of working with unknown real values, we will work with the intervals where they may be in.</p>
+<p>For example, consider a chain of operations where we consecutively multiply a variable by arbitrary real numbers:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">float</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x</span> <span class="o">*=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span></code></pre></div><p>After the first multiplication, the value of $x$ relative to the value of the real product is bounded by $(1 + \epsilon)$, and after each additional multiplication, this upper bound is multiplied by another $(1 + \epsilon)$. By induction, after $n$ multiplications, the computed value is bound by $(1 + \epsilon)^n = 1 + n \epsilon + O(\epsilon^2)$ and a similar lower bound.</p>
+<p>This implies that the relative error is $O(n \epsilon)$, which is sort of okay, because usually $n \ll \frac{1}{\epsilon}$.</p>
+<p>For example of a numerically <em>unstable</em> computation, consider the function</p>
+
+      
+    
+  
+
+  
+    $$
+    
 f(x, y) = x^2 - y^2
-$$
-Assuming $x > y$, the maximum value this function can return is roughly
-$$
-x^2 \cdot (1 + \epsilon) - y^2 \cdot (1 - \epsilon)
-$$
-corresponding to the absolute error of
-$$
-x^2 \cdot (1 + \epsilon) - y^2 \cdot (1 - \epsilon) - (x^2 - y^2) = (x^2 + y^2) \cdot \epsilon
-$$
-and hence the relative error of
-$$
-\frac{x^2 + y^2}{x^2 - y^2} \cdot \epsilon
-$$<p>If $x$ and $y$ are close in magnitude, the error will be $O(\epsilon \cdot |x|)$.</p><p>Under direct computation, the subtraction &ldquo;magnifies&rdquo; the errors of squaring. But this can be fixed by instead using the following formula:</p>$$
-f(x, y) = x^2 - y^2 = (x + y) \cdot (x - y)
-$$<p>In this one, it is easy to show that the error is bound by $\epsilon \cdot |x - y|$. It is also faster because it needs 2 additions and 1 multiplication: one fast addition more and one slow multiplication less compared to the original.</p><span class=anchor id=kahan-summation></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/#kahan-summation>#</a>Kahan Summation</h3><p>From the previous example, we can see that long chains of operations are not a problem, but adding and subtracting numbers of different magnitude is. The general approach to dealing with such problems is to try to keep big numbers with big numbers and small numbers with small numbers.</p><p>Consider the standard summation algorithm:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>float</span> <span class=n>s</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>    <span class=n>s</span> <span class=o>+=</span> <span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>];</span>
-</span></span></code></pre></div><p>Since we are performing summations and not multiplications, its relative error is no longer just bounded by $O(\epsilon \cdot n)$, but heavily depends on the input.</p><p>In the most ridiculous case, if the first value is $2^{24}$ and the other values are equal to $1$, the sum is going to be $2^{24}$ regardless of $n$, which can be verified by executing the following code and observing that it simply prints $16777216 = 2^{24}$ twice:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>n</span> <span class=o>=</span> <span class=p>(</span><span class=mi>1</span><span class=o>&lt;&lt;</span><span class=mi>24</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=n>printf</span><span class=p>(</span><span class=s>&#34;%d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>n</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=kt>float</span> <span class=n>s</span> <span class=o>=</span> <span class=n>n</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>    <span class=n>s</span> <span class=o>+=</span> <span class=mf>1.0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>printf</span><span class=p>(</span><span class=s>&#34;%f</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>s</span><span class=p>);</span>
-</span></span></code></pre></div><p>This happens because <code>float</code> has only 23 mantissa bits, and so $2^{24} + 1$ is the first integer number that can&rsquo;t be represented exactly and has to be rounded down, which happens every time we try to add $1$ to $s = 2^{24}$. The error is indeed $O(n \cdot \epsilon)$ but in terms of the absolute error, not the relative one: in the example above, it is $2$, and it would go up to infinity if the last number happened to be $-2^{24}$.</p><p>The obvious solution is to switch to a larger type such as <code>double</code>, but this isn&rsquo;t really a scalable method. An elegant solution is to store the parts that weren&rsquo;t added in a separate variable, which is then added to the next variable:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>float</span> <span class=n>s</span> <span class=o>=</span> <span class=mi>0</span><span class=p>,</span> <span class=n>c</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=kt>float</span> <span class=n>y</span> <span class=o>=</span> <span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>-</span> <span class=n>c</span><span class=p>;</span> <span class=c1>// c is zero on the first iteration
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>float</span> <span class=n>t</span> <span class=o>=</span> <span class=n>s</span> <span class=o>+</span> <span class=n>y</span><span class=p>;</span>    <span class=c1>// s may be big and y may be small, losing low-order bits of y
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>c</span> <span class=o>=</span> <span class=p>(</span><span class=n>t</span> <span class=o>-</span> <span class=n>s</span><span class=p>)</span> <span class=o>-</span> <span class=n>y</span><span class=p>;</span>    <span class=c1>// (t - s) cancels high-order part of y
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>s</span> <span class=o>=</span> <span class=n>t</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>This trick is known as <em>Kahan summation</em>. Its relative error is bounded by $2 \epsilon + O(n \epsilon^2)$: the first term comes from the very last summation, and the second term is due to the fact that we work with less-than-epsilon errors on each step.</p><p>Of course, a more general approach that works not just for array summation would be to switch to a more precise data type, like <code>double</code>, also effectively squaring the machine epsilon. Furthermore, it can (sort of) be scaled by bundling two <code>double</code> variables together: one for storing the value and another for its non-representable errors so that they represent the value $a+b$. This approach is known as double-double arithmetic, and it can be similarly generalized to define quad-double and higher precision arithmetic.</p></article><div class=nextprev><div class=left><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/ id=prev-article>← IEEE 754 Floats</a></div><div class=right><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/ id=next-article>Newton's Method →</a></div></div></main><footer>Copyright 2021–2022 Sergey Slotin<br></footer></div></body></html>
+
+    $$
+  
+
+  
+    
+    
+      
+        Assuming $x &gt; y$, the maximum value this function can return is roughly
+      
+    
+  
+
+  
+    $$
+    
+x^2 \cdot (1 &#43; \epsilon) - y^2 \cdot (1 - \epsilon)
+
+    $$
+  
+
+  
+    
+    
+      
+        corresponding to the absolute error of
+      
+    
+  
+
+  
+    $$
+    
+x^2 \cdot (1 &#43; \epsilon) - y^2 \cdot (1 - \epsilon) - (x^2 - y^2) = (x^2 &#43; y^2) \cdot \epsilon
+
+    $$
+  
+
+  
+    
+    
+      
+        and hence the relative error of
+      
+    
+  
+
+  
+    $$
+    
+\frac{x^2 &#43; y^2}{x^2 - y^2} \cdot \epsilon
+
+    $$
+  
+
+  
+    
+    
+      
+        <p>If $x$ and $y$ are close in magnitude, the error will be $O(\epsilon \cdot |x|)$.</p>
+<p>Under direct computation, the subtraction &ldquo;magnifies&rdquo; the errors of squaring. But this can be fixed by instead using the following formula:</p>
+
+      
+    
+  
+
+  
+    $$
+    
+f(x, y) = x^2 - y^2 = (x &#43; y) \cdot (x - y)
+
+    $$
+  
+
+  
+    
+    
+      
+        <p>In this one, it is easy to show that the error is bound by $\epsilon \cdot |x - y|$. It is also faster because it needs 2 additions and 1 multiplication: one fast addition more and one slow multiplication less compared to the original.</p>
+<span class='anchor' id="kahan-summation"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/#kahan-summation">#</a>Kahan Summation</h3><p>From the previous example, we can see that long chains of operations are not a problem, but adding and subtracting numbers of different magnitude is. The general approach to dealing with such problems is to try to keep big numbers with big numbers and small numbers with small numbers.</p>
+<p>Consider the standard summation algorithm:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">float</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">s</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span></code></pre></div><p>Since we are performing summations and not multiplications, its relative error is no longer just bounded by $O(\epsilon \cdot n)$, but heavily depends on the input.</p>
+<p>In the most ridiculous case, if the first value is $2^{24}$ and the other values are equal to $1$, the sum is going to be $2^{24}$ regardless of $n$, which can be verified by executing the following code and observing that it simply prints $16777216 = 2^{24}$ twice:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="mi">24</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">float</span> <span class="n">s</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">s</span> <span class="o">+=</span> <span class="mf">1.0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">printf</span><span class="p">(</span><span class="s">&#34;%f</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+</span></span></code></pre></div><p>This happens because <code>float</code> has only 23 mantissa bits, and so $2^{24} + 1$ is the first integer number that can&rsquo;t be represented exactly and has to be rounded down, which happens every time we try to add $1$ to $s = 2^{24}$. The error is indeed $O(n \cdot \epsilon)$ but in terms of the absolute error, not the relative one: in the example above, it is $2$, and it would go up to infinity if the last number happened to be $-2^{24}$.</p>
+<p>The obvious solution is to switch to a larger type such as <code>double</code>, but this isn&rsquo;t really a scalable method. An elegant solution is to store the parts that weren&rsquo;t added in a separate variable, which is then added to the next variable:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">float</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">float</span> <span class="n">y</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">c</span><span class="p">;</span> <span class="c1">// c is zero on the first iteration
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">float</span> <span class="n">t</span> <span class="o">=</span> <span class="n">s</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span>    <span class="c1">// s may be big and y may be small, losing low-order bits of y
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="n">y</span><span class="p">;</span>    <span class="c1">// (t - s) cancels high-order part of y
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">s</span> <span class="o">=</span> <span class="n">t</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>This trick is known as <em>Kahan summation</em>. Its relative error is bounded by $2 \epsilon + O(n \epsilon^2)$: the first term comes from the very last summation, and the second term is due to the fact that we work with less-than-epsilon errors on each step.</p>
+<p>Of course, a more general approach that works not just for array summation would be to switch to a more precise data type, like <code>double</code>, also effectively squaring the machine epsilon. Furthermore, it can (sort of) be scaled by bundling two <code>double</code> variables together: one for storing the value and another for its non-representable errors so that they represent the value $a+b$. This approach is known as double-double arithmetic, and it can be similarly generalized to define quad-double and higher precision arithmetic.</p>
+<!--
+
+## Conversion to Decimal
+
+It is unfortunate that humans evolved to have 10 fingers, because owing to this fact we ended up with a very clumsy number system.
+
+Digit is actually also a anatomical term meaning either a finger or a toe
+
+Six fingers on each hand would be more convenient, because it would be straightforward to divide numbers by 2, 3, 4 and 6. This numbering system was used by ancient Babylonians, and it is still the reason why we have 60 seconds in a minute, 24 hours in a day, 12 months and 6 cans of beer in a pack: you can perfectly divide items by low divisors.
+
+Four fingers on each hand (like in The Simpsons) would give us a very convenient octal system where you can divide by powers of 2, although most people would not start appreciating it until invention of computers.
+
+But here we are, and we have a problem of converting binary floating-point numbers to decimal numbers in scientific notation. But what does that even mean, exactly?
+
+Note that some decimal numbers are not representable in finite form in binary. Here is a famous JavaScript joke (that you can reproduce by pressing F12 in your browser):
+
+```
+> 0.1
+< 0.1
+> 0.2
+< 0.2
+> 0.1+0.2
+< 0.30000000000000004
+```
+
+Neither of them are exact, so JavaScript prints the shortest number that would be parsed back as the same number (reading numbers is defined similarly: it rounds to the closest representable number). The result of "0.3" and "0.1+0.2" is off by exactly one ULP, so it isn't printed as 0.3.
+
+The way to approach any hard problem is to figure out how to solve some partial cases in then to figure out how to reduce the initial problem. Let's start with processing the sign bit: it's simple, just print "-" in front of a number in case it is 1. Next, we can check for special values.
+
+Then, we can notice that some numbers are easy to print. If we have 23-bit mantissa and our exponent value is exactly 23, then we can reinterpret the mantissa as integer, add it to $2^23$ (the implicit 1) and then print it as we would print an integer. We can also do the same thing for small exponents, except that we would need to multiply that intermediate integer by a small power of two.
+
+But what to do in general case, if the exponent value is either too large or too small? We can reduce the problem to the previous case by multiplying it by $\frac{10^a}{2^b}$ for some integers $a$ and $b$ with precise enough arithmetic so that the exponent is small.
+
+Multiplying or dividing by 10 is the same as incrementing the exponent (the resulting one after the "e" in scientific notation, not the binary). The idea is to find a proper power of 10 so that the resulting number will have . We need to precalculate numbers of the form $\frac{10^a}{2^b}$ (since exponent is limited, there won't be many of them). To get the precalculated number, we need to look at the exponent (or possibly its neighbors).
+
+The tricky part is the "shortest possible." It can be solved by printing digits one by one and trying to parse it back, but this would be too slow.
+
+How many decimal digits do we need to print a `float`?
+
+-->
+
+      
+    
+  
+
+
+
+        </article>
+        <div class='nextprev'>
+  
+    
+      
+      
+
+      
+      
+      
+        
+      
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+
+      
+        <div class='left'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/' id='prev-article'>← IEEE 754 Floats</a>
+        
+        </div>
+        <div class='right'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/' id='next-article'>Newton&#39;s Method →</a>
+        
+        </div>
+      
+    
+  
+</div>
+
+      </main>
+      <footer>
+  Copyright 2021–2022 Sergey Slotin
+  <br>
+   
+</footer>
+
+    </div>
+  </body>
+</html>

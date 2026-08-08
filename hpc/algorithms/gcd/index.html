@@ -1,122 +1,1108 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><link rel=icon href=https://anpaure.github.io/algorithmica-beta/favicon.ico><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/beta.css><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00="><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/syntax.css id=syntax-theme><link rel=stylesheet type=text/css href=https://tikzjax.com/v1/fonts.css><script src=https://tikzjax.com/v1/tikzjax.js></script>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js></script>
-<link rel=stylesheet id=theme><script>function toggleSidebar(){console.log("Toggling sidebar visibility");var e=document.getElementById("sidebar"),t=document.getElementById("wrapper");(e.classList.contains("sidebar-toggled")||window.getComputedStyle(e).display=="block")&&(e.classList.toggle("sidebar-hidden"),t.classList.toggle("sidebar-hidden")),e.classList.add("sidebar-toggled"),t.classList.add("sidebar-toggled")}function switchTheme(e){console.log("Changing theme:",e),document.getElementById("theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css":"",document.getElementById("syntax-theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/syntax-dark.css":"https://anpaure.github.io/algorithmica-beta/syntax.css",localStorage.setItem("theme",e)}async function toggleSearch(){console.log("Toggling search");var e=document.getElementById("search");if(window.getComputedStyle(e).display=="none"?(e.style.display="block",window.scrollTo({top:0}),document.getElementById("search-bar").focus()):e.style.display="none",!index){console.log("Fetching index");const e=await fetch("https://anpaure.github.io/algorithmica-beta/searchindex.json"),t=await e.json();index=lunr(function(){this.use(lunr.multiLanguage("en","ru")),this.field("title",{boost:5}),this.field("content",{boost:1}),t.forEach(function(e){this.add(e),articles.push(e)},this)}),console.log("Ready to search")}}var articles=[],index=void 0;function search(){var e=document.getElementById("search-bar").value,n,s=document.getElementById("search-results"),o=document.getElementById("search-count");if(e==''){s.innerHTML='',o.innerHTML='';return}n=index.search(e),o.innerHTML="Found <b>"+n.length+"</b> pages";let t='';for(const a in n){const i=articles[n[a].ref];t+='<li><a href="'+i.path+'">'+i.title+"</a> <p>";const s=i.content,o=80;if(s.includes(e)){const n=s.indexOf(e);n>o&&(t+="…"),t+=s.substring(n-o,n)+"<b>"+e+"</b>"+s.substring(n+e.length,n+e.length+o)}else t+=s.substring(0,o*2);t+="…</p></li>"}s.innerHTML=t}localStorage.getItem("theme")=="dark"&&switchTheme("dark"),window.addEventListener("load",function(){var e=document.getElementById("active-element");e&&e.scrollIntoView({block:"center"})}),window.addEventListener("scroll",function(){var e=document.getElementById("menu");window.scrollY<120?e.classList.remove("scrolled"):e.classList.add("scrolled")}),window.addEventListener("keydown",function(e){if(e.altKey)return;if(document.activeElement.tagName=="INPUT")return;e.key=="ArrowLeft"?document.getElementById("prev-article").click():e.key=="ArrowRight"&&document.getElementById("next-article").click()})</script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin=anonymous></script>
-<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><title>Binary GCD - Algorithmica β</title></head><body><nav id=sidebar><div class=title><a href=https://anpaure.github.io/algorithmica-beta/>Algorithmica β</a>
-<span class=slash>/</span>
-<a href=https://anpaure.github.io/algorithmica-beta/hpc/ class=divisionAbbr>HPC</a></div><ul><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/preface/>Preface</a></li><li class=part>Performance Engineering</li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/>Complexity Models</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/>Modern Hardware</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/>Programming Languages</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/>Models of Computation</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/>When to Optimize</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/>Computer Architecture</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/>Instruction Set Architectures</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/>Assembly Language</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/>Loops and Conditionals</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/>Functions and Recursion</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/>Indirect Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/>Virtualization</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/>Interrupts and System Calls</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/>Machine Code Layout</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/>Instruction-Level Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/>Pipeline Hazards</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/>The Cost of Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/>Branchless Programming</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/>Instruction Tables</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/>Instruction Scheduling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/>Throughput Computing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/>Theoretical Performance Limits</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/>Compilation</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/>Stages of Compilation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/>Flags and Targets</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/>Situational Optimizations</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/>Contract Programming</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/>Non-Zero-Cost Abstractions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/>Precomputation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/>Arithmetic Optimizations</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/>What Compilers Can and Can't Do</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/>Profiling</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/>Instrumentation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/>Statistical Profiling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/>Program Simulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/>Machine Code Analyzers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/>Benchmarking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/>Getting Accurate Results</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/>Arithmetic</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/>Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/>IEEE 754 Floats</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/>Rounding Errors</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/>Newton's Method</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/>Fast Inverse Square Root</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/>Integer Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/>Integer Division</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/>Bit Manipulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/>Data Compression</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/>Number Theory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/>Modular Arithmetic</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/>Binary Exponentiation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/>Extended Euclidean Algorithm</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/>Montgomery Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/>Finite Fields</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/>Error Correction</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/>Hashing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/>Cryptography</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/>Random Number Generation</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/>External Memory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/>Memory Hierarchy</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/>Virtual Memory</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/>External Memory Model</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/>External Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/>List Ranking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/>Eviction Policies</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/>Cache-Oblivious Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/>Spatial and Temporal Locality</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/>B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/>Sublinear Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/>Memory Management</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/>RAM & CPU Caches</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/>Memory Bandwidth</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/>Memory Latency</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/>Cache Lines</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/>Memory Sharing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/>Memory-Level Parallelism</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/>Prefetching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/>Alignment and Packing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/>Pointer Alternatives</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/>Cache Associativity</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/>Memory Paging</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/>AoS and SoA</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/>SIMD Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/>Intrinsics and Vector Types</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/>Moving Data</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/>Reductions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/>Masking and Blending</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/>In-Register Shuffles</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/>Auto-Vectorization and SPMD</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/>Algorithms Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/ id=active-element>Binary GCD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/>Prime Number Sieves</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/>Integer Factorization</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/>Big Integers and Karatsuba Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/>Optimizing Logistic Regression</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/>Fast Fourier Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/>Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/>Argmin with SIMD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/>Number-Theoretic Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/>Prefix Sum with SIMD</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/>Reading Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/>Writing Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/>Reading and Writing Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/>String Searching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/>Matrix Multiplication</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/>Data Structures Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/>Binary Search</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/>Static B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/>Search Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/>Segment Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/>Tries</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/>Bitmaps</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/>Range Minimum Query</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/>Hash Tables</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/>Probabilistic Filters</a></li></ol><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/summary/>Summary</a></li><li class=part>Appendix</li><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/stats/>Probability Theory Refresher</a></li></ul></nav><div id=wrapper><menu id=menu><div class=left><a><img src=https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg onclick=toggleSidebar() title="open table of contents"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg style=position:relative;top:-1px onclick='switchTheme(localStorage.getItem("theme")=="dark"?"light":"dark")' title="dark theme"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg onclick=toggleSearch() title=search></a></div><div class=title><span class=beta-brand>Algorithmica β</span>
-<span class=chapter-title>Binary GCD</span></div><div class=right><a onclick=window.print()><img src=https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg title=print></a>
-<a href=https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2falgorithms%2fgcd.md><img src=https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg title=edit style=width:18px;position:relative;right:-2px;top:-1px></a>
-<a href=https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/algorithms/gcd.md class=github-main><img src=https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg title="view on github"></a></div></menu><main><div id=search><input id=search-bar type=search placeholder="Search this book…" oninput=search()><div id=search-count></div><div id=search-results></div></div><header><h1>Binary GCD</h1><div class=info></div></header><article><p>In this section, we will derive a variant of <code>gcd</code> that is ~2x faster than the one in the C++ standard library.</p><span class=anchor id=euclids-algorithm></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/#euclids-algorithm>#</a>Euclid&rsquo;s Algorithm</h2><p>Euclid&rsquo;s algorithm solves the problem of finding the <em>greatest common divisor</em> (GCD) of two integer numbers $a$ and $b$, which is defined as the largest such number $g$ that divides both $a$ and $b$:</p>$$
+<!doctype html>
+<html lang='en-us'><head><meta charset="utf-8">
+  <link rel="icon" href="https://anpaure.github.io/algorithmica-beta/favicon.ico">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/beta.css">
+  
+
+  
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css" integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00=">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/syntax.css" id="syntax-theme">
+
+  <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+  <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js"></script>
+
+  
+  <link rel="stylesheet" id="theme">
+
+  <script>
+    function toggleSidebar() {
+      console.log("Toggling sidebar visibility")
+      var sidebar = document.getElementById('sidebar')
+      var wrapper = document.getElementById('wrapper')
+      if (sidebar.classList.contains('sidebar-toggled') || window.getComputedStyle(sidebar).display == 'block') { 
+        sidebar.classList.toggle('sidebar-hidden')
+        wrapper.classList.toggle('sidebar-hidden')
+      }
+      sidebar.classList.add('sidebar-toggled')
+      wrapper.classList.add('sidebar-toggled')
+    }
+
+    function switchTheme(theme) {
+      console.log("Changing theme:", theme)
+      document.getElementById('theme').href = (theme == 'dark' ? "https:\/\/anpaure.github.io\/algorithmica-beta\/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css" : "")
+      document.getElementById('syntax-theme').href = (theme == 'dark' ? 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax-dark.css' : 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax.css')
+      localStorage.setItem('theme', theme)
+    }
+
+    async function toggleSearch() {
+      console.log("Toggling search")
+      
+      var searchDiv = document.getElementById('search')
+      if (window.getComputedStyle(searchDiv).display == 'none') {
+        searchDiv.style.display = 'block'
+        window.scrollTo({ top: 0 });
+        document.getElementById('search-bar').focus()
+      } else {
+        searchDiv.style.display = 'none'  
+      }
+
+      if (!index) {
+        console.log("Fetching index")
+        const response = await fetch('https:\/\/anpaure.github.io\/algorithmica-beta\/searchindex.json')
+        const pages = await response.json()
+        index = lunr(function() {
+          this.use(lunr.multiLanguage('en', 'ru'))
+          this.field('title', {
+            boost: 5
+          })
+          this.field('content', {
+            boost: 1
+          })
+          pages.forEach(function(doc) {
+            this.add(doc)
+            articles.push(doc)
+          }, this)
+        })
+        console.log("Ready to search")
+      }
+    }
+
+    var articles = []
+    var index = undefined
+
+    function search() {
+      var query = document.getElementById('search-bar').value
+      var resultsDiv = document.getElementById('search-results')
+      var countDiv = document.getElementById('search-count')
+      
+      if (query == '') {
+        resultsDiv.innerHTML = ''
+        countDiv.innerHTML = ''
+        return
+      }
+      
+      var results = index.search(query)
+
+      countDiv.innerHTML = 'Found <b>' + results.length + '</b> pages'
+
+      let resultList = ''
+
+      for (const n in results) {
+        const item = articles[results[n].ref]
+        resultList += '<li><a href="' + item.path + '">' + item.title + '</a> <p>'
+        const text = item.content
+
+        const contextLimit = 80
+
+        if (text.includes(query)) {
+          const start = text.indexOf(query)
+          if (start > contextLimit)
+            resultList += '…'
+          resultList += text.substring(start - contextLimit, start)
+                      + '<b>' + query + '</b>' + text.substring(start + query.length, start + query.length + contextLimit)
+
+        } else {
+          resultList += text.substring(0, contextLimit * 2)
+        }
+        resultList += '…</p></li>'
+      }
+
+      resultsDiv.innerHTML = resultList
+    }
+
+    if (localStorage.getItem('theme') == 'dark') {
+      switchTheme('dark')
+    }
+
+    window.addEventListener('load', function() {
+      var el = document.getElementById("active-element")
+      
+      if (el) {
+        el.scrollIntoView({block: "center"})
+      }
+      
+
+    })
+
+    window.addEventListener('scroll', function() {
+      var menu = document.getElementById('menu')
+      if (window.scrollY < 120) {
+        
+        menu.classList.remove('scrolled')
+      } else {
+        
+        menu.classList.add('scrolled')
+      }
+    })
+
+    window.addEventListener('keydown', function(e) {
+      if (e.altKey) { return }
+      if (document.activeElement.tagName == 'INPUT') { return }
+      if (e.key == 'ArrowLeft') {
+        document.getElementById('prev-article').click()
+      } else if (e.key == 'ArrowRight') {
+        document.getElementById('next-article').click()
+      }
+    })
+  </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false}
+    ]
+  })"></script>
+
+  
+  <title>Binary GCD - Algorithmica β</title>
+</head>
+<body><nav id='sidebar' >
+  
+  
+  <div class='title'>
+    <a href='https://anpaure.github.io/algorithmica-beta/'>Algorithmica β</a>
+    
+      
+        
+        <span class='slash'>/</span>
+        <a href='https://anpaure.github.io/algorithmica-beta/hpc/' class='divisionAbbr'
+           >
+          HPC
+        </a>
+      
+    
+  </div>
+  <ul>
+    
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/preface/'
+          
+          >Preface</a></li>
+        
+      
+        
+          <li class='part'>Performance Engineering</li>
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/'
+          
+          >Complexity Models</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/'
+                
+                >Modern Hardware</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/'
+                
+                >Programming Languages</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/'
+                
+                >Models of Computation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/'
+                
+                >When to Optimize</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/'
+          
+          >Computer Architecture</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/'
+                
+                >Instruction Set Architectures</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/'
+                
+                >Assembly Language</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/'
+                
+                >Loops and Conditionals</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/'
+                
+                >Functions and Recursion</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/'
+                
+                >Indirect Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/'
+                
+                >Machine Code Layout</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/'
+                
+                >Interrupts and System Calls</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/'
+                
+                >Virtualization</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/'
+          
+          >Instruction-Level Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/'
+                
+                >Pipeline Hazards</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/'
+                
+                >The Cost of Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/'
+                
+                >Branchless Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/'
+                
+                >Instruction Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/'
+                
+                >Instruction Scheduling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/'
+                
+                >Throughput Computing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/'
+                
+                >Theoretical Performance Limits</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/'
+          
+          >Compilation</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/'
+                
+                >Stages of Compilation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/'
+                
+                >Flags and Targets</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/'
+                
+                >Situational Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/'
+                
+                >Contract Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/'
+                
+                >Non-Zero-Cost Abstractions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/'
+                
+                >Precomputation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/'
+                
+                >Arithmetic Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/'
+                
+                >What Compilers Can and Can&#39;t Do</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/'
+          
+          >Profiling</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/'
+                
+                >Instrumentation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/'
+                
+                >Statistical Profiling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/'
+                
+                >Program Simulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/'
+                
+                >Machine Code Analyzers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/'
+                
+                >Benchmarking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/'
+                
+                >Getting Accurate Results</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/'
+          
+          >Arithmetic</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/'
+                
+                >Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/'
+                
+                >IEEE 754 Floats</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/'
+                
+                >Rounding Errors</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/'
+                
+                >Newton&#39;s Method</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/'
+                
+                >Fast Inverse Square Root</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/'
+                
+                >Integer Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/'
+                
+                >Integer Division</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/'
+                
+                >Bit Manipulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/'
+                
+                >Data Compression</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/'
+          
+          >Number Theory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/'
+                
+                >Modular Arithmetic</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/'
+                
+                >Binary Exponentiation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/'
+                
+                >Extended Euclidean Algorithm</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/'
+                
+                >Montgomery Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/'
+                
+                >Finite Fields</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/'
+                
+                >Error Correction</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/'
+                
+                >Cryptography</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/'
+                
+                >Hashing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/'
+                
+                >Random Number Generation</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/'
+          
+          >External Memory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/'
+                
+                >Memory Hierarchy</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/'
+                
+                >Virtual Memory</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/'
+                
+                >External Memory Model</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/'
+                
+                >External Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/'
+                
+                >List Ranking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/'
+                
+                >Eviction Policies</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/'
+                
+                >Cache-Oblivious Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/'
+                
+                >Spatial and Temporal Locality</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/'
+                
+                >B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/'
+                
+                >Sublinear Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/'
+                
+                >Memory Management</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/'
+          
+          >RAM &amp; CPU Caches</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/'
+                
+                >Memory Bandwidth</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/'
+                
+                >Memory Latency</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/'
+                
+                >Cache Lines</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/'
+                
+                >Memory Sharing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/'
+                
+                >Memory-Level Parallelism</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/'
+                
+                >Prefetching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/'
+                
+                >Alignment and Packing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/'
+                
+                >Pointer Alternatives</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/'
+                
+                >Cache Associativity</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/'
+                
+                >Memory Paging</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/'
+                
+                >AoS and SoA</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/'
+          
+          >SIMD Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/'
+                
+                >Intrinsics and Vector Types</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/'
+                
+                >Moving Data</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/'
+                
+                >Reductions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/'
+                
+                >Masking and Blending</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/'
+                
+                >In-Register Shuffles</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/'
+                
+                >Auto-Vectorization and SPMD</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/'
+          
+          >Algorithms Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/'
+                id='active-element'
+                >Binary GCD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/'
+                
+                >Prime Number Sieves</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/'
+                
+                >Integer Factorization</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/'
+                
+                >Optimizing Logistic Regression</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/'
+                
+                >Big Integers and Karatsuba Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/'
+                
+                >Fast Fourier Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/'
+                
+                >Number-Theoretic Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/'
+                
+                >Argmin with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/'
+                
+                >Prefix Sum with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/'
+                
+                >Reading Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/'
+                
+                >Writing Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/'
+                
+                >Reading and Writing Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/'
+                
+                >String Searching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/'
+                
+                >Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/'
+                
+                >Matrix Multiplication</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/'
+          
+          >Data Structures Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/'
+                
+                >Binary Search</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/'
+                
+                >Static B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/'
+                
+                >Search Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/'
+                
+                >Segment Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/'
+                
+                >Tries</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/'
+                
+                >Range Minimum Query</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/'
+                
+                >Hash Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/'
+                
+                >Bitmaps</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/'
+                
+                >Probabilistic Filters</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/summary/'
+          
+          >Summary</a></li>
+        
+      
+        
+          <li class='part'>Appendix</li>
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/stats/'
+          
+          >Probability Theory Refresher</a></li>
+        
+      
+    
+  </ul>
+</nav>
+<div id='wrapper' ><menu id='menu'>
+  
+  
+  
+  
+  <div class='left'>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg'
+           onclick='toggleSidebar()'
+           title='open table of contents'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg'
+           style='position: relative; top: -1px'
+           onclick='switchTheme(localStorage.getItem("theme") == "dark" ? "light" : "dark")'
+           title='dark theme'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg'
+           onclick='toggleSearch()'
+           title='search'>
+    </a>
+  </div>
+  <div class='title'>
+    
+      <span class='beta-brand'>Algorithmica β</span>
+      <span class='chapter-title'>Binary GCD</span>
+    
+  </div>
+  <div class='right'>
+    <a onClick='window.print()'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg' title='print'>
+    </a>
+    <a href='https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2falgorithms%2fgcd.md'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg'
+           title='edit'
+           style='width: 18px; position: relative; right: -2px; top: -1px'>
+    </a>
+    <a href='https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/algorithms/gcd.md' class='github-main'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg' title='view on github'>
+    </a>
+  </div>
+</menu>
+<main>
+        <div id="search">
+    <input id="search-bar" type="search" placeholder='Search this book…' oninput="search()">
+    <div id="search-count"></div>
+    <div id="search-results">
+    </div>
+</div>
+<header>
+  
+  <h1>Binary GCD</h1>
+  
+    <div class='info'></div>
+  
+</header>
+<article>
+  
+
+
+  
+    
+    
+      
+        <p>In this section, we will derive a variant of <code>gcd</code> that is ~2x faster than the one in the C++ standard library.</p>
+<span class='anchor' id="euclids-algorithm"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/#euclids-algorithm">#</a>Euclid&rsquo;s Algorithm</h2><p>Euclid&rsquo;s algorithm solves the problem of finding the <em>greatest common divisor</em> (GCD) of two integer numbers $a$ and $b$, which is defined as the largest such number $g$ that divides both $a$ and $b$:</p>
+
+      
+    
+  
+
+  
+    $$
+    
 \gcd(a, b) = \max_{g: \; g|a \, \land \, g | b} g
-$$
-You probably already know this algorithm from a CS textbook, but I will summarize it here. It is based on the following formula, assuming that $a > b$:
-$$
+
+    $$
+  
+
+  
+    
+    
+      
+        You probably already know this algorithm from a CS textbook, but I will summarize it here. It is based on the following formula, assuming that $a &gt; b$:
+      
+    
+  
+
+  
+    $$
+    
 \gcd(a, b) = \begin{cases}
-a, & b = 0
-\\ \gcd(b, a \bmod b), & b > 0
+    a, &amp; b = 0
+\\ \gcd(b, a \bmod b), &amp; b &gt; 0
 \end{cases}
-$$<p>This is true, because if $g = \gcd(a, b)$ divides both $a$ and $b$, it should also divide $(a \bmod b = a - k \cdot b)$, but any larger divisor $d$ of $b$ will not: $d > g$ implies that $d$ couldn&rsquo;t divide $a$ and thus won&rsquo;t divide $(a - k \cdot b)$.</p><p>The formula above is essentially the algorithm itself: you can simply apply it recursively, and since each time one of the arguments strictly decreases, it will eventually converge to the $b = 0$ case.</p><p>The textbook also probably mentioned that the worst possible input to Euclid&rsquo;s algorithm — the one that maximizes the total number of steps — are consecutive Fibonacci numbers, and since they grow exponentially, the running time of the algorithm is logarithmic in the worst case. This is also true for its <em>average</em> running time if we define it as the expected number of steps for pairs of uniformly distributed integers. <a href=https://en.wikipedia.org/wiki/Euclidean_algorithm>The Wikipedia article</a> also has a cryptic derivation of a more precise $0.84 \cdot \ln n$ asymptotic estimate.</p><p><figure><img src=../img/euclid.svg><figcaption>You can see bright blue lines at the proportions of the golden ratio</figcaption></figure></p><p>There are many ways you can implement Euclid&rsquo;s algorithm. The simplest would be just to convert the definition into code:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>gcd</span><span class=p>(</span><span class=kt>int</span> <span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>b</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>a</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>else</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>gcd</span><span class=p>(</span><span class=n>b</span><span class=p>,</span> <span class=n>a</span> <span class=o>%</span> <span class=n>b</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>You can rewrite it more compactly like this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>gcd</span><span class=p>(</span><span class=kt>int</span> <span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=p>(</span><span class=n>b</span> <span class=o>?</span> <span class=n>gcd</span><span class=p>(</span><span class=n>b</span><span class=p>,</span> <span class=n>a</span> <span class=o>%</span> <span class=n>b</span><span class=p>)</span> <span class=o>:</span> <span class=n>a</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>You can rewrite it as a loop, which will be closer to how it is actually executed by the hardware. It won&rsquo;t be faster though, because compilers can easily optimize tail recursion.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>gcd</span><span class=p>(</span><span class=kt>int</span> <span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>b</span> <span class=o>&gt;</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>a</span> <span class=o>%=</span> <span class=n>b</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=n>std</span><span class=o>::</span><span class=n>swap</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>a</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>You can even write the body of the loop as this confusing one-liner — and it will even compile without causing undefined behavior warnings since C++17:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>gcd</span><span class=p>(</span><span class=kt>int</span> <span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>b</span><span class=p>)</span> <span class=n>b</span> <span class=o>^=</span> <span class=n>a</span> <span class=o>^=</span> <span class=n>b</span> <span class=o>^=</span> <span class=n>a</span> <span class=o>%=</span> <span class=n>b</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>a</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>All of these, as well as <code>std::gcd</code> which was introduced in C++17, are almost equivalent and get <a href=https://godbolt.org/z/r8z5KcGqK>compiled</a> into functionally the following assembly loop:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nasm data-lang=nasm><span class=line><span class=cl><span class=c1>; a = eax, b = edx</span>
-</span></span><span class=line><span class=cl><span class=nl>loop:</span>
-</span></span><span class=line><span class=cl>    <span class=c1>; modulo in assembly:</span>
-</span></span><span class=line><span class=cl>    <span class=nf>mov</span>  <span class=nb>r8d</span><span class=p>,</span> <span class=nb>edx</span>
-</span></span><span class=line><span class=cl>    <span class=nf>cdq</span>
-</span></span><span class=line><span class=cl>    <span class=nf>idiv</span> <span class=nb>r8d</span>
-</span></span><span class=line><span class=cl>    <span class=nf>mov</span>  <span class=nb>eax</span><span class=p>,</span> <span class=nb>r8d</span>
-</span></span><span class=line><span class=cl>    <span class=c1>; (a and b are already swapped now)</span>
-</span></span><span class=line><span class=cl>    <span class=c1>; continue until b is zero:</span>
-</span></span><span class=line><span class=cl>    <span class=nf>test</span> <span class=nb>edx</span><span class=p>,</span> <span class=nb>edx</span>
-</span></span><span class=line><span class=cl>    <span class=nf>jne</span>  <span class=nv>loop</span>
-</span></span></code></pre></div><p>If you run <a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/events>perf</a> on it, you will see that it spends ~90% of the time on the <code>idiv</code> line. This isn&rsquo;t surprising: general <a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division>integer division</a> works notoriously slow on all computers, including x86.</p><p>But there is one kind of division that works well in hardware: division by a power of 2.</p><span class=anchor id=binary-gcd></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/#binary-gcd>#</a>Binary GCD</h2><p>The <em>binary GCD algorithm</em> was discovered around the same time as Euclid&rsquo;s, but on the other end of the civilized world, in ancient China. In 1967, it was rediscovered by Josef Stein for use in computers that either don&rsquo;t have division instruction or have a very slow one — it wasn&rsquo;t uncommon for CPUs of that era to use hundreds or thousands of cycles for rare or complex operations.</p><p>Analogous to the Euclidean algorithm, it is based on a few similar observations:</p><ol><li>$\gcd(0, b) = b$ and symmetrically $\gcd(a, 0) = a$;</li><li>$\gcd(2a, 2b) = 2 \cdot \gcd(a, b)$;</li><li>$\gcd(2a, b) = \gcd(a, b)$ if $b$ is odd and symmetrically $\gcd(a, b) = \gcd(a, 2b)$ if $a$ is odd;</li><li>$\gcd(a, b) = \gcd(|a - b|, \min(a, b))$, if $a$ and $b$ are both odd.</li></ol><p>Likewise, the algorithm itself is just a repeated application of these identities.</p><p>Its running time is still logarithmic, which is even easier to show because in each of these identities one of the arguments is divided by 2 — except for the last case, in which the new first argument, the absolute difference of two odd numbers, is guaranteed to be even and thus will be divided by 2 on the next iteration.</p><p>What makes this algorithm especially interesting to us is that the only arithmetic operations it uses are binary shifts, comparisons, and subtractions, all of which typically take just one cycle.</p><span class=anchor id=implementation></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/#implementation>#</a>Implementation</h3><p>The reason this algorithm is not in the textbooks is because it can&rsquo;t be implemented as a simple one-liner anymore:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>gcd</span><span class=p>(</span><span class=kt>int</span> <span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=c1>// base cases (1)
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>if</span> <span class=p>(</span><span class=n>a</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=k>return</span> <span class=n>b</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>b</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=k>return</span> <span class=n>a</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>a</span> <span class=o>==</span> <span class=n>b</span><span class=p>)</span> <span class=k>return</span> <span class=n>a</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>a</span> <span class=o>%</span> <span class=mi>2</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>b</span> <span class=o>%</span> <span class=mi>2</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=c1>// a is even, b is even (2)
-</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=k>return</span> <span class=mi>2</span> <span class=o>*</span> <span class=n>gcd</span><span class=p>(</span><span class=n>a</span> <span class=o>/</span> <span class=mi>2</span><span class=p>,</span> <span class=n>b</span> <span class=o>/</span> <span class=mi>2</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=k>else</span>            <span class=c1>// a is even, b is odd (3)
-</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=k>return</span> <span class=n>gcd</span><span class=p>(</span><span class=n>a</span> <span class=o>/</span> <span class=mi>2</span><span class=p>,</span> <span class=n>b</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>b</span> <span class=o>%</span> <span class=mi>2</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=c1>// a is odd, b is even (3)
-</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=k>return</span> <span class=n>gcd</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span> <span class=o>/</span> <span class=mi>2</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=k>else</span>            <span class=c1>// a is odd, b is odd (4)
-</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=k>return</span> <span class=n>gcd</span><span class=p>(</span><span class=n>std</span><span class=o>::</span><span class=n>abs</span><span class=p>(</span><span class=n>a</span> <span class=o>-</span> <span class=n>b</span><span class=p>),</span> <span class=n>std</span><span class=o>::</span><span class=n>min</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>));</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>Let&rsquo;s run it, and… it sucks. The difference in speed compared to <code>std::gcd</code> is indeed 2x, but on the other side of the equation. This is mainly because of all the branching needed to differentiate between the cases. Let&rsquo;s start optimizing.</p><p>First, let&rsquo;s replace all divisions by 2 with divisions by whichever highest power of 2 we can. We can do it efficiently with <code>__builtin_ctz</code>, the &ldquo;count trailing zeros&rdquo; instruction available on modern CPUs. Whenever we are supposed to divide by 2 in the original algorithm, we will call this function instead, which will give us the exact number of bits to right-shift the number by. Assuming that the we are dealing with large random numbers, this is expected to decrease the number of iterations by almost a factor 2, because $1 + \frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \ldots \to 2$.</p><p>Second, we can notice that condition 2 can now only be true once — in the very beginning — because every other identity leaves at least one of the numbers odd. Therefore we can handle this case just once in the beginning and not consider it in the main loop.</p><p>Third, we can notice that after we&rsquo;ve entered condition 4 and applied its identity, $a$ will always be even and $b$ will always be odd, so we already know that on the next iteration we are going to be in condition 3. This means that we can actually &ldquo;de-evenize&rdquo; $a$ right away, and if we do so we will again hit condition 4 on the next iteration. This means that we can only ever be either in condition 4 or terminating by condition 1, which removes the need to branch.</p><p>Combining these ideas, we get the following implementation:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>gcd</span><span class=p>(</span><span class=kt>int</span> <span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>a</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=k>return</span> <span class=n>b</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>b</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=k>return</span> <span class=n>a</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>az</span> <span class=o>=</span> <span class=n>__builtin_ctz</span><span class=p>(</span><span class=n>a</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>bz</span> <span class=o>=</span> <span class=n>__builtin_ctz</span><span class=p>(</span><span class=n>b</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>shift</span> <span class=o>=</span> <span class=n>std</span><span class=o>::</span><span class=n>min</span><span class=p>(</span><span class=n>az</span><span class=p>,</span> <span class=n>bz</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=n>a</span> <span class=o>&gt;&gt;=</span> <span class=n>az</span><span class=p>,</span> <span class=n>b</span> <span class=o>&gt;&gt;=</span> <span class=n>bz</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>a</span> <span class=o>!=</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>diff</span> <span class=o>=</span> <span class=n>a</span> <span class=o>-</span> <span class=n>b</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=n>b</span> <span class=o>=</span> <span class=n>std</span><span class=o>::</span><span class=n>min</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>a</span> <span class=o>=</span> <span class=n>std</span><span class=o>::</span><span class=n>abs</span><span class=p>(</span><span class=n>diff</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>a</span> <span class=o>&gt;&gt;=</span> <span class=n>__builtin_ctz</span><span class=p>(</span><span class=n>a</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>b</span> <span class=o>&lt;&lt;</span> <span class=n>shift</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>It runs in 116ns, while <code>std::gcd</code> takes 198ns. Almost twice as fast — maybe we can even optimize it below 100ns?</p><p>For that we need to stare at <a href=https://godbolt.org/z/nKKMe48cW>its assembly</a> again, in particular at this block:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nasm data-lang=nasm><span class=line><span class=cl><span class=c1>; a = edx, b = eax</span>
-</span></span><span class=line><span class=cl><span class=nl>loop:</span>
-</span></span><span class=line><span class=cl>    <span class=nf>mov</span>   <span class=nb>ecx</span><span class=p>,</span> <span class=nb>edx</span>
-</span></span><span class=line><span class=cl>    <span class=nf>sub</span>   <span class=nb>ecx</span><span class=p>,</span> <span class=nb>eax</span>       <span class=c1>; diff = a - b</span>
-</span></span><span class=line><span class=cl>    <span class=nf>cmp</span>   <span class=nb>eax</span><span class=p>,</span> <span class=nb>edx</span>
-</span></span><span class=line><span class=cl>    <span class=nf>cmovg</span> <span class=nb>eax</span><span class=p>,</span> <span class=nb>edx</span>       <span class=c1>; b = min(a, b)</span>
-</span></span><span class=line><span class=cl>    <span class=nf>mov</span>   <span class=nb>edx</span><span class=p>,</span> <span class=nb>ecx</span>
-</span></span><span class=line><span class=cl>    <span class=nf>neg</span>   <span class=nb>edx</span>
-</span></span><span class=line><span class=cl>    <span class=nf>cmovs</span> <span class=nb>edx</span><span class=p>,</span> <span class=nb>ecx</span>       <span class=c1>; a = max(diff, -diff) = abs(diff)</span>
-</span></span><span class=line><span class=cl>    <span class=nf>tzcnt</span> <span class=nb>ecx</span><span class=p>,</span> <span class=nb>edx</span>       <span class=c1>; az = __builtin_ctz(a)</span>
-</span></span><span class=line><span class=cl>    <span class=nf>sarx</span>  <span class=nb>edx</span><span class=p>,</span> <span class=nb>edx</span><span class=p>,</span> <span class=nb>ecx</span>  <span class=c1>; a &gt;&gt;= az</span>
-</span></span><span class=line><span class=cl>    <span class=nf>test</span>  <span class=nb>edx</span><span class=p>,</span> <span class=nb>edx</span>       <span class=c1>; a != 0?</span>
-</span></span><span class=line><span class=cl>    <span class=nf>jne</span>   <span class=nv>loop</span>
-</span></span></code></pre></div><p>Let&rsquo;s draw the dependency graph of this loop:</p><p><figure><img src=../img/gcd-dependency1.png><figcaption></figcaption></figure></p><p>Modern processors can execute many instructions in parallel, essentially meaning that the true &ldquo;cost&rdquo; of this computation is roughly the sum of latencies on its critical path. In this case, it is the total latency of <code>diff</code>, <code>abs</code>, <code>ctz</code>, and <code>shift</code>.</p><p>We can decrease this latency using the fact that we can actually calculate <code>ctz</code> using just <code>diff = a - b</code>, because a <a href=../../arithmetic/integer/#signed-integers>negative number</a> divisible by $2^k$ still has $k$ zeros at the end of its binary representation. This lets us not wait for <code>max(diff, -diff)</code> to be computed first, resulting in a shorter graph like this:</p><p><figure><img src=../img/gcd-dependency2.png><figcaption></figcaption></figure></p><p>Hopefully you will be less confused when you think about how the final code will be executed:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>int</span> <span class=nf>gcd</span><span class=p>(</span><span class=kt>int</span> <span class=n>a</span><span class=p>,</span> <span class=kt>int</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>a</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=k>return</span> <span class=n>b</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>b</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=k>return</span> <span class=n>a</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>az</span> <span class=o>=</span> <span class=n>__builtin_ctz</span><span class=p>(</span><span class=n>a</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>bz</span> <span class=o>=</span> <span class=n>__builtin_ctz</span><span class=p>(</span><span class=n>b</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>shift</span> <span class=o>=</span> <span class=n>std</span><span class=o>::</span><span class=n>min</span><span class=p>(</span><span class=n>az</span><span class=p>,</span> <span class=n>bz</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=n>b</span> <span class=o>&gt;&gt;=</span> <span class=n>bz</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>a</span> <span class=o>!=</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>a</span> <span class=o>&gt;&gt;=</span> <span class=n>az</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>diff</span> <span class=o>=</span> <span class=n>b</span> <span class=o>-</span> <span class=n>a</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=n>az</span> <span class=o>=</span> <span class=n>__builtin_ctz</span><span class=p>(</span><span class=n>diff</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>b</span> <span class=o>=</span> <span class=n>std</span><span class=o>::</span><span class=n>min</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>a</span> <span class=o>=</span> <span class=n>std</span><span class=o>::</span><span class=n>abs</span><span class=p>(</span><span class=n>diff</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>b</span> <span class=o>&lt;&lt;</span> <span class=n>shift</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>It runs in 91ns, which is good enough to leave it there.</p><p>If somebody wants to try to shave off a few more nanoseconds by rewriting the assembly by hand or trying a lookup table to save a few last iterations, please <a href=http://sereja.me/>let me know</a>.</p><span class=anchor id=acknowledgements></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/#acknowledgements>#</a>Acknowledgements</h3><p>The main optimization ideas belong to Daniel Lemire and Ralph Corderoy, who <a href=https://lemire.me/blog/2013/12/26/fastest-way-to-compute-the-greatest-common-divisor/>had nothing better to do</a> on the Christmas holidays of 2013.</p></article><div class=nextprev><div class=left><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ id=prev-article>← ../Algorithms Case Studies</a></div><div class=right><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/ id=next-article>Prime Number Sieves →</a></div></div></main><footer>Copyright 2021–2022 Sergey Slotin<br></footer></div></body></html>
+
+    $$
+  
+
+  
+    
+    
+      
+        <p>This is true, because if $g = \gcd(a, b)$ divides both $a$ and $b$, it should also divide $(a \bmod b = a - k \cdot b)$, but any larger divisor $d$ of $b$ will not: $d &gt; g$ implies that $d$ couldn&rsquo;t divide $a$ and thus won&rsquo;t divide $(a - k \cdot b)$.</p>
+<p>The formula above is essentially the algorithm itself: you can simply apply it recursively, and since each time one of the arguments strictly decreases, it will eventually converge to the $b = 0$ case.</p>
+<p>The textbook also probably mentioned that the worst possible input to Euclid&rsquo;s algorithm — the one that maximizes the total number of steps — are consecutive Fibonacci numbers, and since they grow exponentially, the running time of the algorithm is logarithmic in the worst case. This is also true for its <em>average</em> running time if we define it as the expected number of steps for pairs of uniformly distributed integers. <a href="https://en.wikipedia.org/wiki/Euclidean_algorithm">The Wikipedia article</a> also has a cryptic derivation of a more precise $0.84 \cdot \ln n$ asymptotic estimate.</p>
+<p><figure>
+  <img src="../img/euclid.svg">
+  <figcaption>You can see bright blue lines at the proportions of the golden ratio</figcaption>
+</figure>
+</p>
+<p>There are many ways you can implement Euclid&rsquo;s algorithm. The simplest would be just to convert the definition into code:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">gcd</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">gcd</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">%</span> <span class="n">b</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>You can rewrite it more compactly like this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">gcd</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">(</span><span class="n">b</span> <span class="o">?</span> <span class="n">gcd</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">%</span> <span class="n">b</span><span class="p">)</span> <span class="o">:</span> <span class="n">a</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>You can rewrite it as a loop, which will be closer to how it is actually executed by the hardware. It won&rsquo;t be faster though, because compilers can easily optimize tail recursion.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">gcd</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">b</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">a</span> <span class="o">%=</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>You can even write the body of the loop as this confusing one-liner — and it will even compile without causing undefined behavior warnings since C++17:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">gcd</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="n">b</span> <span class="o">^=</span> <span class="n">a</span> <span class="o">^=</span> <span class="n">b</span> <span class="o">^=</span> <span class="n">a</span> <span class="o">%=</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>All of these, as well as <code>std::gcd</code> which was introduced in C++17, are almost equivalent and get <a href="https://godbolt.org/z/r8z5KcGqK">compiled</a> into functionally the following assembly loop:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="c1">; a = eax, b = edx</span>
+</span></span><span class="line"><span class="cl"><span class="nl">loop:</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">; modulo in assembly:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span>  <span class="nb">r8d</span><span class="p">,</span> <span class="nb">edx</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">cdq</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">idiv</span> <span class="nb">r8d</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span>  <span class="nb">eax</span><span class="p">,</span> <span class="nb">r8d</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">; (a and b are already swapped now)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">; continue until b is zero:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">test</span> <span class="nb">edx</span><span class="p">,</span> <span class="nb">edx</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">jne</span>  <span class="nv">loop</span>
+</span></span></code></pre></div><p>If you run <a href="https://anpaure.github.io/algorithmica-beta/hpc/profiling/events">perf</a> on it, you will see that it spends ~90% of the time on the <code>idiv</code> line. This isn&rsquo;t surprising: general <a href="https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division">integer division</a> works notoriously slow on all computers, including x86.</p>
+<p>But there is one kind of division that works well in hardware: division by a power of 2.</p>
+<span class='anchor' id="binary-gcd"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/#binary-gcd">#</a>Binary GCD</h2><p>The <em>binary GCD algorithm</em> was discovered around the same time as Euclid&rsquo;s, but on the other end of the civilized world, in ancient China. In 1967, it was rediscovered by Josef Stein for use in computers that either don&rsquo;t have division instruction or have a very slow one — it wasn&rsquo;t uncommon for CPUs of that era to use hundreds or thousands of cycles for rare or complex operations.</p>
+<p>Analogous to the Euclidean algorithm, it is based on a few similar observations:</p>
+<ol>
+<li>$\gcd(0, b) = b$ and symmetrically $\gcd(a, 0) = a$;</li>
+<li>$\gcd(2a, 2b) = 2 \cdot \gcd(a, b)$;</li>
+<li>$\gcd(2a, b) = \gcd(a, b)$ if $b$ is odd and symmetrically $\gcd(a, b) = \gcd(a, 2b)$ if $a$ is odd;</li>
+<li>$\gcd(a, b) = \gcd(|a - b|, \min(a, b))$, if $a$ and $b$ are both odd.</li>
+</ol>
+<p>Likewise, the algorithm itself is just a repeated application of these identities.</p>
+<p>Its running time is still logarithmic, which is even easier to show because in each of these identities one of the arguments is divided by 2 — except for the last case, in which the new first argument, the absolute difference of two odd numbers, is guaranteed to be even and thus will be divided by 2 on the next iteration.</p>
+<p>What makes this algorithm especially interesting to us is that the only arithmetic operations it uses are binary shifts, comparisons, and subtractions, all of which typically take just one cycle.</p>
+<span class='anchor' id="implementation"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/#implementation">#</a>Implementation</h3><p>The reason this algorithm is not in the textbooks is because it can&rsquo;t be implemented as a simple one-liner anymore:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">gcd</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// base cases (1)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="p">)</span> <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">b</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">// a is even, b is even (2)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">gcd</span><span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">b</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span>            <span class="c1">// a is even, b is odd (3)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">return</span> <span class="n">gcd</span><span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">b</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">// a is odd, b is even (3)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">return</span> <span class="n">gcd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span>            <span class="c1">// a is odd, b is odd (4)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">return</span> <span class="n">gcd</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Let&rsquo;s run it, and… it sucks. The difference in speed compared to <code>std::gcd</code> is indeed 2x, but on the other side of the equation. This is mainly because of all the branching needed to differentiate between the cases. Let&rsquo;s start optimizing.</p>
+<p>First, let&rsquo;s replace all divisions by 2 with divisions by whichever highest power of 2 we can. We can do it efficiently with <code>__builtin_ctz</code>, the &ldquo;count trailing zeros&rdquo; instruction available on modern CPUs. Whenever we are supposed to divide by 2 in the original algorithm, we will call this function instead, which will give us the exact number of bits to right-shift the number by. Assuming that the we are dealing with large random numbers, this is expected to decrease the number of iterations by almost a factor 2, because $1 + \frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \ldots \to 2$.</p>
+<p>Second, we can notice that condition 2 can now only be true once — in the very beginning — because every other identity leaves at least one of the numbers odd. Therefore we can handle this case just once in the beginning and not consider it in the main loop.</p>
+<p>Third, we can notice that after we&rsquo;ve entered condition 4 and applied its identity, $a$ will always be even and $b$ will always be odd, so we already know that on the next iteration we are going to be in condition 3. This means that we can actually &ldquo;de-evenize&rdquo; $a$ right away, and if we do so we will again hit condition 4 on the next iteration. This means that we can only ever be either in condition 4 or terminating by condition 1, which removes the need to branch.</p>
+<p>Combining these ideas, we get the following implementation:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">gcd</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">az</span> <span class="o">=</span> <span class="n">__builtin_ctz</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">bz</span> <span class="o">=</span> <span class="n">__builtin_ctz</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">shift</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">az</span><span class="p">,</span> <span class="n">bz</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">a</span> <span class="o">&gt;&gt;=</span> <span class="n">az</span><span class="p">,</span> <span class="n">b</span> <span class="o">&gt;&gt;=</span> <span class="n">bz</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">diff</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">b</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">a</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">diff</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">a</span> <span class="o">&gt;&gt;=</span> <span class="n">__builtin_ctz</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="n">shift</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>It runs in 116ns, while <code>std::gcd</code> takes 198ns. Almost twice as fast — maybe we can even optimize it below 100ns?</p>
+<p>For that we need to stare at <a href="https://godbolt.org/z/nKKMe48cW">its assembly</a> again, in particular at this block:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="c1">; a = edx, b = eax</span>
+</span></span><span class="line"><span class="cl"><span class="nl">loop:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span>   <span class="nb">ecx</span><span class="p">,</span> <span class="nb">edx</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">sub</span>   <span class="nb">ecx</span><span class="p">,</span> <span class="nb">eax</span>       <span class="c1">; diff = a - b</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">cmp</span>   <span class="nb">eax</span><span class="p">,</span> <span class="nb">edx</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">cmovg</span> <span class="nb">eax</span><span class="p">,</span> <span class="nb">edx</span>       <span class="c1">; b = min(a, b)</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span>   <span class="nb">edx</span><span class="p">,</span> <span class="nb">ecx</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">neg</span>   <span class="nb">edx</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">cmovs</span> <span class="nb">edx</span><span class="p">,</span> <span class="nb">ecx</span>       <span class="c1">; a = max(diff, -diff) = abs(diff)</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">tzcnt</span> <span class="nb">ecx</span><span class="p">,</span> <span class="nb">edx</span>       <span class="c1">; az = __builtin_ctz(a)</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">sarx</span>  <span class="nb">edx</span><span class="p">,</span> <span class="nb">edx</span><span class="p">,</span> <span class="nb">ecx</span>  <span class="c1">; a &gt;&gt;= az</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">test</span>  <span class="nb">edx</span><span class="p">,</span> <span class="nb">edx</span>       <span class="c1">; a != 0?</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">jne</span>   <span class="nv">loop</span>
+</span></span></code></pre></div><p>Let&rsquo;s draw the dependency graph of this loop:</p>
+<!--
+\node [draw, circle] (diff)  at (3, 10) {diff};
+\node [draw, circle] (min)   at (1.5, 8.9) {min};
+\node [draw, circle] (abs)   at (3, 8.9) {abs};
+\node [draw, circle] (ctz)   at (3, 7.8) {ctz};
+\node [draw, circle] (shift) at (3, 6.6) {shift};
+\node [draw, circle] (test)  at (3, 5.3) {test};
+
+\path [->] (diff) edge (abs);
+\path [->] (abs) edge (ctz);
+\path [->] (ctz) edge (shift);
+\path [->, dashed] (min) edge [bend left] (diff);
+\path [->, dotted] (shift) edge (test);
+\path [->, dashed] (shift) edge [bend right=75] (diff);
+\path [->, dashed] (shift) edge [bend left=25] (min);
+-->
+<p><figure>
+  <img src="../img/gcd-dependency1.png">
+  <figcaption></figcaption>
+</figure>
+</p>
+<p>Modern processors can execute many instructions in parallel, essentially meaning that the true &ldquo;cost&rdquo; of this computation is roughly the sum of latencies on its critical path. In this case, it is the total latency of <code>diff</code>, <code>abs</code>, <code>ctz</code>, and <code>shift</code>.</p>
+<p>We can decrease this latency using the fact that we can actually calculate <code>ctz</code> using just <code>diff = a - b</code>, because a <a href="../../arithmetic/integer/#signed-integers">negative number</a> divisible by $2^k$ still has $k$ zeros at the end of its binary representation. This lets us not wait for <code>max(diff, -diff)</code> to be computed first, resulting in a shorter graph like this:</p>
+<!--
+\node [draw, circle] (diff)  at (3, 10) {diff};
+\node [draw, circle] (min)   at (1.5, 8.9) {min};
+\node [draw, circle] (abs)   at (4.5, 8.9) {abs};
+\node [draw, circle] (ctz)   at (3, 8.9) {ctz};
+\node [draw, circle] (shift) at (3, 7.8) {shift};
+\node [draw, circle] (test)  at (5.6, 9.4) {test};
+
+\path [->] (diff) edge (abs);
+\path [->] (diff) edge (ctz);
+\path [->] (ctz) edge (shift);
+\path [->, dashed] (min) edge [bend left] (diff);
+\path [->, dotted] (diff) edge (test);
+\path [->, dashed] (shift) edge [bend left=25] (min);
+\path [->, dashed] (abs) edge [bend left=25] (diff);
+-->
+<p><figure>
+  <img src="../img/gcd-dependency2.png">
+  <figcaption></figcaption>
+</figure>
+</p>
+<p>Hopefully you will be less confused when you think about how the final code will be executed:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">gcd</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">az</span> <span class="o">=</span> <span class="n">__builtin_ctz</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">bz</span> <span class="o">=</span> <span class="n">__builtin_ctz</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">shift</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">az</span><span class="p">,</span> <span class="n">bz</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">b</span> <span class="o">&gt;&gt;=</span> <span class="n">bz</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">a</span> <span class="o">&gt;&gt;=</span> <span class="n">az</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">diff</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">az</span> <span class="o">=</span> <span class="n">__builtin_ctz</span><span class="p">(</span><span class="n">diff</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">b</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">a</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">diff</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="n">shift</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>It runs in 91ns, which is good enough to leave it there.</p>
+<p>If somebody wants to try to shave off a few more nanoseconds by rewriting the assembly by hand or trying a lookup table to save a few last iterations, please <a href="http://sereja.me/">let me know</a>.</p>
+<span class='anchor' id="acknowledgements"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/#acknowledgements">#</a>Acknowledgements</h3><p>The main optimization ideas belong to Daniel Lemire and Ralph Corderoy, who <a href="https://lemire.me/blog/2013/12/26/fastest-way-to-compute-the-greatest-common-divisor/">had nothing better to do</a> on the Christmas holidays of 2013.</p>
+
+      
+    
+  
+
+
+
+        </article>
+        <div class='nextprev'>
+  
+    
+      
+      
+
+      
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+
+      
+        <div class='left'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/' id='prev-article'>← ../Algorithms Case Studies</a>
+        
+        </div>
+        <div class='right'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/' id='next-article'>Prime Number Sieves →</a>
+        
+        </div>
+      
+    
+  
+</div>
+
+      </main>
+      <footer>
+  Copyright 2021–2022 Sergey Slotin
+  <br>
+   
+</footer>
+
+    </div>
+  </body>
+</html>

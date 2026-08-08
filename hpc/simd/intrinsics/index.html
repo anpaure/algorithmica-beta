@@ -1,72 +1,1000 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><link rel=icon href=https://anpaure.github.io/algorithmica-beta/favicon.ico><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/beta.css><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00="><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/syntax.css id=syntax-theme><link rel=stylesheet type=text/css href=https://tikzjax.com/v1/fonts.css><script src=https://tikzjax.com/v1/tikzjax.js></script>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js></script>
-<link rel=stylesheet id=theme><script>function toggleSidebar(){console.log("Toggling sidebar visibility");var e=document.getElementById("sidebar"),t=document.getElementById("wrapper");(e.classList.contains("sidebar-toggled")||window.getComputedStyle(e).display=="block")&&(e.classList.toggle("sidebar-hidden"),t.classList.toggle("sidebar-hidden")),e.classList.add("sidebar-toggled"),t.classList.add("sidebar-toggled")}function switchTheme(e){console.log("Changing theme:",e),document.getElementById("theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css":"",document.getElementById("syntax-theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/syntax-dark.css":"https://anpaure.github.io/algorithmica-beta/syntax.css",localStorage.setItem("theme",e)}async function toggleSearch(){console.log("Toggling search");var e=document.getElementById("search");if(window.getComputedStyle(e).display=="none"?(e.style.display="block",window.scrollTo({top:0}),document.getElementById("search-bar").focus()):e.style.display="none",!index){console.log("Fetching index");const e=await fetch("https://anpaure.github.io/algorithmica-beta/searchindex.json"),t=await e.json();index=lunr(function(){this.use(lunr.multiLanguage("en","ru")),this.field("title",{boost:5}),this.field("content",{boost:1}),t.forEach(function(e){this.add(e),articles.push(e)},this)}),console.log("Ready to search")}}var articles=[],index=void 0;function search(){var e=document.getElementById("search-bar").value,n,s=document.getElementById("search-results"),o=document.getElementById("search-count");if(e==''){s.innerHTML='',o.innerHTML='';return}n=index.search(e),o.innerHTML="Found <b>"+n.length+"</b> pages";let t='';for(const a in n){const i=articles[n[a].ref];t+='<li><a href="'+i.path+'">'+i.title+"</a> <p>";const s=i.content,o=80;if(s.includes(e)){const n=s.indexOf(e);n>o&&(t+="…"),t+=s.substring(n-o,n)+"<b>"+e+"</b>"+s.substring(n+e.length,n+e.length+o)}else t+=s.substring(0,o*2);t+="…</p></li>"}s.innerHTML=t}localStorage.getItem("theme")=="dark"&&switchTheme("dark"),window.addEventListener("load",function(){var e=document.getElementById("active-element");e&&e.scrollIntoView({block:"center"})}),window.addEventListener("scroll",function(){var e=document.getElementById("menu");window.scrollY<120?e.classList.remove("scrolled"):e.classList.add("scrolled")}),window.addEventListener("keydown",function(e){if(e.altKey)return;if(document.activeElement.tagName=="INPUT")return;e.key=="ArrowLeft"?document.getElementById("prev-article").click():e.key=="ArrowRight"&&document.getElementById("next-article").click()})</script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin=anonymous></script>
-<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><title>Intrinsics and Vector Types - Algorithmica β</title></head><body><nav id=sidebar><div class=title><a href=https://anpaure.github.io/algorithmica-beta/>Algorithmica β</a>
-<span class=slash>/</span>
-<a href=https://anpaure.github.io/algorithmica-beta/hpc/ class=divisionAbbr>HPC</a></div><ul><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/preface/>Preface</a></li><li class=part>Performance Engineering</li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/>Complexity Models</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/>Modern Hardware</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/>Programming Languages</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/>Models of Computation</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/>When to Optimize</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/>Computer Architecture</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/>Instruction Set Architectures</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/>Assembly Language</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/>Loops and Conditionals</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/>Functions and Recursion</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/>Indirect Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/>Virtualization</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/>Interrupts and System Calls</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/>Machine Code Layout</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/>Instruction-Level Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/>Pipeline Hazards</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/>The Cost of Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/>Branchless Programming</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/>Instruction Tables</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/>Instruction Scheduling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/>Throughput Computing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/>Theoretical Performance Limits</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/>Compilation</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/>Stages of Compilation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/>Flags and Targets</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/>Situational Optimizations</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/>Contract Programming</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/>Non-Zero-Cost Abstractions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/>Precomputation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/>Arithmetic Optimizations</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/>What Compilers Can and Can't Do</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/>Profiling</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/>Instrumentation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/>Statistical Profiling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/>Program Simulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/>Machine Code Analyzers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/>Benchmarking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/>Getting Accurate Results</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/>Arithmetic</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/>Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/>IEEE 754 Floats</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/>Rounding Errors</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/>Newton's Method</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/>Fast Inverse Square Root</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/>Integer Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/>Integer Division</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/>Bit Manipulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/>Data Compression</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/>Number Theory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/>Modular Arithmetic</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/>Binary Exponentiation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/>Extended Euclidean Algorithm</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/>Montgomery Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/>Finite Fields</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/>Error Correction</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/>Hashing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/>Cryptography</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/>Random Number Generation</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/>External Memory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/>Memory Hierarchy</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/>Virtual Memory</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/>External Memory Model</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/>External Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/>List Ranking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/>Eviction Policies</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/>Cache-Oblivious Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/>Spatial and Temporal Locality</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/>B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/>Sublinear Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/>Memory Management</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/>RAM & CPU Caches</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/>Memory Bandwidth</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/>Memory Latency</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/>Cache Lines</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/>Memory Sharing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/>Memory-Level Parallelism</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/>Prefetching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/>Alignment and Packing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/>Pointer Alternatives</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/>Cache Associativity</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/>Memory Paging</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/>AoS and SoA</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/>SIMD Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/ id=active-element>Intrinsics and Vector Types</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/>Moving Data</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/>Reductions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/>Masking and Blending</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/>In-Register Shuffles</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/>Auto-Vectorization and SPMD</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/>Algorithms Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/>Binary GCD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/>Prime Number Sieves</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/>Integer Factorization</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/>Big Integers and Karatsuba Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/>Optimizing Logistic Regression</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/>Fast Fourier Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/>Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/>Argmin with SIMD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/>Number-Theoretic Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/>Prefix Sum with SIMD</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/>Reading Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/>Writing Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/>Reading and Writing Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/>String Searching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/>Matrix Multiplication</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/>Data Structures Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/>Binary Search</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/>Static B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/>Search Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/>Segment Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/>Tries</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/>Bitmaps</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/>Range Minimum Query</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/>Hash Tables</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/>Probabilistic Filters</a></li></ol><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/summary/>Summary</a></li><li class=part>Appendix</li><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/stats/>Probability Theory Refresher</a></li></ul></nav><div id=wrapper><menu id=menu><div class=left><a><img src=https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg onclick=toggleSidebar() title="open table of contents"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg style=position:relative;top:-1px onclick='switchTheme(localStorage.getItem("theme")=="dark"?"light":"dark")' title="dark theme"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg onclick=toggleSearch() title=search></a></div><div class=title><span class=beta-brand>Algorithmica β</span>
-<span class=chapter-title>Intrinsics and Vector Types</span></div><div class=right><a onclick=window.print()><img src=https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg title=print></a>
-<a href=https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2fsimd%2fintrinsics.md><img src=https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg title=edit style=width:18px;position:relative;right:-2px;top:-1px></a>
-<a href=https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/simd/intrinsics.md class=github-main><img src=https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg title="view on github"></a></div></menu><main><div id=search><input id=search-bar type=search placeholder="Search this book…" oninput=search()><div id=search-count></div><div id=search-results></div></div><header><h1>Intrinsics and Vector Types</h1><div class=info></div></header><article><p>The most low-level way to use SIMD is to use the assembly vector instructions directly — they aren&rsquo;t different from their scalar equivalents at all — but we are not going to do that. Instead, we will use <em>intrinsic</em> functions mapping to these instructions that are available in modern C/C++ compilers.</p><p>In this section, we will go through the basics of their syntax, and in the rest of this chapter, we will use them extensively to do things that are actually interesting.</p><span class=anchor id=setup></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/#setup>#</a>Setup</h2><p>To use x86 intrinsics, we need to do a little groundwork.</p><p>First, we need to determine which extensions are supported by the hardware. On Linux, you can call <code>cat /proc/cpuinfo</code>, and on other platforms, you&rsquo;d better go to <a href=https://en.wikichip.org/wiki/WikiChip>WikiChip</a> and look it up there using the name of the CPU. In either case, there should be a <code>flags</code> section that lists the codes of all supported vector extensions.</p><p>There is also a special <a href=https://en.wikipedia.org/wiki/CPUID>CPUID</a> assembly instruction that lets you query various information about the CPU, including the support of particular vector extensions. It is primarily used to get such information in runtime and avoid distributing a separate binary for each microarchitecture. Its output information is returned very densely in the form of feature masks, so compilers provide built-in methods to make sense of it. Here is an example:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=n>__builtin_cpu_supports</span><span class=p>(</span><span class=s>&#34;sse&#34;</span><span class=p>)</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=n>__builtin_cpu_supports</span><span class=p>(</span><span class=s>&#34;sse2&#34;</span><span class=p>)</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=n>__builtin_cpu_supports</span><span class=p>(</span><span class=s>&#34;avx&#34;</span><span class=p>)</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=n>__builtin_cpu_supports</span><span class=p>(</span><span class=s>&#34;avx2&#34;</span><span class=p>)</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=n>__builtin_cpu_supports</span><span class=p>(</span><span class=s>&#34;avx512f&#34;</span><span class=p>)</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>Second, we need to include a header file that contains the subset of intrinsics we need. Similar to <code>&lt;bits/stdc++.h></code> in GCC, there is the <code>&lt;x86intrin.h></code> header that contains all of them, so we will just use that.</p><p>And last, we need to <a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags>tell the compiler</a> that the target CPU actually supports these extensions. This can be done either with <code>#pragma GCC target(...)</code> <a href=../>as we did before</a>, or with the <code>-march=...</code> flag in the compiler options. If you are compiling and running the code on the same machine, you can set <code>-march=native</code> to auto-detect the microarchitecture.</p><p>In all further code examples, assume that they begin with these lines:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=cp>#pragma GCC target(&#34;avx2&#34;)
-</span></span></span><span class=line><span class=cl><span class=cp>#pragma GCC optimize(&#34;O3&#34;)
-</span></span></span><span class=line><span class=cl><span class=cp></span>
-</span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;x86intrin.h&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;bits/stdc++.h&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
-</span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
-</span></span></code></pre></div><p>We will focus on AVX2 and the previous SIMD extensions in this chapter, which should be available on 95% of all desktop and server computers, although the general principles transfer on AVX512, Arm Neon, and other SIMD architectures just as well.</p><span class=anchor id=simd-registers></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/#simd-registers>#</a>SIMD Registers</h3><p>The most notable distinction between SIMD extensions is the support for wider registers:</p><ul><li>SSE (1999) added 16 128-bit registers called <code>xmm0</code> through <code>xmm15</code>.</li><li>AVX (2011) added 16 256-bit registers called <code>ymm0</code> through <code>ymm15</code>.</li><li>AVX512 (2017) added<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup> 16 512-bit registers called <code>zmm0</code> through <code>zmm15</code>.</li></ul><p>As you can guess from the naming, and also from the fact that 512 bits already occupy a full cache line, x86 designers are not planning to add wider registers anytime soon.</p><p>C/C++ compilers implement special <em>vector types</em> that refer to the data stored in these registers:</p><ul><li>128-bit <code>__m128</code>, <code>__m128d</code> and <code>__m128i</code> types for single-precision floating-point, double-precision floating-point and various integer data respectively;</li><li>256-bit <code>__m256</code>, <code>__m256d</code>, <code>__m256i</code>;</li><li>512-bit <code>__m512</code>, <code>__m512d</code>, <code>__m512i</code>.</li></ul><p>Registers themselves can hold data of any kind: these types are only used for type checking. You can convert a vector variable to another vector type the same way you would normally convert any other type, and it won&rsquo;t cost you anything.</p><span class=anchor id=simd-intrinsics></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/#simd-intrinsics>#</a>SIMD Intrinsics</h3><p><em>Intrinsics</em> are just C-style functions that do something with these vector data types, usually by simply calling the associated assembly instruction.</p><p>For example, here is a cycle that adds together two arrays of 64-bit floating-point numbers using AVX intrinsics:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=kt>double</span> <span class=n>a</span><span class=p>[</span><span class=mi>100</span><span class=p>],</span> <span class=n>b</span><span class=p>[</span><span class=mi>100</span><span class=p>],</span> <span class=n>c</span><span class=p>[</span><span class=mi>100</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=c1>// iterate in blocks of 4,
-</span></span></span><span class=line><span class=cl><span class=c1>// because that&#39;s how many doubles can fit into a 256-bit register
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=mi>100</span><span class=p>;</span> <span class=n>i</span> <span class=o>+=</span> <span class=mi>4</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=c1>// load two 256-bit segments into registers
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>__m256d</span> <span class=n>x</span> <span class=o>=</span> <span class=n>_mm256_loadu_pd</span><span class=p>(</span><span class=o>&amp;</span><span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>]);</span>
-</span></span><span class=line><span class=cl>    <span class=n>__m256d</span> <span class=n>y</span> <span class=o>=</span> <span class=n>_mm256_loadu_pd</span><span class=p>(</span><span class=o>&amp;</span><span class=n>b</span><span class=p>[</span><span class=n>i</span><span class=p>]);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=c1>// add 4+4 64-bit numbers together
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>__m256d</span> <span class=n>z</span> <span class=o>=</span> <span class=n>_mm256_add_pd</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=c1>// write the 256-bit result into memory, starting with c[i]
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>_mm256_storeu_pd</span><span class=p>(</span><span class=o>&amp;</span><span class=n>c</span><span class=p>[</span><span class=n>i</span><span class=p>],</span> <span class=n>z</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>The main challenge of using SIMD is getting the data into contiguous fixed-sized blocks suitable for loading into registers. In the code above, we may in general have a problem if the length of the array is not divisible by the block size. There are two common solutions to this:</p><ol><li>We can &ldquo;overshoot&rdquo; by iterating over the last incomplete segment either way. To make sure we don&rsquo;t segfault by trying to read from or write to a memory region we don&rsquo;t own, we need to pad the arrays to the nearest block size (typically with some &ldquo;neutral&rdquo; element, e.g., zero).</li><li>Make one iteration less and write a little loop in the end that calculates the remainder normally (with scalar operations).</li></ol><p>Humans prefer #1 because it is simpler and results in less code, and compilers prefer #2 because they don&rsquo;t really have another legal option.</p><span class=anchor id=instruction-references></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/#instruction-references>#</a>Instruction References</h3><p>Most SIMD intrinsics follow a naming convention similar to <code>_mm&lt;size>_&lt;action>_&lt;type></code> and correspond to a single analogously named assembly instruction. They become relatively self-explanatory once you get used to the assembly naming conventions, although sometimes it does seem like their names were generated by cats walking on keyboards (explain this: <a href="https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#ig_expand=3037,3009,4870,4870,4872,4875,833,879,874,849,848,6715,4845,6046,3853,288,6570,6527,6527,90,7307,6385,5993,2692,6946,6949,5456,6938,5456,1021,3007,514,518,4875,7253,7183,3892,5135,5260,5259,6385,3915,4027,3873,7401&techs=AVX,AVX2&text=punpcklqdq">punpcklqdq</a>).</p><p>Here are a few more examples, just so that you get the gist of it:</p><ul><li><code>_mm_add_epi16</code>: add two 128-bit vectors of 16-bit <em>extended packed integers</em>, or simply said, <code>short</code>s.</li><li><code>_mm256_acos_pd</code>: calculate elementwise $\arccos$ for 4 <em>packed doubles</em>.</li><li><code>_mm256_broadcast_sd</code>: broadcast (copy) a <code>double</code> from a memory location to all 4 elements of the result vector.</li><li><code>_mm256_ceil_pd</code>: round up each of 4 <code>double</code>s to the nearest integer.</li><li><code>_mm256_cmpeq_epi32</code>: compare 8+8 packed <code>int</code>s and return a mask that contains ones for equal element pairs.</li><li><code>_mm256_blendv_ps</code>: pick elements from one of two vectors according to a mask.</li></ul><p>As you may have guessed, there is a combinatorially very large number of intrinsics, and in addition to that, some instructions also have immediate values — so their intrinsics require compile-time constant parameters: for example, the floating-point comparison instruction <a href=https://stackoverflow.com/questions/16988199/how-to-choose-avx-compare-predicate-variants>has 32 different modifiers</a>.</p><p>For some reason, there are some operations that are agnostic to the type of data stored in registers, but only take a specific vector type (usually 32-bit float) — you just have to convert to and from it to use that intrinsic. To simplify the examples in this chapter, we will mostly work with 32-bit integers (<code>epi32</code>) in 256-bit AVX2 registers.</p><p>A very helpful reference for x86 SIMD intrinsics is the <a href=https://software.intel.com/sites/landingpage/IntrinsicsGuide/>Intel Intrinsics Guide</a>, which has groupings by categories and extensions, descriptions, pseudocode, associated assembly instructions, and their latency and throughput on Intel microarchitectures. You may want to bookmark that page.</p><p>The Intel reference is useful when you know that a specific instruction exists and just want to look up its name or performance info. When you don&rsquo;t know whether it exists, this <a href=https://db.in.tum.de/~finis/x86%20intrinsics%20cheat%20sheet%20v1.0.pdf>cheat sheet</a> may do a better job.</p><p><strong>Instruction selection.</strong> Note that compilers do not necessarily pick the exact instruction that you specify. Similar to the scalar <code>c = a + b</code> we <a href=https://anpaure.github.io/algorithmica-beta/hpc/analyzing-performance/assembly>discussed before</a>, there is a fused vector addition instruction too, so instead of using 2+1+1=4 instructions per loop cycle, compiler <a href=https://godbolt.org/z/dMz8E5Ye8>rewrites the code above</a> with blocks of 3 instructions like this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nasm data-lang=nasm><span class=line><span class=cl><span class=nf>vmovapd</span> <span class=nv>ymm1</span><span class=p>,</span> <span class=nv>YMMWORD</span> <span class=nv>PTR</span> <span class=nv>a</span><span class=p>[</span><span class=nb>rax</span><span class=p>]</span>
-</span></span><span class=line><span class=cl><span class=nf>vaddpd</span>  <span class=nv>ymm0</span><span class=p>,</span> <span class=nv>ymm1</span><span class=p>,</span> <span class=nv>YMMWORD</span> <span class=nv>PTR</span> <span class=nv>b</span><span class=p>[</span><span class=nb>rax</span><span class=p>]</span>
-</span></span><span class=line><span class=cl><span class=nf>vmovapd</span> <span class=nv>YMMWORD</span> <span class=nv>PTR</span> <span class=nv>c</span><span class=p>[</span><span class=nb>rax</span><span class=p>],</span> <span class=nv>ymm0</span>
-</span></span></code></pre></div><p>Sometimes, although quite rarely, this compiler interference makes things worse, so it is always a good idea to <a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages>check the assembly</a> and take a closer look at the emitted vector instructions (they usually start with a &ldquo;v&rdquo;).</p><p>Also, some of the intrinsics don&rsquo;t map to a single instruction but a short sequence of them, as a convenient shortcut: <a href=../moving#register-aliasing>broadcasts and extracts</a> are a notable example.</p><span class=anchor id=gcc-vector-extensions></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/#gcc-vector-extensions>#</a>GCC Vector Extensions</h3><p>If you feel like the design of C intrinsics is terrible, you are not alone. I&rsquo;ve spent hundreds of hours writing SIMD code and reading the Intel Intrinsics Guide, and I still can&rsquo;t remember whether I need to type <code>_mm256</code> or <code>__m256</code>.</p><p>Intrinsics are not only hard to use but also neither portable nor maintainable. In good software, you don&rsquo;t want to maintain different procedures for each CPU: you want to implement it just once, in an architecture-agnostic way.</p><p>One day, compiler engineers from the GNU Project thought the same way and developed a way to define your own vector types that feel more like arrays with some operators overloaded to match the relevant instructions.</p><p>In GCC, here is how you can define a vector of 8 integers packed into a 256-bit (32-byte) register:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>typedef</span> <span class=kt>int</span> <span class=n>v8si</span> <span class=nf>__attribute__</span> <span class=p>((</span> <span class=n>vector_size</span><span class=p>(</span><span class=mi>32</span><span class=p>)</span> <span class=p>));</span>
-</span></span><span class=line><span class=cl><span class=c1>// type ^   ^ typename          size in bytes ^ 
-</span></span></span></code></pre></div><p>Unfortunately, this is not a part of the C or C++ standard, so different compilers use different syntax for that.</p><p>There is somewhat of a naming convention, which is to include size and type of elements into the name of the type: in the example above, we defined a &ldquo;vector of 8 signed integers.&rdquo; But you may choose any name you want, like <code>vec</code>, <code>reg</code> or whatever. The only thing you don&rsquo;t want to do is to name it <code>vector</code> because of how much confusion there would be because of <code>std::vector</code>.</p><p>The main advantage of using these types is that for many operations you can use normal C++ operators instead of looking up the relevant intrinsic.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>v4si</span> <span class=n>a</span> <span class=o>=</span> <span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>5</span><span class=p>};</span>
-</span></span><span class=line><span class=cl><span class=n>v4si</span> <span class=n>b</span> <span class=o>=</span> <span class=p>{</span><span class=mi>8</span><span class=p>,</span> <span class=mi>13</span><span class=p>,</span> <span class=mi>21</span><span class=p>,</span> <span class=mi>34</span><span class=p>};</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>v4si</span> <span class=n>c</span> <span class=o>=</span> <span class=n>a</span> <span class=o>+</span> <span class=n>b</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=mi>4</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;%d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>c</span><span class=p>[</span><span class=n>i</span><span class=p>]);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>c</span> <span class=o>*=</span> <span class=mi>2</span><span class=p>;</span> <span class=c1>// multiply by scalar
-</span></span></span><span class=line><span class=cl><span class=c1></span>
-</span></span><span class=line><span class=cl><span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=mi>4</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;%d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>c</span><span class=p>[</span><span class=n>i</span><span class=p>]);</span>
-</span></span></code></pre></div><p>With vector types we can greatly simplify the &ldquo;a + b&rdquo; loop we implemented with intrinsics before:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>typedef</span> <span class=kt>double</span> <span class=n>v4d</span> <span class=nf>__attribute__</span> <span class=p>((</span> <span class=n>vector_size</span><span class=p>(</span><span class=mi>32</span><span class=p>)</span> <span class=p>));</span>
-</span></span><span class=line><span class=cl><span class=n>v4d</span> <span class=n>a</span><span class=p>[</span><span class=mi>100</span><span class=o>/</span><span class=mi>4</span><span class=p>],</span> <span class=n>b</span><span class=p>[</span><span class=mi>100</span><span class=o>/</span><span class=mi>4</span><span class=p>],</span> <span class=n>c</span><span class=p>[</span><span class=mi>100</span><span class=o>/</span><span class=mi>4</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=mi>100</span><span class=o>/</span><span class=mi>4</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>    <span class=n>c</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>+</span> <span class=n>b</span><span class=p>[</span><span class=n>i</span><span class=p>];</span>
-</span></span></code></pre></div><p>As you can see, vector extensions are much cleaner compared to the nightmare we have with intrinsic functions. Their downside is that there are some things that we may want to do are just not expressible with native C++ constructs, so we will still need intrinsics for them. Luckily, this is not an exclusive choice, because vector types support zero-cost conversion to the <code>_mm</code> types and back:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>v8f</span> <span class=n>x</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=n>mask</span> <span class=o>=</span> <span class=n>_mm256_movemask_ps</span><span class=p>((</span><span class=n>__m256</span><span class=p>)</span> <span class=n>x</span><span class=p>)</span>
-</span></span></code></pre></div><p>There are also many third-party libraries for different languages that provide a similar capability to write portable SIMD code and also implement some, and just in general are nicer to use than both intrinsics and built-in vector types. Notable examples for C++ are <a href=https://github.com/google/highway>Highway</a>, <a href=https://github.com/jfalcou/eve>Expressive Vector Engine</a>, <a href=https://github.com/vectorclass/version2>Vector Class Library</a>, and <a href=https://github.com/xtensor-stack/xsimd>xsimd</a>.</p><p>Using a well-established SIMD library is recommended as it greatly improves the developer experience. In this book, however, we will try to keep close to the hardware and mostly use intrinsics directly, occasionally switching to the vector extensions for simplicity when we can.</p><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>AVX512 also added 8 so-called <em>mask registers</em> named <code>k0</code> through <code>k7</code>, which are used for masking and blending data. We are not going to cover them and will mostly use AVX2 and previous standards.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></article><div class=nextprev><div class=left><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/ id=prev-article>← ../SIMD Parallelism</a></div><div class=right><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/ id=next-article>Moving Data →</a></div></div></main><footer>Copyright 2021–2022 Sergey Slotin<br></footer></div></body></html>
+<!doctype html>
+<html lang='en-us'><head><meta charset="utf-8">
+  <link rel="icon" href="https://anpaure.github.io/algorithmica-beta/favicon.ico">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/beta.css">
+  
+
+  
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css" integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00=">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/syntax.css" id="syntax-theme">
+
+  <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+  <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js"></script>
+
+  
+  <link rel="stylesheet" id="theme">
+
+  <script>
+    function toggleSidebar() {
+      console.log("Toggling sidebar visibility")
+      var sidebar = document.getElementById('sidebar')
+      var wrapper = document.getElementById('wrapper')
+      if (sidebar.classList.contains('sidebar-toggled') || window.getComputedStyle(sidebar).display == 'block') { 
+        sidebar.classList.toggle('sidebar-hidden')
+        wrapper.classList.toggle('sidebar-hidden')
+      }
+      sidebar.classList.add('sidebar-toggled')
+      wrapper.classList.add('sidebar-toggled')
+    }
+
+    function switchTheme(theme) {
+      console.log("Changing theme:", theme)
+      document.getElementById('theme').href = (theme == 'dark' ? "https:\/\/anpaure.github.io\/algorithmica-beta\/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css" : "")
+      document.getElementById('syntax-theme').href = (theme == 'dark' ? 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax-dark.css' : 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax.css')
+      localStorage.setItem('theme', theme)
+    }
+
+    async function toggleSearch() {
+      console.log("Toggling search")
+      
+      var searchDiv = document.getElementById('search')
+      if (window.getComputedStyle(searchDiv).display == 'none') {
+        searchDiv.style.display = 'block'
+        window.scrollTo({ top: 0 });
+        document.getElementById('search-bar').focus()
+      } else {
+        searchDiv.style.display = 'none'  
+      }
+
+      if (!index) {
+        console.log("Fetching index")
+        const response = await fetch('https:\/\/anpaure.github.io\/algorithmica-beta\/searchindex.json')
+        const pages = await response.json()
+        index = lunr(function() {
+          this.use(lunr.multiLanguage('en', 'ru'))
+          this.field('title', {
+            boost: 5
+          })
+          this.field('content', {
+            boost: 1
+          })
+          pages.forEach(function(doc) {
+            this.add(doc)
+            articles.push(doc)
+          }, this)
+        })
+        console.log("Ready to search")
+      }
+    }
+
+    var articles = []
+    var index = undefined
+
+    function search() {
+      var query = document.getElementById('search-bar').value
+      var resultsDiv = document.getElementById('search-results')
+      var countDiv = document.getElementById('search-count')
+      
+      if (query == '') {
+        resultsDiv.innerHTML = ''
+        countDiv.innerHTML = ''
+        return
+      }
+      
+      var results = index.search(query)
+
+      countDiv.innerHTML = 'Found <b>' + results.length + '</b> pages'
+
+      let resultList = ''
+
+      for (const n in results) {
+        const item = articles[results[n].ref]
+        resultList += '<li><a href="' + item.path + '">' + item.title + '</a> <p>'
+        const text = item.content
+
+        const contextLimit = 80
+
+        if (text.includes(query)) {
+          const start = text.indexOf(query)
+          if (start > contextLimit)
+            resultList += '…'
+          resultList += text.substring(start - contextLimit, start)
+                      + '<b>' + query + '</b>' + text.substring(start + query.length, start + query.length + contextLimit)
+
+        } else {
+          resultList += text.substring(0, contextLimit * 2)
+        }
+        resultList += '…</p></li>'
+      }
+
+      resultsDiv.innerHTML = resultList
+    }
+
+    if (localStorage.getItem('theme') == 'dark') {
+      switchTheme('dark')
+    }
+
+    window.addEventListener('load', function() {
+      var el = document.getElementById("active-element")
+      
+      if (el) {
+        el.scrollIntoView({block: "center"})
+      }
+      
+
+    })
+
+    window.addEventListener('scroll', function() {
+      var menu = document.getElementById('menu')
+      if (window.scrollY < 120) {
+        
+        menu.classList.remove('scrolled')
+      } else {
+        
+        menu.classList.add('scrolled')
+      }
+    })
+
+    window.addEventListener('keydown', function(e) {
+      if (e.altKey) { return }
+      if (document.activeElement.tagName == 'INPUT') { return }
+      if (e.key == 'ArrowLeft') {
+        document.getElementById('prev-article').click()
+      } else if (e.key == 'ArrowRight') {
+        document.getElementById('next-article').click()
+      }
+    })
+  </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false}
+    ]
+  })"></script>
+
+  
+  <title>Intrinsics and Vector Types - Algorithmica β</title>
+</head>
+<body><nav id='sidebar' >
+  
+  
+  <div class='title'>
+    <a href='https://anpaure.github.io/algorithmica-beta/'>Algorithmica β</a>
+    
+      
+        
+        <span class='slash'>/</span>
+        <a href='https://anpaure.github.io/algorithmica-beta/hpc/' class='divisionAbbr'
+           >
+          HPC
+        </a>
+      
+    
+  </div>
+  <ul>
+    
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/preface/'
+          
+          >Preface</a></li>
+        
+      
+        
+          <li class='part'>Performance Engineering</li>
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/'
+          
+          >Complexity Models</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/'
+                
+                >Modern Hardware</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/'
+                
+                >Programming Languages</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/'
+                
+                >Models of Computation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/'
+                
+                >When to Optimize</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/'
+          
+          >Computer Architecture</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/'
+                
+                >Instruction Set Architectures</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/'
+                
+                >Assembly Language</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/'
+                
+                >Loops and Conditionals</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/'
+                
+                >Functions and Recursion</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/'
+                
+                >Indirect Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/'
+                
+                >Machine Code Layout</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/'
+                
+                >Interrupts and System Calls</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/'
+                
+                >Virtualization</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/'
+          
+          >Instruction-Level Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/'
+                
+                >Pipeline Hazards</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/'
+                
+                >The Cost of Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/'
+                
+                >Branchless Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/'
+                
+                >Instruction Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/'
+                
+                >Instruction Scheduling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/'
+                
+                >Throughput Computing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/'
+                
+                >Theoretical Performance Limits</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/'
+          
+          >Compilation</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/'
+                
+                >Stages of Compilation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/'
+                
+                >Flags and Targets</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/'
+                
+                >Situational Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/'
+                
+                >Contract Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/'
+                
+                >Non-Zero-Cost Abstractions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/'
+                
+                >Precomputation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/'
+                
+                >Arithmetic Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/'
+                
+                >What Compilers Can and Can&#39;t Do</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/'
+          
+          >Profiling</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/'
+                
+                >Instrumentation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/'
+                
+                >Statistical Profiling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/'
+                
+                >Program Simulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/'
+                
+                >Machine Code Analyzers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/'
+                
+                >Benchmarking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/'
+                
+                >Getting Accurate Results</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/'
+          
+          >Arithmetic</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/'
+                
+                >Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/'
+                
+                >IEEE 754 Floats</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/'
+                
+                >Rounding Errors</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/'
+                
+                >Newton&#39;s Method</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/'
+                
+                >Fast Inverse Square Root</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/'
+                
+                >Integer Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/'
+                
+                >Integer Division</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/'
+                
+                >Bit Manipulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/'
+                
+                >Data Compression</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/'
+          
+          >Number Theory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/'
+                
+                >Modular Arithmetic</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/'
+                
+                >Binary Exponentiation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/'
+                
+                >Extended Euclidean Algorithm</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/'
+                
+                >Montgomery Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/'
+                
+                >Finite Fields</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/'
+                
+                >Error Correction</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/'
+                
+                >Cryptography</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/'
+                
+                >Hashing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/'
+                
+                >Random Number Generation</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/'
+          
+          >External Memory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/'
+                
+                >Memory Hierarchy</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/'
+                
+                >Virtual Memory</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/'
+                
+                >External Memory Model</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/'
+                
+                >External Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/'
+                
+                >List Ranking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/'
+                
+                >Eviction Policies</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/'
+                
+                >Cache-Oblivious Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/'
+                
+                >Spatial and Temporal Locality</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/'
+                
+                >B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/'
+                
+                >Sublinear Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/'
+                
+                >Memory Management</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/'
+          
+          >RAM &amp; CPU Caches</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/'
+                
+                >Memory Bandwidth</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/'
+                
+                >Memory Latency</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/'
+                
+                >Cache Lines</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/'
+                
+                >Memory Sharing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/'
+                
+                >Memory-Level Parallelism</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/'
+                
+                >Prefetching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/'
+                
+                >Alignment and Packing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/'
+                
+                >Pointer Alternatives</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/'
+                
+                >Cache Associativity</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/'
+                
+                >Memory Paging</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/'
+                
+                >AoS and SoA</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/'
+          
+          >SIMD Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/'
+                id='active-element'
+                >Intrinsics and Vector Types</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/'
+                
+                >Moving Data</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/'
+                
+                >Reductions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/'
+                
+                >Masking and Blending</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/'
+                
+                >In-Register Shuffles</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/'
+                
+                >Auto-Vectorization and SPMD</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/'
+          
+          >Algorithms Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/'
+                
+                >Binary GCD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/'
+                
+                >Prime Number Sieves</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/'
+                
+                >Integer Factorization</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/'
+                
+                >Optimizing Logistic Regression</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/'
+                
+                >Big Integers and Karatsuba Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/'
+                
+                >Fast Fourier Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/'
+                
+                >Number-Theoretic Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/'
+                
+                >Argmin with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/'
+                
+                >Prefix Sum with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/'
+                
+                >Reading Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/'
+                
+                >Writing Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/'
+                
+                >Reading and Writing Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/'
+                
+                >String Searching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/'
+                
+                >Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/'
+                
+                >Matrix Multiplication</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/'
+          
+          >Data Structures Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/'
+                
+                >Binary Search</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/'
+                
+                >Static B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/'
+                
+                >Search Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/'
+                
+                >Segment Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/'
+                
+                >Tries</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/'
+                
+                >Range Minimum Query</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/'
+                
+                >Hash Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/'
+                
+                >Bitmaps</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/'
+                
+                >Probabilistic Filters</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/summary/'
+          
+          >Summary</a></li>
+        
+      
+        
+          <li class='part'>Appendix</li>
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/stats/'
+          
+          >Probability Theory Refresher</a></li>
+        
+      
+    
+  </ul>
+</nav>
+<div id='wrapper' ><menu id='menu'>
+  
+  
+  
+  
+  <div class='left'>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg'
+           onclick='toggleSidebar()'
+           title='open table of contents'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg'
+           style='position: relative; top: -1px'
+           onclick='switchTheme(localStorage.getItem("theme") == "dark" ? "light" : "dark")'
+           title='dark theme'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg'
+           onclick='toggleSearch()'
+           title='search'>
+    </a>
+  </div>
+  <div class='title'>
+    
+      <span class='beta-brand'>Algorithmica β</span>
+      <span class='chapter-title'>Intrinsics and Vector Types</span>
+    
+  </div>
+  <div class='right'>
+    <a onClick='window.print()'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg' title='print'>
+    </a>
+    <a href='https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2fsimd%2fintrinsics.md'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg'
+           title='edit'
+           style='width: 18px; position: relative; right: -2px; top: -1px'>
+    </a>
+    <a href='https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/simd/intrinsics.md' class='github-main'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg' title='view on github'>
+    </a>
+  </div>
+</menu>
+<main>
+        <div id="search">
+    <input id="search-bar" type="search" placeholder='Search this book…' oninput="search()">
+    <div id="search-count"></div>
+    <div id="search-results">
+    </div>
+</div>
+<header>
+  
+  <h1>Intrinsics and Vector Types</h1>
+  
+    <div class='info'></div>
+  
+</header>
+<article>
+  
+
+
+  
+    
+    
+      
+        <p>The most low-level way to use SIMD is to use the assembly vector instructions directly — they aren&rsquo;t different from their scalar equivalents at all — but we are not going to do that. Instead, we will use <em>intrinsic</em> functions mapping to these instructions that are available in modern C/C++ compilers.</p>
+<p>In this section, we will go through the basics of their syntax, and in the rest of this chapter, we will use them extensively to do things that are actually interesting.</p>
+<span class='anchor' id="setup"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/#setup">#</a>Setup</h2><p>To use x86 intrinsics, we need to do a little groundwork.</p>
+<p>First, we need to determine which extensions are supported by the hardware. On Linux, you can call <code>cat /proc/cpuinfo</code>, and on other platforms, you&rsquo;d better go to <a href="https://en.wikichip.org/wiki/WikiChip">WikiChip</a> and look it up there using the name of the CPU. In either case, there should be a <code>flags</code> section that lists the codes of all supported vector extensions.</p>
+<p>There is also a special <a href="https://en.wikipedia.org/wiki/CPUID">CPUID</a> assembly instruction that lets you query various information about the CPU, including the support of particular vector extensions. It is primarily used to get such information in runtime and avoid distributing a separate binary for each microarchitecture. Its output information is returned very densely in the form of feature masks, so compilers provide built-in methods to make sense of it. Here is an example:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">__builtin_cpu_supports</span><span class="p">(</span><span class="s">&#34;sse&#34;</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">__builtin_cpu_supports</span><span class="p">(</span><span class="s">&#34;sse2&#34;</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">__builtin_cpu_supports</span><span class="p">(</span><span class="s">&#34;avx&#34;</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">__builtin_cpu_supports</span><span class="p">(</span><span class="s">&#34;avx2&#34;</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">__builtin_cpu_supports</span><span class="p">(</span><span class="s">&#34;avx512f&#34;</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Second, we need to include a header file that contains the subset of intrinsics we need. Similar to <code>&lt;bits/stdc++.h&gt;</code> in GCC, there is the <code>&lt;x86intrin.h&gt;</code> header that contains all of them, so we will just use that.</p>
+<p>And last, we need to <a href="https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags">tell the compiler</a> that the target CPU actually supports these extensions. This can be done either with <code>#pragma GCC target(...)</code> <a href="../">as we did before</a>, or with the <code>-march=...</code> flag in the compiler options. If you are compiling and running the code on the same machine, you can set <code>-march=native</code> to auto-detect the microarchitecture.</p>
+<p>In all further code examples, assume that they begin with these lines:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#pragma GCC target(&#34;avx2&#34;)
+</span></span></span><span class="line"><span class="cl"><span class="cp">#pragma GCC optimize(&#34;O3&#34;)
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;x86intrin.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;bits/stdc++.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+</span></span></code></pre></div><p>We will focus on AVX2 and the previous SIMD extensions in this chapter, which should be available on 95% of all desktop and server computers, although the general principles transfer on AVX512, Arm Neon, and other SIMD architectures just as well.</p>
+<span class='anchor' id="simd-registers"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/#simd-registers">#</a>SIMD Registers</h3><p>The most notable distinction between SIMD extensions is the support for wider registers:</p>
+<ul>
+<li>SSE (1999) added 16 128-bit registers called <code>xmm0</code> through <code>xmm15</code>.</li>
+<li>AVX (2011) added 16 256-bit registers called <code>ymm0</code> through <code>ymm15</code>.</li>
+<li>AVX512 (2017) added<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> 16 512-bit registers called <code>zmm0</code> through <code>zmm15</code>.</li>
+</ul>
+<p>As you can guess from the naming, and also from the fact that 512 bits already occupy a full cache line, x86 designers are not planning to add wider registers anytime soon.</p>
+<p>C/C++ compilers implement special <em>vector types</em> that refer to the data stored in these registers:</p>
+<ul>
+<li>128-bit <code>__m128</code>, <code>__m128d</code> and <code>__m128i</code> types for single-precision floating-point, double-precision floating-point and various integer data respectively;</li>
+<li>256-bit <code>__m256</code>, <code>__m256d</code>, <code>__m256i</code>;</li>
+<li>512-bit <code>__m512</code>, <code>__m512d</code>, <code>__m512i</code>.</li>
+</ul>
+<p>Registers themselves can hold data of any kind: these types are only used for type checking. You can convert a vector variable to another vector type the same way you would normally convert any other type, and it won&rsquo;t cost you anything.</p>
+<span class='anchor' id="simd-intrinsics"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/#simd-intrinsics">#</a>SIMD Intrinsics</h3><p><em>Intrinsics</em> are just C-style functions that do something with these vector data types, usually by simply calling the associated assembly instruction.</p>
+<p>For example, here is a cycle that adds together two arrays of 64-bit floating-point numbers using AVX intrinsics:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">double</span> <span class="n">a</span><span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// iterate in blocks of 4,
+</span></span></span><span class="line"><span class="cl"><span class="c1">// because that&#39;s how many doubles can fit into a 256-bit register
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// load two 256-bit segments into registers
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">__m256d</span> <span class="n">x</span> <span class="o">=</span> <span class="n">_mm256_loadu_pd</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">__m256d</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_mm256_loadu_pd</span><span class="p">(</span><span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// add 4+4 64-bit numbers together
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">__m256d</span> <span class="n">z</span> <span class="o">=</span> <span class="n">_mm256_add_pd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// write the 256-bit result into memory, starting with c[i]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">_mm256_storeu_pd</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">z</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>The main challenge of using SIMD is getting the data into contiguous fixed-sized blocks suitable for loading into registers. In the code above, we may in general have a problem if the length of the array is not divisible by the block size. There are two common solutions to this:</p>
+<ol>
+<li>We can &ldquo;overshoot&rdquo; by iterating over the last incomplete segment either way. To make sure we don&rsquo;t segfault by trying to read from or write to a memory region we don&rsquo;t own, we need to pad the arrays to the nearest block size (typically with some &ldquo;neutral&rdquo; element, e.g., zero).</li>
+<li>Make one iteration less and write a little loop in the end that calculates the remainder normally (with scalar operations).</li>
+</ol>
+<p>Humans prefer #1 because it is simpler and results in less code, and compilers prefer #2 because they don&rsquo;t really have another legal option.</p>
+<span class='anchor' id="instruction-references"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/#instruction-references">#</a>Instruction References</h3><p>Most SIMD intrinsics follow a naming convention similar to <code>_mm&lt;size&gt;_&lt;action&gt;_&lt;type&gt;</code> and correspond to a single analogously named assembly instruction. They become relatively self-explanatory once you get used to the assembly naming conventions, although sometimes it does seem like their names were generated by cats walking on keyboards (explain this: <a href="https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#ig_expand=3037,3009,4870,4870,4872,4875,833,879,874,849,848,6715,4845,6046,3853,288,6570,6527,6527,90,7307,6385,5993,2692,6946,6949,5456,6938,5456,1021,3007,514,518,4875,7253,7183,3892,5135,5260,5259,6385,3915,4027,3873,7401&amp;techs=AVX,AVX2&amp;text=punpcklqdq">punpcklqdq</a>).</p>
+<p>Here are a few more examples, just so that you get the gist of it:</p>
+<ul>
+<li><code>_mm_add_epi16</code>: add two 128-bit vectors of 16-bit <em>extended packed integers</em>, or simply said, <code>short</code>s.</li>
+<li><code>_mm256_acos_pd</code>: calculate elementwise $\arccos$ for 4 <em>packed doubles</em>.</li>
+<li><code>_mm256_broadcast_sd</code>: broadcast (copy) a <code>double</code> from a memory location to all 4 elements of the result vector.</li>
+<li><code>_mm256_ceil_pd</code>: round up each of 4 <code>double</code>s to the nearest integer.</li>
+<li><code>_mm256_cmpeq_epi32</code>: compare 8+8 packed <code>int</code>s and return a mask that contains ones for equal element pairs.</li>
+<li><code>_mm256_blendv_ps</code>: pick elements from one of two vectors according to a mask.</li>
+</ul>
+<p>As you may have guessed, there is a combinatorially very large number of intrinsics, and in addition to that, some instructions also have immediate values — so their intrinsics require compile-time constant parameters: for example, the floating-point comparison instruction <a href="https://stackoverflow.com/questions/16988199/how-to-choose-avx-compare-predicate-variants">has 32 different modifiers</a>.</p>
+<p>For some reason, there are some operations that are agnostic to the type of data stored in registers, but only take a specific vector type (usually 32-bit float) — you just have to convert to and from it to use that intrinsic. To simplify the examples in this chapter, we will mostly work with 32-bit integers (<code>epi32</code>) in 256-bit AVX2 registers.</p>
+<p>A very helpful reference for x86 SIMD intrinsics is the <a href="https://software.intel.com/sites/landingpage/IntrinsicsGuide/">Intel Intrinsics Guide</a>, which has groupings by categories and extensions, descriptions, pseudocode, associated assembly instructions, and their latency and throughput on Intel microarchitectures. You may want to bookmark that page.</p>
+<p>The Intel reference is useful when you know that a specific instruction exists and just want to look up its name or performance info. When you don&rsquo;t know whether it exists, this <a href="https://db.in.tum.de/~finis/x86%20intrinsics%20cheat%20sheet%20v1.0.pdf">cheat sheet</a> may do a better job.</p>
+<p><strong>Instruction selection.</strong> Note that compilers do not necessarily pick the exact instruction that you specify. Similar to the scalar <code>c = a + b</code> we <a href="https://anpaure.github.io/algorithmica-beta/hpc/analyzing-performance/assembly">discussed before</a>, there is a fused vector addition instruction too, so instead of using 2+1+1=4 instructions per loop cycle, compiler <a href="https://godbolt.org/z/dMz8E5Ye8">rewrites the code above</a> with blocks of 3 instructions like this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">vmovapd</span> <span class="nv">ymm1</span><span class="p">,</span> <span class="nv">YMMWORD</span> <span class="nv">PTR</span> <span class="nv">a</span><span class="p">[</span><span class="nb">rax</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nf">vaddpd</span>  <span class="nv">ymm0</span><span class="p">,</span> <span class="nv">ymm1</span><span class="p">,</span> <span class="nv">YMMWORD</span> <span class="nv">PTR</span> <span class="nv">b</span><span class="p">[</span><span class="nb">rax</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nf">vmovapd</span> <span class="nv">YMMWORD</span> <span class="nv">PTR</span> <span class="nv">c</span><span class="p">[</span><span class="nb">rax</span><span class="p">],</span> <span class="nv">ymm0</span>
+</span></span></code></pre></div><p>Sometimes, although quite rarely, this compiler interference makes things worse, so it is always a good idea to <a href="https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages">check the assembly</a> and take a closer look at the emitted vector instructions (they usually start with a &ldquo;v&rdquo;).</p>
+<p>Also, some of the intrinsics don&rsquo;t map to a single instruction but a short sequence of them, as a convenient shortcut: <a href="../moving#register-aliasing">broadcasts and extracts</a> are a notable example.</p>
+<!--
+
+For example, the group of `extract` intrinsics that are used to get individual elements out of vectors: e g., `_mm256_extract_epi32(x, 0)` returns the first element out of 8-integer vector. t is quite slow (~5 cycles) to move data between "normal" and SIMD registers in general.
+
+-->
+<span class='anchor' id="gcc-vector-extensions"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/#gcc-vector-extensions">#</a>GCC Vector Extensions</h3><p>If you feel like the design of C intrinsics is terrible, you are not alone. I&rsquo;ve spent hundreds of hours writing SIMD code and reading the Intel Intrinsics Guide, and I still can&rsquo;t remember whether I need to type <code>_mm256</code> or <code>__m256</code>.</p>
+<p>Intrinsics are not only hard to use but also neither portable nor maintainable. In good software, you don&rsquo;t want to maintain different procedures for each CPU: you want to implement it just once, in an architecture-agnostic way.</p>
+<p>One day, compiler engineers from the GNU Project thought the same way and developed a way to define your own vector types that feel more like arrays with some operators overloaded to match the relevant instructions.</p>
+<p>In GCC, here is how you can define a vector of 8 integers packed into a 256-bit (32-byte) register:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="kt">int</span> <span class="n">v8si</span> <span class="nf">__attribute__</span> <span class="p">((</span> <span class="n">vector_size</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span> <span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// type ^   ^ typename          size in bytes ^ 
+</span></span></span></code></pre></div><p>Unfortunately, this is not a part of the C or C++ standard, so different compilers use different syntax for that.</p>
+<p>There is somewhat of a naming convention, which is to include size and type of elements into the name of the type: in the example above, we defined a &ldquo;vector of 8 signed integers.&rdquo; But you may choose any name you want, like <code>vec</code>, <code>reg</code> or whatever. The only thing you don&rsquo;t want to do is to name it <code>vector</code> because of how much confusion there would be because of <code>std::vector</code>.</p>
+<p>The main advantage of using these types is that for many operations you can use normal C++ operators instead of looking up the relevant intrinsic.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">v4si</span> <span class="n">a</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">v4si</span> <span class="n">b</span> <span class="o">=</span> <span class="p">{</span><span class="mi">8</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">34</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">v4si</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">c</span> <span class="o">*=</span> <span class="mi">2</span><span class="p">;</span> <span class="c1">// multiply by scalar
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span></code></pre></div><p>With vector types we can greatly simplify the &ldquo;a + b&rdquo; loop we implemented with intrinsics before:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="kt">double</span> <span class="n">v4d</span> <span class="nf">__attribute__</span> <span class="p">((</span> <span class="n">vector_size</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span> <span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="n">v4d</span> <span class="n">a</span><span class="p">[</span><span class="mi">100</span><span class="o">/</span><span class="mi">4</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">100</span><span class="o">/</span><span class="mi">4</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">100</span><span class="o">/</span><span class="mi">4</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="o">/</span><span class="mi">4</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span></code></pre></div><p>As you can see, vector extensions are much cleaner compared to the nightmare we have with intrinsic functions. Their downside is that there are some things that we may want to do are just not expressible with native C++ constructs, so we will still need intrinsics for them. Luckily, this is not an exclusive choice, because vector types support zero-cost conversion to the <code>_mm</code> types and back:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">v8f</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">_mm256_movemask_ps</span><span class="p">((</span><span class="n">__m256</span><span class="p">)</span> <span class="n">x</span><span class="p">)</span>
+</span></span></code></pre></div><p>There are also many third-party libraries for different languages that provide a similar capability to write portable SIMD code and also implement some, and just in general are nicer to use than both intrinsics and built-in vector types. Notable examples for C++ are <a href="https://github.com/google/highway">Highway</a>, <a href="https://github.com/jfalcou/eve">Expressive Vector Engine</a>, <a href="https://github.com/vectorclass/version2">Vector Class Library</a>, and <a href="https://github.com/xtensor-stack/xsimd">xsimd</a>.</p>
+<p>Using a well-established SIMD library is recommended as it greatly improves the developer experience. In this book, however, we will try to keep close to the hardware and mostly use intrinsics directly, occasionally switching to the vector extensions for simplicity when we can.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>AVX512 also added 8 so-called <em>mask registers</em> named <code>k0</code> through <code>k7</code>, which are used for masking and blending data. We are not going to cover them and will mostly use AVX2 and previous standards.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+      
+    
+  
+
+
+
+        </article>
+        <div class='nextprev'>
+  
+    
+      
+      
+
+      
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+
+      
+        <div class='left'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/' id='prev-article'>← ../SIMD Parallelism</a>
+        
+        </div>
+        <div class='right'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/' id='next-article'>Moving Data →</a>
+        
+        </div>
+      
+    
+  
+</div>
+
+      </main>
+      <footer>
+  Copyright 2021–2022 Sergey Slotin
+  <br>
+   
+</footer>
+
+    </div>
+  </body>
+</html>

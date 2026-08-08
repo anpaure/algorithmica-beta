@@ -1,235 +1,1278 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><link rel=icon href=https://anpaure.github.io/algorithmica-beta/favicon.ico><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/beta.css><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00="><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/syntax.css id=syntax-theme><link rel=stylesheet type=text/css href=https://tikzjax.com/v1/fonts.css><script src=https://tikzjax.com/v1/tikzjax.js></script>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js></script>
-<link rel=stylesheet id=theme><script>function toggleSidebar(){console.log("Toggling sidebar visibility");var e=document.getElementById("sidebar"),t=document.getElementById("wrapper");(e.classList.contains("sidebar-toggled")||window.getComputedStyle(e).display=="block")&&(e.classList.toggle("sidebar-hidden"),t.classList.toggle("sidebar-hidden")),e.classList.add("sidebar-toggled"),t.classList.add("sidebar-toggled")}function switchTheme(e){console.log("Changing theme:",e),document.getElementById("theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css":"",document.getElementById("syntax-theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/syntax-dark.css":"https://anpaure.github.io/algorithmica-beta/syntax.css",localStorage.setItem("theme",e)}async function toggleSearch(){console.log("Toggling search");var e=document.getElementById("search");if(window.getComputedStyle(e).display=="none"?(e.style.display="block",window.scrollTo({top:0}),document.getElementById("search-bar").focus()):e.style.display="none",!index){console.log("Fetching index");const e=await fetch("https://anpaure.github.io/algorithmica-beta/searchindex.json"),t=await e.json();index=lunr(function(){this.use(lunr.multiLanguage("en","ru")),this.field("title",{boost:5}),this.field("content",{boost:1}),t.forEach(function(e){this.add(e),articles.push(e)},this)}),console.log("Ready to search")}}var articles=[],index=void 0;function search(){var e=document.getElementById("search-bar").value,n,s=document.getElementById("search-results"),o=document.getElementById("search-count");if(e==''){s.innerHTML='',o.innerHTML='';return}n=index.search(e),o.innerHTML="Found <b>"+n.length+"</b> pages";let t='';for(const a in n){const i=articles[n[a].ref];t+='<li><a href="'+i.path+'">'+i.title+"</a> <p>";const s=i.content,o=80;if(s.includes(e)){const n=s.indexOf(e);n>o&&(t+="…"),t+=s.substring(n-o,n)+"<b>"+e+"</b>"+s.substring(n+e.length,n+e.length+o)}else t+=s.substring(0,o*2);t+="…</p></li>"}s.innerHTML=t}localStorage.getItem("theme")=="dark"&&switchTheme("dark"),window.addEventListener("load",function(){var e=document.getElementById("active-element");e&&e.scrollIntoView({block:"center"})}),window.addEventListener("scroll",function(){var e=document.getElementById("menu");window.scrollY<120?e.classList.remove("scrolled"):e.classList.add("scrolled")}),window.addEventListener("keydown",function(e){if(e.altKey)return;if(document.activeElement.tagName=="INPUT")return;e.key=="ArrowLeft"?document.getElementById("prev-article").click():e.key=="ArrowRight"&&document.getElementById("next-article").click()})</script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin=anonymous></script>
-<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><title>Integer Factorization - Algorithmica β</title></head><body><nav id=sidebar><div class=title><a href=https://anpaure.github.io/algorithmica-beta/>Algorithmica β</a>
-<span class=slash>/</span>
-<a href=https://anpaure.github.io/algorithmica-beta/hpc/ class=divisionAbbr>HPC</a></div><ul><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/preface/>Preface</a></li><li class=part>Performance Engineering</li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/>Complexity Models</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/>Modern Hardware</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/>Programming Languages</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/>Models of Computation</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/>When to Optimize</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/>Computer Architecture</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/>Instruction Set Architectures</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/>Assembly Language</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/>Loops and Conditionals</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/>Functions and Recursion</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/>Indirect Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/>Virtualization</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/>Interrupts and System Calls</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/>Machine Code Layout</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/>Instruction-Level Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/>Pipeline Hazards</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/>The Cost of Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/>Branchless Programming</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/>Instruction Tables</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/>Instruction Scheduling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/>Throughput Computing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/>Theoretical Performance Limits</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/>Compilation</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/>Stages of Compilation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/>Flags and Targets</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/>Situational Optimizations</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/>Contract Programming</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/>Non-Zero-Cost Abstractions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/>Precomputation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/>Arithmetic Optimizations</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/>What Compilers Can and Can't Do</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/>Profiling</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/>Instrumentation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/>Statistical Profiling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/>Program Simulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/>Machine Code Analyzers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/>Benchmarking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/>Getting Accurate Results</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/>Arithmetic</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/>Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/>IEEE 754 Floats</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/>Rounding Errors</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/>Newton's Method</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/>Fast Inverse Square Root</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/>Integer Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/>Integer Division</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/>Bit Manipulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/>Data Compression</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/>Number Theory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/>Modular Arithmetic</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/>Binary Exponentiation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/>Extended Euclidean Algorithm</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/>Montgomery Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/>Finite Fields</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/>Error Correction</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/>Hashing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/>Cryptography</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/>Random Number Generation</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/>External Memory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/>Memory Hierarchy</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/>Virtual Memory</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/>External Memory Model</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/>External Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/>List Ranking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/>Eviction Policies</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/>Cache-Oblivious Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/>Spatial and Temporal Locality</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/>B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/>Sublinear Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/>Memory Management</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/>RAM & CPU Caches</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/>Memory Bandwidth</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/>Memory Latency</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/>Cache Lines</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/>Memory Sharing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/>Memory-Level Parallelism</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/>Prefetching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/>Alignment and Packing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/>Pointer Alternatives</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/>Cache Associativity</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/>Memory Paging</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/>AoS and SoA</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/>SIMD Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/>Intrinsics and Vector Types</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/>Moving Data</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/>Reductions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/>Masking and Blending</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/>In-Register Shuffles</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/>Auto-Vectorization and SPMD</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/>Algorithms Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/>Binary GCD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/>Prime Number Sieves</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/ id=active-element>Integer Factorization</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/>Big Integers and Karatsuba Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/>Optimizing Logistic Regression</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/>Fast Fourier Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/>Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/>Argmin with SIMD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/>Number-Theoretic Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/>Prefix Sum with SIMD</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/>Reading Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/>Writing Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/>Reading and Writing Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/>String Searching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/>Matrix Multiplication</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/>Data Structures Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/>Binary Search</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/>Static B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/>Search Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/>Segment Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/>Tries</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/>Bitmaps</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/>Range Minimum Query</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/>Hash Tables</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/>Probabilistic Filters</a></li></ol><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/summary/>Summary</a></li><li class=part>Appendix</li><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/stats/>Probability Theory Refresher</a></li></ul></nav><div id=wrapper><menu id=menu><div class=left><a><img src=https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg onclick=toggleSidebar() title="open table of contents"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg style=position:relative;top:-1px onclick='switchTheme(localStorage.getItem("theme")=="dark"?"light":"dark")' title="dark theme"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg onclick=toggleSearch() title=search></a></div><div class=title><span class=beta-brand>Algorithmica β</span>
-<span class=chapter-title>Integer Factorization</span></div><div class=right><a onclick=window.print()><img src=https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg title=print></a>
-<a href=https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2falgorithms%2ffactorization.md><img src=https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg title=edit style=width:18px;position:relative;right:-2px;top:-1px></a>
-<a href=https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/algorithms/factorization.md class=github-main><img src=https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg title="view on github"></a></div></menu><main><div id=search><input id=search-bar type=search placeholder="Search this book…" oninput=search()><div id=search-count></div><div id=search-results></div></div><header><h1>Integer Factorization</h1><div class=info></div></header><article><p>The problem of factoring integers into primes is central to computational <a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/>number theory</a>. It has been <a href=https://www.cs.purdue.edu/homes/ssw/chapter3.pdf>studied</a> since at least the 3rd century BC, and <a href=https://en.wikipedia.org/wiki/Category:Integer_factorization_algorithms>many methods</a> have been developed that are efficient for different inputs.</p><p>In this case study, we specifically consider the factorization of <em>word-sized</em> integers: those on the order of $10^9$ and $10^{18}$. Untypical for this book, in this one, you may actually learn an asymptotically better algorithm: we start with a few basic approaches and gradually build up to the $O(\sqrt[4]{n})$-time <em>Pollard&rsquo;s rho algorithm</em> and optimize it to the point where it can factorize 60-bit semiprimes in 0.3-0.4ms and ~3 times faster than the previous state-of-the-art.</p><span class=anchor id=benchmark></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#benchmark>#</a>Benchmark</h3><p>For all methods, we will implement <code>find_factor</code> function that takes a positive integer $n$ and returns any of its non-trivial divisors (or <code>1</code> if the number is prime):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=c1>// I don&#39;t feel like typing &#34;unsigned long long&#34; each time
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>typedef</span> <span class=n>__uint16_t</span> <span class=n>u16</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=n>__uint32_t</span> <span class=n>u32</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=n>__uint64_t</span> <span class=n>u64</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=n>__uint128_t</span> <span class=n>u128</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>u64</span> <span class=nf>find_factor</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>);</span>
-</span></span></code></pre></div><p>To find the full factorization, you can apply it to $n$, reduce it, and continue until a new factor can no longer be found:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>vector</span><span class=o>&lt;</span><span class=n>u64</span><span class=o>&gt;</span> <span class=n>factorize</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>vector</span><span class=o>&lt;</span><span class=n>u64</span><span class=o>&gt;</span> <span class=n>factorization</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>do</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>u64</span> <span class=n>d</span> <span class=o>=</span> <span class=n>find_factor</span><span class=p>(</span><span class=n>n</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>factorization</span><span class=p>.</span><span class=n>push_back</span><span class=p>(</span><span class=n>d</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>n</span> <span class=o>/=</span> <span class=n>d</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span> <span class=k>while</span> <span class=p>(</span><span class=n>d</span> <span class=o>!=</span> <span class=mi>1</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>factorization</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>After each removed factor, the problem becomes considerably smaller, so the worst-case running time of full factorization is equal to the worst-case running time of a <code>find_factor</code> call.</p><p>For many factorization algorithms, including those presented in this section, the running time scales with the smaller prime factor. Therefore, to provide worst-case input, we use <em>semiprimes:</em> products of two prime numbers $p \le q$ that are on the same order of magnitude. We generate a $k$-bit semiprime as the product of two random $\lfloor k / 2 \rfloor$-bit primes.</p><p>Since some of the algorithms are inherently randomized, we also tolerate a small (&lt;1%) percentage of false-negative errors (when <code>find_factor</code> returns <code>1</code> despite number $n$ being composite), although this rate can be reduced to almost zero without significant performance penalties.</p><span class=anchor id=trial-division></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#trial-division>#</a>Trial division</h3><p>The most basic approach is to try every integer smaller than $n$ as a divisor:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>u64</span> <span class=nf>find_factor</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=n>u64</span> <span class=n>d</span> <span class=o>=</span> <span class=mi>2</span><span class=p>;</span> <span class=n>d</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>d</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>n</span> <span class=o>%</span> <span class=n>d</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>d</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>We can notice that if $n$ is divided by $d &lt; \sqrt n$, then it is also divided by $\frac{n}{d} > \sqrt n$, and there is no need to check for it separately. This lets us stop trial division early and only check for potential divisors that do not exceed $\sqrt n$:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>u64</span> <span class=nf>find_factor</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=n>u64</span> <span class=n>d</span> <span class=o>=</span> <span class=mi>2</span><span class=p>;</span> <span class=n>d</span> <span class=o>*</span> <span class=n>d</span> <span class=o>&lt;=</span> <span class=n>n</span><span class=p>;</span> <span class=n>d</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>n</span> <span class=o>%</span> <span class=n>d</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>d</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>In our benchmark, $n$ is a semiprime, and we always find the lesser divisor, so both $O(n)$ and $O(\sqrt n)$ implementations perform the same and are able to factorize ~2k 30-bit numbers per second — while taking whole 20 seconds to factorize a single 60-bit number.</p><span class=anchor id=lookup-table></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#lookup-table>#</a>Lookup Table</h3><p>Nowadays, you can type <code>factor 57</code> in your Linux terminal or Google search bar to get the factorization of any number. But before computers were invented, it was more practical to use <em>factorization tables:</em> special books containing factorizations of the first $N$ numbers.</p><p>We can also use this approach to compute these lookup tables <a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/>during compile time</a>. To save space, we can store only the smallest divisor of a number. Since the smallest divisor does not exceed the $\sqrt n$, we need just one byte per a 16-bit integer:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>template</span> <span class=o>&lt;</span><span class=kt>int</span> <span class=n>N</span> <span class=o>=</span> <span class=p>(</span><span class=mi>1</span><span class=o>&lt;&lt;</span><span class=mi>16</span><span class=p>)</span><span class=o>&gt;</span>
-</span></span><span class=line><span class=cl><span class=k>struct</span> <span class=nc>Precalc</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=kt>unsigned</span> <span class=kt>char</span> <span class=n>divisor</span><span class=p>[</span><span class=n>N</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>constexpr</span> <span class=nf>Precalc</span><span class=p>()</span> <span class=o>:</span> <span class=n>divisor</span><span class=p>{}</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>N</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=n>divisor</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>2</span><span class=p>;</span> <span class=n>i</span> <span class=o>*</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>N</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>divisor</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>==</span> <span class=mi>1</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>                <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=n>i</span> <span class=o>*</span> <span class=n>i</span><span class=p>;</span> <span class=n>k</span> <span class=o>&lt;</span> <span class=n>N</span><span class=p>;</span> <span class=n>k</span> <span class=o>+=</span> <span class=n>i</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>                    <span class=n>divisor</span><span class=p>[</span><span class=n>k</span><span class=p>]</span> <span class=o>=</span> <span class=n>i</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl><span class=p>};</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>constexpr</span> <span class=n>Precalc</span> <span class=n>P</span><span class=p>{};</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>u64</span> <span class=nf>find_factor</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>P</span><span class=p>.</span><span class=n>divisor</span><span class=p>[</span><span class=n>n</span><span class=p>];</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>With this approach, we can process 3M 16-bit integers per second, although it would probably <a href=../../cpu-cache/bandwidth/>get slower</a> for larger numbers. While it requires just a few milliseconds and 64KB of memory to calculate and store the divisors of the first $2^{16}$ numbers, it does not scale well for larger inputs.</p><span class=anchor id=wheel-factorization></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#wheel-factorization>#</a>Wheel factorization</h3><p>To save paper space, pre-computer era factorization tables typically excluded numbers divisible by $2$ and $5$, making the factorization table ½ × ⅘ = 0.4 of its original size. In the decimal numeral system, you can quickly determine whether a number is divisible by $2$ or $5$ (by looking at its last digit) and keep dividing the number $n$ by $2$ or $5$ while it is possible, eventually arriving at some entry in the factorization table.</p><p>We can apply a similar trick to trial division by first checking if the number is divisible by $2$ and then only considering odd divisors:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>u64</span> <span class=nf>find_factor</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>n</span> <span class=o>%</span> <span class=mi>2</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=mi>2</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=n>u64</span> <span class=n>d</span> <span class=o>=</span> <span class=mi>3</span><span class=p>;</span> <span class=n>d</span> <span class=o>*</span> <span class=n>d</span> <span class=o>&lt;=</span> <span class=n>n</span><span class=p>;</span> <span class=n>d</span> <span class=o>+=</span> <span class=mi>2</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>n</span> <span class=o>%</span> <span class=n>d</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>d</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>With 50% fewer divisions to perform, this algorithm works twice as fast.</p><p>This method can be extended: if the number is not divisible by $3$, we can also ignore all multiples of $3$, and the same goes for all other divisors. The problem is, as we increase the number of primes to exclude, it becomes less straightforward to iterate only over the numbers not divisible by them as they follow an irregular pattern — unless the number of primes is small.</p><p>For example, if we consider $2$, $3$, and $5$, then, among the first $90$ numbers, we only need to check:</p><pre class=center-pre>
+<!doctype html>
+<html lang='en-us'><head><meta charset="utf-8">
+  <link rel="icon" href="https://anpaure.github.io/algorithmica-beta/favicon.ico">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/beta.css">
+  
+
+  
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css" integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00=">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/syntax.css" id="syntax-theme">
+
+  <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+  <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js"></script>
+
+  
+  <link rel="stylesheet" id="theme">
+
+  <script>
+    function toggleSidebar() {
+      console.log("Toggling sidebar visibility")
+      var sidebar = document.getElementById('sidebar')
+      var wrapper = document.getElementById('wrapper')
+      if (sidebar.classList.contains('sidebar-toggled') || window.getComputedStyle(sidebar).display == 'block') { 
+        sidebar.classList.toggle('sidebar-hidden')
+        wrapper.classList.toggle('sidebar-hidden')
+      }
+      sidebar.classList.add('sidebar-toggled')
+      wrapper.classList.add('sidebar-toggled')
+    }
+
+    function switchTheme(theme) {
+      console.log("Changing theme:", theme)
+      document.getElementById('theme').href = (theme == 'dark' ? "https:\/\/anpaure.github.io\/algorithmica-beta\/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css" : "")
+      document.getElementById('syntax-theme').href = (theme == 'dark' ? 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax-dark.css' : 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax.css')
+      localStorage.setItem('theme', theme)
+    }
+
+    async function toggleSearch() {
+      console.log("Toggling search")
+      
+      var searchDiv = document.getElementById('search')
+      if (window.getComputedStyle(searchDiv).display == 'none') {
+        searchDiv.style.display = 'block'
+        window.scrollTo({ top: 0 });
+        document.getElementById('search-bar').focus()
+      } else {
+        searchDiv.style.display = 'none'  
+      }
+
+      if (!index) {
+        console.log("Fetching index")
+        const response = await fetch('https:\/\/anpaure.github.io\/algorithmica-beta\/searchindex.json')
+        const pages = await response.json()
+        index = lunr(function() {
+          this.use(lunr.multiLanguage('en', 'ru'))
+          this.field('title', {
+            boost: 5
+          })
+          this.field('content', {
+            boost: 1
+          })
+          pages.forEach(function(doc) {
+            this.add(doc)
+            articles.push(doc)
+          }, this)
+        })
+        console.log("Ready to search")
+      }
+    }
+
+    var articles = []
+    var index = undefined
+
+    function search() {
+      var query = document.getElementById('search-bar').value
+      var resultsDiv = document.getElementById('search-results')
+      var countDiv = document.getElementById('search-count')
+      
+      if (query == '') {
+        resultsDiv.innerHTML = ''
+        countDiv.innerHTML = ''
+        return
+      }
+      
+      var results = index.search(query)
+
+      countDiv.innerHTML = 'Found <b>' + results.length + '</b> pages'
+
+      let resultList = ''
+
+      for (const n in results) {
+        const item = articles[results[n].ref]
+        resultList += '<li><a href="' + item.path + '">' + item.title + '</a> <p>'
+        const text = item.content
+
+        const contextLimit = 80
+
+        if (text.includes(query)) {
+          const start = text.indexOf(query)
+          if (start > contextLimit)
+            resultList += '…'
+          resultList += text.substring(start - contextLimit, start)
+                      + '<b>' + query + '</b>' + text.substring(start + query.length, start + query.length + contextLimit)
+
+        } else {
+          resultList += text.substring(0, contextLimit * 2)
+        }
+        resultList += '…</p></li>'
+      }
+
+      resultsDiv.innerHTML = resultList
+    }
+
+    if (localStorage.getItem('theme') == 'dark') {
+      switchTheme('dark')
+    }
+
+    window.addEventListener('load', function() {
+      var el = document.getElementById("active-element")
+      
+      if (el) {
+        el.scrollIntoView({block: "center"})
+      }
+      
+
+    })
+
+    window.addEventListener('scroll', function() {
+      var menu = document.getElementById('menu')
+      if (window.scrollY < 120) {
+        
+        menu.classList.remove('scrolled')
+      } else {
+        
+        menu.classList.add('scrolled')
+      }
+    })
+
+    window.addEventListener('keydown', function(e) {
+      if (e.altKey) { return }
+      if (document.activeElement.tagName == 'INPUT') { return }
+      if (e.key == 'ArrowLeft') {
+        document.getElementById('prev-article').click()
+      } else if (e.key == 'ArrowRight') {
+        document.getElementById('next-article').click()
+      }
+    })
+  </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false}
+    ]
+  })"></script>
+
+  
+  <title>Integer Factorization - Algorithmica β</title>
+</head>
+<body><nav id='sidebar' >
+  
+  
+  <div class='title'>
+    <a href='https://anpaure.github.io/algorithmica-beta/'>Algorithmica β</a>
+    
+      
+        
+        <span class='slash'>/</span>
+        <a href='https://anpaure.github.io/algorithmica-beta/hpc/' class='divisionAbbr'
+           >
+          HPC
+        </a>
+      
+    
+  </div>
+  <ul>
+    
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/preface/'
+          
+          >Preface</a></li>
+        
+      
+        
+          <li class='part'>Performance Engineering</li>
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/'
+          
+          >Complexity Models</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/'
+                
+                >Modern Hardware</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/'
+                
+                >Programming Languages</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/'
+                
+                >Models of Computation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/'
+                
+                >When to Optimize</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/'
+          
+          >Computer Architecture</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/'
+                
+                >Instruction Set Architectures</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/'
+                
+                >Assembly Language</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/'
+                
+                >Loops and Conditionals</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/'
+                
+                >Functions and Recursion</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/'
+                
+                >Indirect Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/'
+                
+                >Machine Code Layout</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/'
+                
+                >Interrupts and System Calls</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/'
+                
+                >Virtualization</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/'
+          
+          >Instruction-Level Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/'
+                
+                >Pipeline Hazards</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/'
+                
+                >The Cost of Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/'
+                
+                >Branchless Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/'
+                
+                >Instruction Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/'
+                
+                >Instruction Scheduling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/'
+                
+                >Throughput Computing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/'
+                
+                >Theoretical Performance Limits</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/'
+          
+          >Compilation</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/'
+                
+                >Stages of Compilation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/'
+                
+                >Flags and Targets</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/'
+                
+                >Situational Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/'
+                
+                >Contract Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/'
+                
+                >Non-Zero-Cost Abstractions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/'
+                
+                >Precomputation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/'
+                
+                >Arithmetic Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/'
+                
+                >What Compilers Can and Can&#39;t Do</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/'
+          
+          >Profiling</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/'
+                
+                >Instrumentation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/'
+                
+                >Statistical Profiling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/'
+                
+                >Program Simulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/'
+                
+                >Machine Code Analyzers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/'
+                
+                >Benchmarking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/'
+                
+                >Getting Accurate Results</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/'
+          
+          >Arithmetic</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/'
+                
+                >Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/'
+                
+                >IEEE 754 Floats</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/'
+                
+                >Rounding Errors</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/'
+                
+                >Newton&#39;s Method</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/'
+                
+                >Fast Inverse Square Root</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/'
+                
+                >Integer Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/'
+                
+                >Integer Division</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/'
+                
+                >Bit Manipulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/'
+                
+                >Data Compression</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/'
+          
+          >Number Theory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/'
+                
+                >Modular Arithmetic</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/'
+                
+                >Binary Exponentiation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/'
+                
+                >Extended Euclidean Algorithm</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/'
+                
+                >Montgomery Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/'
+                
+                >Finite Fields</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/'
+                
+                >Error Correction</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/'
+                
+                >Cryptography</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/'
+                
+                >Hashing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/'
+                
+                >Random Number Generation</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/'
+          
+          >External Memory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/'
+                
+                >Memory Hierarchy</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/'
+                
+                >Virtual Memory</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/'
+                
+                >External Memory Model</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/'
+                
+                >External Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/'
+                
+                >List Ranking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/'
+                
+                >Eviction Policies</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/'
+                
+                >Cache-Oblivious Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/'
+                
+                >Spatial and Temporal Locality</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/'
+                
+                >B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/'
+                
+                >Sublinear Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/'
+                
+                >Memory Management</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/'
+          
+          >RAM &amp; CPU Caches</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/'
+                
+                >Memory Bandwidth</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/'
+                
+                >Memory Latency</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/'
+                
+                >Cache Lines</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/'
+                
+                >Memory Sharing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/'
+                
+                >Memory-Level Parallelism</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/'
+                
+                >Prefetching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/'
+                
+                >Alignment and Packing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/'
+                
+                >Pointer Alternatives</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/'
+                
+                >Cache Associativity</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/'
+                
+                >Memory Paging</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/'
+                
+                >AoS and SoA</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/'
+          
+          >SIMD Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/'
+                
+                >Intrinsics and Vector Types</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/'
+                
+                >Moving Data</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/'
+                
+                >Reductions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/'
+                
+                >Masking and Blending</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/'
+                
+                >In-Register Shuffles</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/'
+                
+                >Auto-Vectorization and SPMD</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/'
+          
+          >Algorithms Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/'
+                
+                >Binary GCD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/'
+                
+                >Prime Number Sieves</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/'
+                id='active-element'
+                >Integer Factorization</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/'
+                
+                >Optimizing Logistic Regression</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/'
+                
+                >Big Integers and Karatsuba Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/'
+                
+                >Fast Fourier Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/'
+                
+                >Number-Theoretic Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/'
+                
+                >Argmin with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/'
+                
+                >Prefix Sum with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/'
+                
+                >Reading Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/'
+                
+                >Writing Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/'
+                
+                >Reading and Writing Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/'
+                
+                >String Searching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/'
+                
+                >Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/'
+                
+                >Matrix Multiplication</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/'
+          
+          >Data Structures Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/'
+                
+                >Binary Search</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/'
+                
+                >Static B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/'
+                
+                >Search Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/'
+                
+                >Segment Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/'
+                
+                >Tries</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/'
+                
+                >Range Minimum Query</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/'
+                
+                >Hash Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/'
+                
+                >Bitmaps</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/'
+                
+                >Probabilistic Filters</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/summary/'
+          
+          >Summary</a></li>
+        
+      
+        
+          <li class='part'>Appendix</li>
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/stats/'
+          
+          >Probability Theory Refresher</a></li>
+        
+      
+    
+  </ul>
+</nav>
+<div id='wrapper' ><menu id='menu'>
+  
+  
+  
+  
+  <div class='left'>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg'
+           onclick='toggleSidebar()'
+           title='open table of contents'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg'
+           style='position: relative; top: -1px'
+           onclick='switchTheme(localStorage.getItem("theme") == "dark" ? "light" : "dark")'
+           title='dark theme'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg'
+           onclick='toggleSearch()'
+           title='search'>
+    </a>
+  </div>
+  <div class='title'>
+    
+      <span class='beta-brand'>Algorithmica β</span>
+      <span class='chapter-title'>Integer Factorization</span>
+    
+  </div>
+  <div class='right'>
+    <a onClick='window.print()'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg' title='print'>
+    </a>
+    <a href='https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2falgorithms%2ffactorization.md'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg'
+           title='edit'
+           style='width: 18px; position: relative; right: -2px; top: -1px'>
+    </a>
+    <a href='https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/algorithms/factorization.md' class='github-main'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg' title='view on github'>
+    </a>
+  </div>
+</menu>
+<main>
+        <div id="search">
+    <input id="search-bar" type="search" placeholder='Search this book…' oninput="search()">
+    <div id="search-count"></div>
+    <div id="search-results">
+    </div>
+</div>
+<header>
+  
+  <h1>Integer Factorization</h1>
+  
+    <div class='info'></div>
+  
+</header>
+<article>
+  
+
+
+  
+    
+    
+      
+        <p>The problem of factoring integers into primes is central to computational <a href="https://anpaure.github.io/algorithmica-beta/hpc/number-theory/">number theory</a>. It has been <a href="https://www.cs.purdue.edu/homes/ssw/chapter3.pdf">studied</a> since at least the 3rd century BC, and <a href="https://en.wikipedia.org/wiki/Category:Integer_factorization_algorithms">many methods</a> have been developed that are efficient for different inputs.</p>
+<p>In this case study, we specifically consider the factorization of <em>word-sized</em> integers: those on the order of $10^9$ and $10^{18}$. Untypical for this book, in this one, you may actually learn an asymptotically better algorithm: we start with a few basic approaches and gradually build up to the $O(\sqrt[4]{n})$-time <em>Pollard&rsquo;s rho algorithm</em> and optimize it to the point where it can factorize 60-bit semiprimes in 0.3-0.4ms and ~3 times faster than the previous state-of-the-art.</p>
+<!--
+Integer factorization is interesting because of the RSA problem.
+Unlike other case studies of this book, in this one you will actually learn an asymptotically better algorithm that you've never known before — Pollard's rho algorithm — which we optimize so that it is almost 4 times faster than the existing implementation, to the best of my knowledge.
+-->
+<span class='anchor' id="benchmark"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#benchmark">#</a>Benchmark</h3><p>For all methods, we will implement <code>find_factor</code> function that takes a positive integer $n$ and returns any of its non-trivial divisors (or <code>1</code> if the number is prime):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">// I don&#39;t feel like typing &#34;unsigned long long&#34; each time
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">typedef</span> <span class="n">__uint16_t</span> <span class="n">u16</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">typedef</span> <span class="n">__uint32_t</span> <span class="n">u32</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">typedef</span> <span class="n">__uint64_t</span> <span class="n">u64</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">typedef</span> <span class="n">__uint128_t</span> <span class="n">u128</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">find_factor</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">);</span>
+</span></span></code></pre></div><p>To find the full factorization, you can apply it to $n$, reduce it, and continue until a new factor can no longer be found:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">vector</span><span class="o">&lt;</span><span class="n">u64</span><span class="o">&gt;</span> <span class="n">factorize</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="n">u64</span><span class="o">&gt;</span> <span class="n">factorization</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">do</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">u64</span> <span class="n">d</span> <span class="o">=</span> <span class="n">find_factor</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">factorization</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">d</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">n</span> <span class="o">/=</span> <span class="n">d</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">d</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">factorization</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>After each removed factor, the problem becomes considerably smaller, so the worst-case running time of full factorization is equal to the worst-case running time of a <code>find_factor</code> call.</p>
+<p>For many factorization algorithms, including those presented in this section, the running time scales with the smaller prime factor. Therefore, to provide worst-case input, we use <em>semiprimes:</em> products of two prime numbers $p \le q$ that are on the same order of magnitude. We generate a $k$-bit semiprime as the product of two random $\lfloor k / 2 \rfloor$-bit primes.</p>
+<p>Since some of the algorithms are inherently randomized, we also tolerate a small (&lt;1%) percentage of false-negative errors (when <code>find_factor</code> returns <code>1</code> despite number $n$ being composite), although this rate can be reduced to almost zero without significant performance penalties.</p>
+<span class='anchor' id="trial-division"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#trial-division">#</a>Trial division</h3><!--
+
+Trial division was first described by Fibonacci in 1202. Although it was probably known to animals. Perhaps some animals can factor? The scientific priority probably belongs to dinosaurs or ancient fish trying to divvy stuff up.
+
+0.056024
+
+-->
+<p>The most basic approach is to try every integer smaller than $n$ as a divisor:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">find_factor</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">u64</span> <span class="n">d</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">d</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">d</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>We can notice that if $n$ is divided by $d &lt; \sqrt n$, then it is also divided by $\frac{n}{d} &gt; \sqrt n$, and there is no need to check for it separately. This lets us stop trial division early and only check for potential divisors that do not exceed $\sqrt n$:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">find_factor</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">u64</span> <span class="n">d</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">d</span> <span class="o">*</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">d</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">d</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>In our benchmark, $n$ is a semiprime, and we always find the lesser divisor, so both $O(n)$ and $O(\sqrt n)$ implementations perform the same and are able to factorize ~2k 30-bit numbers per second — while taking whole 20 seconds to factorize a single 60-bit number.</p>
+<span class='anchor' id="lookup-table"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#lookup-table">#</a>Lookup Table</h3><p>Nowadays, you can type <code>factor 57</code> in your Linux terminal or Google search bar to get the factorization of any number. But before computers were invented, it was more practical to use <em>factorization tables:</em> special books containing factorizations of the first $N$ numbers.</p>
+<p>We can also use this approach to compute these lookup tables <a href="https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/">during compile time</a>. To save space, we can store only the smallest divisor of a number. Since the smallest divisor does not exceed the $\sqrt n$, we need just one byte per a 16-bit integer:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">template</span> <span class="o">&lt;</span><span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="mi">16</span><span class="p">)</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Precalc</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">divisor</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">constexpr</span> <span class="nf">Precalc</span><span class="p">()</span> <span class="o">:</span> <span class="n">divisor</span><span class="p">{}</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">divisor</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">*</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">divisor</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">i</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">k</span> <span class="o">+=</span> <span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">divisor</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">constexpr</span> <span class="n">Precalc</span> <span class="n">P</span><span class="p">{};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">find_factor</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">P</span><span class="p">.</span><span class="n">divisor</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>With this approach, we can process 3M 16-bit integers per second, although it would probably <a href="../../cpu-cache/bandwidth/">get slower</a> for larger numbers. While it requires just a few milliseconds and 64KB of memory to calculate and store the divisors of the first $2^{16}$ numbers, it does not scale well for larger inputs.</p>
+<span class='anchor' id="wheel-factorization"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#wheel-factorization">#</a>Wheel factorization</h3><p>To save paper space, pre-computer era factorization tables typically excluded numbers divisible by $2$ and $5$, making the factorization table ½ × ⅘ = 0.4 of its original size. In the decimal numeral system, you can quickly determine whether a number is divisible by $2$ or $5$ (by looking at its last digit) and keep dividing the number $n$ by $2$ or $5$ while it is possible, eventually arriving at some entry in the factorization table.</p>
+<p>We can apply a similar trick to trial division by first checking if the number is divisible by $2$ and then only considering odd divisors:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">find_factor</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">u64</span> <span class="n">d</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">d</span> <span class="o">*</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">d</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">d</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>With 50% fewer divisions to perform, this algorithm works twice as fast.</p>
+<p>This method can be extended: if the number is not divisible by $3$, we can also ignore all multiples of $3$, and the same goes for all other divisors. The problem is, as we increase the number of primes to exclude, it becomes less straightforward to iterate only over the numbers not divisible by them as they follow an irregular pattern — unless the number of primes is small.</p>
+<p>For example, if we consider $2$, $3$, and $5$, then, among the first $90$ numbers, we only need to check:</p>
+<pre class='center-pre'>
 (1,) 7, 11, 13, 17, 19, 23, 29,
 31, 37, 41, 43, 47, 49, 53, 59,
 61, 67, 71, 73, 77, 79, 83, 89…
-</pre><p>You can notice a pattern: the sequence repeats itself every $30$ numbers. This is not surprising since the remainder modulo $2 \times 3 \times 5 = 30$ is all we need to determine whether a number is divisible by $2$, $3$, or $5$. This means that we only need to check $8$ numbers with specific remainders out of every $30$, proportionally improving the performance:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>u64</span> <span class=nf>find_factor</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=n>u64</span> <span class=nl>d</span> <span class=p>:</span> <span class=p>{</span><span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>5</span><span class=p>})</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>n</span> <span class=o>%</span> <span class=n>d</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>d</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>u64</span> <span class=n>offsets</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span><span class=mi>0</span><span class=p>,</span> <span class=mi>4</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>12</span><span class=p>,</span> <span class=mi>16</span><span class=p>,</span> <span class=mi>22</span><span class=p>,</span> <span class=mi>24</span><span class=p>};</span>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=n>u64</span> <span class=n>d</span> <span class=o>=</span> <span class=mi>7</span><span class=p>;</span> <span class=n>d</span> <span class=o>*</span> <span class=n>d</span> <span class=o>&lt;=</span> <span class=n>n</span><span class=p>;</span> <span class=n>d</span> <span class=o>+=</span> <span class=mi>30</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=n>u64</span> <span class=nl>offset</span> <span class=p>:</span> <span class=n>offsets</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>            <span class=n>u64</span> <span class=n>x</span> <span class=o>=</span> <span class=n>d</span> <span class=o>+</span> <span class=n>offset</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>n</span> <span class=o>%</span> <span class=n>x</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=n>x</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>As expected, it works $\frac{30}{8} = 3.75$ times faster than the naive trial division, processing about 7.6k 30-bit numbers per second. The performance can be improved further by considering more primes, but the returns are diminishing: adding a new prime $p$ reduces the number of iterations by $\frac{1}{p}$ but increases the size of the skip-list by a factor of $p$, requiring proportionally more memory.</p><span class=anchor id=precomputed-primes></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#precomputed-primes>#</a>Precomputed Primes</h3><p>If we keep increasing the number of primes in wheel factorization, we eventually exclude all composite numbers and only check for prime factors. In this case, we don&rsquo;t need this array of offsets but just the array of primes:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>N</span> <span class=o>=</span> <span class=p>(</span><span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=mi>16</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>struct</span> <span class=nc>Precalc</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>u16</span> <span class=n>primes</span><span class=p>[</span><span class=mi>6542</span><span class=p>];</span> <span class=c1>// # of primes under N=2^16
-</span></span></span><span class=line><span class=cl><span class=c1></span>
-</span></span><span class=line><span class=cl>    <span class=k>constexpr</span> <span class=nf>Precalc</span><span class=p>()</span> <span class=o>:</span> <span class=n>primes</span><span class=p>{}</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=kt>bool</span> <span class=n>marked</span><span class=p>[</span><span class=n>N</span><span class=p>]</span> <span class=o>=</span> <span class=p>{};</span>
-</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>n_primes</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>2</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>N</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>marked</span><span class=p>[</span><span class=n>i</span><span class=p>])</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>                <span class=n>primes</span><span class=p>[</span><span class=n>n_primes</span><span class=o>++</span><span class=p>]</span> <span class=o>=</span> <span class=n>i</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>                <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=mi>2</span> <span class=o>*</span> <span class=n>i</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>N</span><span class=p>;</span> <span class=n>j</span> <span class=o>+=</span> <span class=n>i</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>                    <span class=n>marked</span><span class=p>[</span><span class=n>j</span><span class=p>]</span> <span class=o>=</span> <span class=nb>true</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=p>}</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl><span class=p>};</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>constexpr</span> <span class=n>Precalc</span> <span class=n>P</span><span class=p>{};</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>u64</span> <span class=nf>find_factor</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=n>u16</span> <span class=nl>p</span> <span class=p>:</span> <span class=n>P</span><span class=p>.</span><span class=n>primes</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>n</span> <span class=o>%</span> <span class=n>p</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>p</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>This approach lets us process almost 20k 30-bit integers per second, but it does not work for larger (64-bit) numbers unless they have small ($&lt; 2^{16}$) factors.</p><p>Note that this is actually an asymptotic optimization: there are $O(\frac{n}{\ln n})$ primes among the first $n$ numbers, so this algorithm performs $O(\frac{\sqrt n}{\ln \sqrt n})$ operations, while wheel factorization only eliminates a large but constant fraction of divisors. If we extend it to 64-bit numbers and precompute every prime under $2^{32}$ (storing which would require several hundred megabytes of memory), the relative speedup would grow by a factor of $\frac{\ln \sqrt{n^2}}{\ln \sqrt n} = 2 \cdot \frac{1/2}{1/2} \cdot \frac{\ln n}{\ln n} = 2$.</p><p>All variants of trial division, including this one, are bottlenecked by the speed of integer division, which can be <a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/>optimized</a> if we know the divisors in advance and allow for some additional precomputation. In our case, it is suitable to use <a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/#lemire-reduction>the Lemire division check</a>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=c1>// ...precomputation is the same as before,
-</span></span></span><span class=line><span class=cl><span class=c1>// but we store the reciprocal instead of the prime number itself
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>u64</span> <span class=n>magic</span><span class=p>[</span><span class=mi>6542</span><span class=p>];</span>
-</span></span><span class=line><span class=cl><span class=c1>// for each prime i:
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>magic</span><span class=p>[</span><span class=n>n_primes</span><span class=o>++</span><span class=p>]</span> <span class=o>=</span> <span class=n>u64</span><span class=p>(</span><span class=o>-</span><span class=mi>1</span><span class=p>)</span> <span class=o>/</span> <span class=n>i</span> <span class=o>+</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>u64</span> <span class=nf>find_factor</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=n>u64</span> <span class=nl>m</span> <span class=p>:</span> <span class=n>P</span><span class=p>.</span><span class=n>magic</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>m</span> <span class=o>*</span> <span class=n>n</span> <span class=o>&lt;</span> <span class=n>m</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>u64</span><span class=p>(</span><span class=o>-</span><span class=mi>1</span><span class=p>)</span> <span class=o>/</span> <span class=n>m</span> <span class=o>+</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>This makes the algorithm ~18x faster: we can now factorize <strong>~350k</strong> 30-bit numbers per second, which is actually the most efficient algorithm we have for this number range. While it can probably be optimized even further by performing these checks in parallel with <a href=https://anpaure.github.io/algorithmica-beta/hpc/simd>SIMD</a>, we will stop there and try a different, asymptotically better approach.</p><span class=anchor id=pollards-rho-algorithm></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#pollards-rho-algorithm>#</a>Pollard&rsquo;s Rho Algorithm</h3><p>Pollard&rsquo;s rho is a randomized $O(\sqrt[4]{n})$ integer factorization algorithm that makes use of the <a href=https://en.wikipedia.org/wiki/Birthday_problem>birthday paradox</a>:</p><blockquote><p>One only needs to draw $d = \Theta(\sqrt{n})$ random numbers between $1$ and $n$ to get a collision with high probability.</p></blockquote><p>The reasoning behind it is that each of the $d$ added element has a $\frac{d}{n}$ chance of colliding with some other element, implying that the expected number of collisions is $\frac{d^2}{n}$. If $d$ is asymptotically smaller than $\sqrt n$, then this ratio grows to zero as $n \to \infty$, and to infinity otherwise.</p><p>Consider some function $f(x)$ that takes a remainder $x \in [0, n)$ and maps it to some other remainder of $n$ in a way that seems random from the number theory point of view. Specifically, we will use $f(x) = x^2 + 1 \bmod n$, which is random enough for our purposes.</p><p>Now, consider a graph where each number-vertex $x$ has an edge pointing to $f(x)$. Such graphs are called <em>functional</em>. In functional graphs, the &ldquo;trajectory&rdquo; of any element — the path we walk if we start from that element and keep following the edges — is a path that eventually loops around (because the set of vertices is limited, and at some point, we have to go to a vertex we have already visited).</p><p><figure><img src=../img/rho.jpg><figcaption>The trajectory of an element resembles the greek letter ρ (rho), which is what the algorithm is named after</figcaption></figure></p><p>Consider a trajectory of some particular element $x_0$:</p>$$
+</pre>
+<p>You can notice a pattern: the sequence repeats itself every $30$ numbers. This is not surprising since the remainder modulo $2 \times 3 \times 5 = 30$ is all we need to determine whether a number is divisible by $2$, $3$, or $5$. This means that we only need to check $8$ numbers with specific remainders out of every $30$, proportionally improving the performance:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">find_factor</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">u64</span> <span class="nl">d</span> <span class="p">:</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">d</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">u64</span> <span class="n">offsets</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">24</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">u64</span> <span class="n">d</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span> <span class="n">d</span> <span class="o">*</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">d</span> <span class="o">+=</span> <span class="mi">30</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="n">u64</span> <span class="nl">offset</span> <span class="p">:</span> <span class="n">offsets</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">u64</span> <span class="n">x</span> <span class="o">=</span> <span class="n">d</span> <span class="o">+</span> <span class="n">offset</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>As expected, it works $\frac{30}{8} = 3.75$ times faster than the naive trial division, processing about 7.6k 30-bit numbers per second. The performance can be improved further by considering more primes, but the returns are diminishing: adding a new prime $p$ reduces the number of iterations by $\frac{1}{p}$ but increases the size of the skip-list by a factor of $p$, requiring proportionally more memory.</p>
+<span class='anchor' id="precomputed-primes"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#precomputed-primes">#</a>Precomputed Primes</h3><p>If we keep increasing the number of primes in wheel factorization, we eventually exclude all composite numbers and only check for prime factors. In this case, we don&rsquo;t need this array of offsets but just the array of primes:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Precalc</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">u16</span> <span class="n">primes</span><span class="p">[</span><span class="mi">6542</span><span class="p">];</span> <span class="c1">// # of primes under N=2^16
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="k">constexpr</span> <span class="nf">Precalc</span><span class="p">()</span> <span class="o">:</span> <span class="n">primes</span><span class="p">{}</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">bool</span> <span class="n">marked</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">n_primes</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">marked</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">primes</span><span class="p">[</span><span class="n">n_primes</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">j</span> <span class="o">+=</span> <span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">marked</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">constexpr</span> <span class="n">Precalc</span> <span class="n">P</span><span class="p">{};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">find_factor</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">u16</span> <span class="nl">p</span> <span class="p">:</span> <span class="n">P</span><span class="p">.</span><span class="n">primes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>This approach lets us process almost 20k 30-bit integers per second, but it does not work for larger (64-bit) numbers unless they have small ($&lt; 2^{16}$) factors.</p>
+<p>Note that this is actually an asymptotic optimization: there are $O(\frac{n}{\ln n})$ primes among the first $n$ numbers, so this algorithm performs $O(\frac{\sqrt n}{\ln \sqrt n})$ operations, while wheel factorization only eliminates a large but constant fraction of divisors. If we extend it to 64-bit numbers and precompute every prime under $2^{32}$ (storing which would require several hundred megabytes of memory), the relative speedup would grow by a factor of $\frac{\ln \sqrt{n^2}}{\ln \sqrt n} = 2 \cdot \frac{1/2}{1/2} \cdot \frac{\ln n}{\ln n} = 2$.</p>
+<p>All variants of trial division, including this one, are bottlenecked by the speed of integer division, which can be <a href="https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/">optimized</a> if we know the divisors in advance and allow for some additional precomputation. In our case, it is suitable to use <a href="https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/#lemire-reduction">the Lemire division check</a>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">// ...precomputation is the same as before,
+</span></span></span><span class="line"><span class="cl"><span class="c1">// but we store the reciprocal instead of the prime number itself
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">u64</span> <span class="n">magic</span><span class="p">[</span><span class="mi">6542</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// for each prime i:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">magic</span><span class="p">[</span><span class="n">n_primes</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">u64</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">find_factor</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">u64</span> <span class="nl">m</span> <span class="p">:</span> <span class="n">P</span><span class="p">.</span><span class="n">magic</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">u64</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>This makes the algorithm ~18x faster: we can now factorize <strong>~350k</strong> 30-bit numbers per second, which is actually the most efficient algorithm we have for this number range. While it can probably be optimized even further by performing these checks in parallel with <a href="https://anpaure.github.io/algorithmica-beta/hpc/simd">SIMD</a>, we will stop there and try a different, asymptotically better approach.</p>
+<span class='anchor' id="pollards-rho-algorithm"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#pollards-rho-algorithm">#</a>Pollard&rsquo;s Rho Algorithm</h3><!--
+
+Consider this weird code snippet:
+
+```c++
+u64 find_factor(u64 n) {
+    while (true) {
+        if (u64 g = gcd(randint(2, n - 1), n); g != 1)
+            return g;
+    }
+}
+```
+
+It also searches for a factor, but it does so by repeatedly trying to compute the [GCD](../gcd) of $n$ and its random remainder, which would yield a valid divisor of $n$ if this remainder is not coprime with it. Surprisingly, this algorithm is not *that* terrible: it needs expected $O(\sqrt n)$ iterations in the worst case (times $\log n$ from GCD) because on each trial, it can hit not only $p$ or $q = \frac{n}{p}$, but also $\frac{n}{p} + \frac{n}{q} = O(\sqrt n)$ of their multiples.
+
+By itself, this algorithm is just an esoteric way of computing factorization, but can be made useful. If, instead of random numbers, we apply this $\gcd$ trick to a particular number sequence, we get a $O(n^\frac{1}{4})$ approach known as Pollard's rho algorithm.
+
+Apart from this trick, Pollard's rho algorithm relies on a consequence from the Birthday paradox: we need to add $O(\sqrt{n})$ random numbers from $1$ to $n$ to a set until we get a collision. 
+
+-->
+<p>Pollard&rsquo;s rho is a randomized $O(\sqrt[4]{n})$ integer factorization algorithm that makes use of the <a href="https://en.wikipedia.org/wiki/Birthday_problem">birthday paradox</a>:</p>
+<blockquote>
+<p>One only needs to draw $d = \Theta(\sqrt{n})$ random numbers between $1$ and $n$ to get a collision with high probability.</p>
+</blockquote>
+<p>The reasoning behind it is that each of the $d$ added element has a $\frac{d}{n}$ chance of colliding with some other element, implying that the expected number of collisions is $\frac{d^2}{n}$. If $d$ is asymptotically smaller than $\sqrt n$, then this ratio grows to zero as $n \to \infty$, and to infinity otherwise.</p>
+<p>Consider some function $f(x)$ that takes a remainder $x \in [0, n)$ and maps it to some other remainder of $n$ in a way that seems random from the number theory point of view. Specifically, we will use $f(x) = x^2 + 1 \bmod n$, which is random enough for our purposes.</p>
+<p>Now, consider a graph where each number-vertex $x$ has an edge pointing to $f(x)$. Such graphs are called <em>functional</em>. In functional graphs, the &ldquo;trajectory&rdquo; of any element — the path we walk if we start from that element and keep following the edges — is a path that eventually loops around (because the set of vertices is limited, and at some point, we have to go to a vertex we have already visited).</p>
+<p><figure>
+  <img src="../img/rho.jpg">
+  <figcaption>The trajectory of an element resembles the greek letter ρ (rho), which is what the algorithm is named after</figcaption>
+</figure>
+</p>
+<p>Consider a trajectory of some particular element $x_0$:</p>
+
+      
+    
+  
+
+  
+    $$
+    
 x_0, \; f(x_0), \; f(f(x_0)), \; \ldots
-$$<p>Let&rsquo;s make another sequence out of this one by reducing each element modulo $p$, the smallest prime divisor of $n$.</p><p><strong>Lemma.</strong> The expected length of the reduced sequence before it turns into a cycle is $O(\sqrt[4]{n})$.</p><p><strong>Proof:</strong> Since $p$ is the smallest divisor, $p \leq \sqrt n$. Each time we follow a new edge, we essentially generate a random number between $0$ and $p$ (we treat $f$ as a &ldquo;deterministically-random&rdquo; function). The birthday paradox states that we only need to generate $O(\sqrt p) = O(\sqrt[4]{n})$ numbers until we get a collision and thus enter a loop.</p><p>Since we don&rsquo;t know $p$, this mod-$p$ sequence is only imaginary, but if find a cycle in it — that is, $i$ and $j$ such that</p>$$
+
+    $$
+  
+
+  
+    
+    
+      
+        <p>Let&rsquo;s make another sequence out of this one by reducing each element modulo $p$, the smallest prime divisor of $n$.</p>
+<p><strong>Lemma.</strong> The expected length of the reduced sequence before it turns into a cycle is $O(\sqrt[4]{n})$.</p>
+<p><strong>Proof:</strong> Since $p$ is the smallest divisor, $p \leq \sqrt n$. Each time we follow a new edge, we essentially generate a random number between $0$ and $p$ (we treat $f$ as a &ldquo;deterministically-random&rdquo; function). The birthday paradox states that we only need to generate $O(\sqrt p) = O(\sqrt[4]{n})$ numbers until we get a collision and thus enter a loop.</p>
+<p>Since we don&rsquo;t know $p$, this mod-$p$ sequence is only imaginary, but if find a cycle in it — that is, $i$ and $j$ such that</p>
+
+      
+    
+  
+
+  
+    $$
+    
 f^i(x_0) \equiv f^j(x_0) \pmod p
-$$
-then we can also find $p$ itself as
-$$
+
+    $$
+  
+
+  
+    
+    
+      
+        then we can also find $p$ itself as
+      
+    
+  
+
+  
+    $$
+    
 p = \gcd(|f^i(x_0) - f^j(x_0)|, n)
-$$
-The algorithm itself just finds this cycle and $p$ using this GCD trick and Floyd&rsquo;s &ldquo;<a href="https://en.wikipedia.org/wiki/Cycle_detection#Floyd's_tortoise_and_hare">tortoise and hare</a>&rdquo; algorithm: we maintain two pointers $i$ and $j = 2i$ and check that
-$$
+
+    $$
+  
+
+  
+    
+    
+      
+        The algorithm itself just finds this cycle and $p$ using this GCD trick and Floyd&rsquo;s &ldquo;<a href="https://en.wikipedia.org/wiki/Cycle_detection#Floyd's_tortoise_and_hare">tortoise and hare</a>&rdquo; algorithm: we maintain two pointers $i$ and $j = 2i$ and check that
+      
+    
+  
+
+  
+    $$
+    
 \gcd(|f^i(x_0) - f^j(x_0)|, n) \neq 1
-$$<p>which is equivalent to comparing $f^i(x_0)$ and $f^j(x_0)$ modulo $p$. Since $j$ (hare) is increasing at twice the rate of $i$ (tortoise), their difference is increasing by $1$ each iteration and eventually will become equal to (or a multiple of) the cycle length, with $i$ and $j$ pointing to the same elements. And as we proved half a page ago, reaching a cycle would only require $O(\sqrt[4]{n})$ iterations:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>u64</span> <span class=nf>f</span><span class=p>(</span><span class=n>u64</span> <span class=n>x</span><span class=p>,</span> <span class=n>u64</span> <span class=n>mod</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=p>((</span><span class=n>u128</span><span class=p>)</span> <span class=n>x</span> <span class=o>*</span> <span class=n>x</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span> <span class=o>%</span> <span class=n>mod</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>u64</span> <span class=nf>diff</span><span class=p>(</span><span class=n>u64</span> <span class=n>a</span><span class=p>,</span> <span class=n>u64</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=c1>// a and b are unsigned and so is their difference, so we can&#39;t just call abs(a - b)
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>return</span> <span class=n>a</span> <span class=o>&gt;</span> <span class=n>b</span> <span class=o>?</span> <span class=n>a</span> <span class=o>-</span> <span class=nl>b</span> <span class=p>:</span> <span class=n>b</span> <span class=o>-</span> <span class=n>a</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>const</span> <span class=n>u64</span> <span class=n>SEED</span> <span class=o>=</span> <span class=mi>42</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>u64</span> <span class=nf>find_factor</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>u64</span> <span class=n>x</span> <span class=o>=</span> <span class=n>SEED</span><span class=p>,</span> <span class=n>y</span> <span class=o>=</span> <span class=n>SEED</span><span class=p>,</span> <span class=n>g</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>g</span> <span class=o>==</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>x</span> <span class=o>=</span> <span class=n>f</span><span class=p>(</span><span class=n>f</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>n</span><span class=p>),</span> <span class=n>n</span><span class=p>);</span> <span class=c1>// advance x twice
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>y</span> <span class=o>=</span> <span class=n>f</span><span class=p>(</span><span class=n>y</span><span class=p>,</span> <span class=n>n</span><span class=p>);</span>       <span class=c1>// advance y once
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>g</span> <span class=o>=</span> <span class=n>gcd</span><span class=p>(</span><span class=n>diff</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>));</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>g</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>While it processes only ~25k 30-bit integers — which is almost 15 times slower than by checking each prime using a fast division trick — it dramatically outperforms every $\tilde{O}(\sqrt n)$ algorithm for 60-bit numbers, factorizing around 90 of them per second.</p><span class=anchor id=pollard-brent-algorithm></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#pollard-brent-algorithm>#</a>Pollard-Brent Algorithm</h3><p>Floyd&rsquo;s cycle-finding algorithm has a problem in that it moves iterators more than necessary: at least half of the vertices are visited one additional time by the slower iterator.</p><p>One way to solve it is to memorize the values $x_i$ that the faster iterator visits and, every two iterations, compute the GCD using the difference of $x_i$ and $x_{\lfloor i / 2 \rfloor}$. But it can also be done without extra memory using a different principle: the tortoise doesn&rsquo;t move on every iteration, but it gets reset to the value of the faster iterator when the iteration number becomes a power of two. This lets us save additional iterations while still using the same GCD trick to compare $x_i$ and $x_{2^{\lfloor \log_2 i \rfloor}}$ on each iteration:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=n>u64</span> <span class=nf>find_factor</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>u64</span> <span class=n>x</span> <span class=o>=</span> <span class=n>SEED</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>l</span> <span class=o>=</span> <span class=mi>256</span><span class=p>;</span> <span class=n>l</span> <span class=o>&lt;</span> <span class=p>(</span><span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=mi>20</span><span class=p>);</span> <span class=n>l</span> <span class=o>*=</span> <span class=mi>2</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>u64</span> <span class=n>y</span> <span class=o>=</span> <span class=n>x</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>l</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>            <span class=n>x</span> <span class=o>=</span> <span class=n>f</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>n</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>u64</span> <span class=n>g</span> <span class=o>=</span> <span class=n>gcd</span><span class=p>(</span><span class=n>diff</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>),</span> <span class=n>n</span><span class=p>);</span> <span class=n>g</span> <span class=o>!=</span> <span class=mi>1</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=n>g</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>Note that we also set an upper limit on the number of iterations so that the algorithm finishes in a reasonable amount of time and returns <code>1</code> if $n$ turns out to be a prime.</p><p>It actually does <em>not</em> improve performance and even makes the algorithm ~1.5x <em>slower</em>, which probably has something to do with the fact that $x$ is stale. It spends most of the time computing the GCD and not advancing the iterator — in fact, the time requirement of this algorithm is currently $O(\sqrt[4]{n} \log n)$ because of it.</p><p>Instead of <a href=../gcd>optimizing the GCD itself</a>, we will optimize the number of its invocations. We can use the fact that if one of $a$ and $b$ contains factor $p$, then $a \cdot b \bmod n$ will also contain it, so instead of computing $\gcd(a, n)$ and $\gcd(b, n)$, we can compute $\gcd(a \cdot b \bmod n, n)$. This way, we can group the calculations of GCP in groups of $M = O(\log n)$ we remove $\log n$ out of the asymptotic:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>M</span> <span class=o>=</span> <span class=mi>1024</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>u64</span> <span class=nf>find_factor</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>u64</span> <span class=n>x</span> <span class=o>=</span> <span class=n>SEED</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>l</span> <span class=o>=</span> <span class=n>M</span><span class=p>;</span> <span class=n>l</span> <span class=o>&lt;</span> <span class=p>(</span><span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=mi>20</span><span class=p>);</span> <span class=n>l</span> <span class=o>*=</span> <span class=mi>2</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>u64</span> <span class=n>y</span> <span class=o>=</span> <span class=n>x</span><span class=p>,</span> <span class=n>p</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>l</span><span class=p>;</span> <span class=n>i</span> <span class=o>+=</span> <span class=n>M</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>M</span><span class=p>;</span> <span class=n>j</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>                <span class=n>y</span> <span class=o>=</span> <span class=n>f</span><span class=p>(</span><span class=n>y</span><span class=p>,</span> <span class=n>n</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>                <span class=n>p</span> <span class=o>=</span> <span class=p>(</span><span class=n>u128</span><span class=p>)</span> <span class=n>p</span> <span class=o>*</span> <span class=n>diff</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>)</span> <span class=o>%</span> <span class=n>n</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=p>}</span>
-</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>u64</span> <span class=n>g</span> <span class=o>=</span> <span class=n>gcd</span><span class=p>(</span><span class=n>p</span><span class=p>,</span> <span class=n>n</span><span class=p>);</span> <span class=n>g</span> <span class=o>!=</span> <span class=mi>1</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=n>g</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>Now it performs 425 factorizations per second, bottlenecked by the speed of modulo.</p><span class=anchor id=optimizing-the-modulo></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#optimizing-the-modulo>#</a>Optimizing the Modulo</h3><p>The final step is to apply <a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/>Montgomery multiplication</a>. Since the modulo is constant, we can perform all computations — advancing the iterator, multiplication, and even computing the GCD — in the Montgomery space where reduction is cheap:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=k>struct</span> <span class=nc>Montgomery</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>u64</span> <span class=n>n</span><span class=p>,</span> <span class=n>nr</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=n>Montgomery</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>)</span> <span class=o>:</span> <span class=n>n</span><span class=p>(</span><span class=n>n</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>nr</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=mi>6</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=n>nr</span> <span class=o>*=</span> <span class=mi>2</span> <span class=o>-</span> <span class=n>n</span> <span class=o>*</span> <span class=n>nr</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=n>u64</span> <span class=nf>reduce</span><span class=p>(</span><span class=n>u128</span> <span class=n>x</span><span class=p>)</span> <span class=k>const</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>u64</span> <span class=n>q</span> <span class=o>=</span> <span class=n>u64</span><span class=p>(</span><span class=n>x</span><span class=p>)</span> <span class=o>*</span> <span class=n>nr</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=n>u64</span> <span class=n>m</span> <span class=o>=</span> <span class=p>((</span><span class=n>u128</span><span class=p>)</span> <span class=n>q</span> <span class=o>*</span> <span class=n>n</span><span class=p>)</span> <span class=o>&gt;&gt;</span> <span class=mi>64</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=p>(</span><span class=n>x</span> <span class=o>&gt;&gt;</span> <span class=mi>64</span><span class=p>)</span> <span class=o>+</span> <span class=n>n</span> <span class=o>-</span> <span class=n>m</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=n>u64</span> <span class=nf>multiply</span><span class=p>(</span><span class=n>u64</span> <span class=n>x</span><span class=p>,</span> <span class=n>u64</span> <span class=n>y</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>reduce</span><span class=p>((</span><span class=n>u128</span><span class=p>)</span> <span class=n>x</span> <span class=o>*</span> <span class=n>y</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl><span class=p>};</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>u64</span> <span class=nf>f</span><span class=p>(</span><span class=n>u64</span> <span class=n>x</span><span class=p>,</span> <span class=n>u64</span> <span class=n>a</span><span class=p>,</span> <span class=n>Montgomery</span> <span class=n>m</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>m</span><span class=p>.</span><span class=n>multiply</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>x</span><span class=p>)</span> <span class=o>+</span> <span class=n>a</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>M</span> <span class=o>=</span> <span class=mi>1024</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>u64</span> <span class=nf>find_factor</span><span class=p>(</span><span class=n>u64</span> <span class=n>n</span><span class=p>,</span> <span class=n>u64</span> <span class=n>x0</span> <span class=o>=</span> <span class=mi>2</span><span class=p>,</span> <span class=n>u64</span> <span class=n>a</span> <span class=o>=</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>Montgomery</span> <span class=n>m</span><span class=p>(</span><span class=n>n</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=n>u64</span> <span class=n>x</span> <span class=o>=</span> <span class=n>SEED</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>l</span> <span class=o>=</span> <span class=n>M</span><span class=p>;</span> <span class=n>l</span> <span class=o>&lt;</span> <span class=p>(</span><span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=mi>20</span><span class=p>);</span> <span class=n>l</span> <span class=o>*=</span> <span class=mi>2</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>u64</span> <span class=n>y</span> <span class=o>=</span> <span class=n>x</span><span class=p>,</span> <span class=n>p</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>l</span><span class=p>;</span> <span class=n>i</span> <span class=o>+=</span> <span class=n>M</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>M</span><span class=p>;</span> <span class=n>j</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>                <span class=n>x</span> <span class=o>=</span> <span class=n>f</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>m</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>                <span class=n>p</span> <span class=o>=</span> <span class=n>m</span><span class=p>.</span><span class=n>multiply</span><span class=p>(</span><span class=n>p</span><span class=p>,</span> <span class=n>diff</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>));</span>
-</span></span><span class=line><span class=cl>            <span class=p>}</span>
-</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>u64</span> <span class=n>g</span> <span class=o>=</span> <span class=n>gcd</span><span class=p>(</span><span class=n>p</span><span class=p>,</span> <span class=n>n</span><span class=p>);</span> <span class=n>g</span> <span class=o>!=</span> <span class=mi>1</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=n>g</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>1</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>This implementation can processes around 3k 60-bit integers per second, which is ~3x faster than what <a href=https://pari.math.u-bordeaux.fr/>PARI</a> / <a href=https://doc.sagemath.org/html/en/reference/structure/sage/structure/factorization.html>SageMath&rsquo;s <code>factor</code></a> / <code>cat semiprimes.txt | time factor</code> measures.</p><span class=anchor id=further-improvements></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#further-improvements>#</a>Further Improvements</h3><p><strong>Optimizations.</strong> There is still a lot of potential for optimization in our implementation of the Pollard&rsquo;s algorithm:</p><ul><li>We could probably use a better cycle-finding algorithm, exploiting the fact that the graph is random. For example, there is little chance that we enter the loop in within the first few iterations (the length of the cycle and the path we walk before entering it should be equal in expectation since before we loop around, we choose the vertex of the path we&rsquo;ve walked independently), so we may just advance the iterator for some time before starting the trials with the GCD trick.</li><li>Our current approach is bottlenecked by advancing the iterator (the latency of Montgomery multiplication is much higher than its reciprocal throughput), and while we are waiting for it to complete, we could perform more than just one trial using the previous values.</li><li>If we run $p$ independent instances of the algorithm with different seeds in parallel and stop when one of them finds the answer, it would finish $\sqrt p$ times faster (the reasoning is similar to the Birthday paradox; try to prove it yourself). We don&rsquo;t have to use multiple cores for that: there is a lot of untapped <a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/>instruction-level parallelism</a>, so we could concurrently run two or three of the same operations on the same thread, or use <a href=https://anpaure.github.io/algorithmica-beta/hpc/simd>SIMD</a> instructions to perform 4 or 8 multiplications in parallel.</li></ul><p>I would not be surprised to see another 3x improvement and throughput of ~10k/sec. If you <a href=https://github.com/sslotin/amh-code/tree/main/factor>implement</a> some of these ideas, please <a href=http://sereja.me/>let me know</a>.</p><p><strong>Errors.</strong> Another aspect that we need to handle in a practical implementation is possible errors. Our current implementation has a 0.7% error rate for 60-bit integers, and it grows higher if the numbers are lower. These errors come from three main sources:</p><ul><li>A cycle simply not being found (the algorithm is inherently random, and there is no guarantee that it will be found). In this case, we need to perform a primality test and optionally start again.</li><li>The <code>p</code> variable becoming zero (because both $p$ and $q$ can get into the product). It becomes increasingly more likely as we decrease size of the inputs or increase the constant <code>M</code>. In this case, we need to either restart the process or (better) roll back the last $M$ iterations and perform the trials one by one.</li><li>Overflows in the Montgomery multiplication. Our current implementation is pretty loose with them, and if $n$ is large, we need to add more <code>x > mod ? x - mod : x</code> kind of statements to deal with overflows.</li></ul><p><strong>Larger numbers.</strong> These issues become less important if we exclude small numbers and numbers with small prime factors using the algorithms we&rsquo;ve implemented before. In general, the optimal approach should depend on the size of the numbers:</p><ul><li>Smaller than $2^{16}$: use a lookup table;</li><li>Smaller than $2^{32}$: use a list of precomputed primes with a fast divisibility check;</li><li>Smaller than $2^{64}$ or so: use Pollard&rsquo;s rho algorithm with Montgomery multiplication;</li><li>Smaller than $10^{50}$: switch to <a href=https://en.wikipedia.org/wiki/Lenstra_elliptic-curve_factorization>Lenstra elliptic curve factorization</a>;</li><li>Smaller than $10^{100}$: switch to <a href=https://en.wikipedia.org/wiki/Quadratic_sieve>Quadratic Sieve</a>;</li><li>Larger than $10^{100}$: switch to <a href=https://en.wikipedia.org/wiki/General_number_field_sieve>General Number Field Sieve</a>.</li></ul><p>The last three approaches are very different from what we&rsquo;ve been doing and require much more advanced number theory, and they deserve an article (or a full-length university course) of their own.</p></article><div class=nextprev><div class=left><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/ id=prev-article>← Prime Number Sieves</a></div><div class=right><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/ id=next-article>Big Integers and Karatsuba Multiplication →</a></div></div></main><footer>Copyright 2021–2022 Sergey Slotin<br></footer></div></body></html>
+
+    $$
+  
+
+  
+    
+    
+      
+        <p>which is equivalent to comparing $f^i(x_0)$ and $f^j(x_0)$ modulo $p$. Since $j$ (hare) is increasing at twice the rate of $i$ (tortoise), their difference is increasing by $1$ each iteration and eventually will become equal to (or a multiple of) the cycle length, with $i$ and $j$ pointing to the same elements. And as we proved half a page ago, reaching a cycle would only require $O(\sqrt[4]{n})$ iterations:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">f</span><span class="p">(</span><span class="n">u64</span> <span class="n">x</span><span class="p">,</span> <span class="n">u64</span> <span class="n">mod</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">((</span><span class="n">u128</span><span class="p">)</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">diff</span><span class="p">(</span><span class="n">u64</span> <span class="n">a</span><span class="p">,</span> <span class="n">u64</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// a and b are unsigned and so is their difference, so we can&#39;t just call abs(a - b)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">b</span> <span class="o">?</span> <span class="n">a</span> <span class="o">-</span> <span class="nl">b</span> <span class="p">:</span> <span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">const</span> <span class="n">u64</span> <span class="n">SEED</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">find_factor</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">u64</span> <span class="n">x</span> <span class="o">=</span> <span class="n">SEED</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">SEED</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">g</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">n</span><span class="p">);</span> <span class="c1">// advance x twice
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">y</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>       <span class="c1">// advance y once
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">g</span> <span class="o">=</span> <span class="n">gcd</span><span class="p">(</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">g</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>While it processes only ~25k 30-bit integers — which is almost 15 times slower than by checking each prime using a fast division trick — it dramatically outperforms every $\tilde{O}(\sqrt n)$ algorithm for 60-bit numbers, factorizing around 90 of them per second.</p>
+<span class='anchor' id="pollard-brent-algorithm"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#pollard-brent-algorithm">#</a>Pollard-Brent Algorithm</h3><p>Floyd&rsquo;s cycle-finding algorithm has a problem in that it moves iterators more than necessary: at least half of the vertices are visited one additional time by the slower iterator.</p>
+<p>One way to solve it is to memorize the values $x_i$ that the faster iterator visits and, every two iterations, compute the GCD using the difference of $x_i$ and $x_{\lfloor i / 2 \rfloor}$. But it can also be done without extra memory using a different principle: the tortoise doesn&rsquo;t move on every iteration, but it gets reset to the value of the faster iterator when the iteration number becomes a power of two. This lets us save additional iterations while still using the same GCD trick to compare $x_i$ and $x_{2^{\lfloor \log_2 i \rfloor}}$ on each iteration:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">find_factor</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">u64</span> <span class="n">x</span> <span class="o">=</span> <span class="n">SEED</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">256</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">20</span><span class="p">);</span> <span class="n">l</span> <span class="o">*=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">u64</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">l</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">u64</span> <span class="n">g</span> <span class="o">=</span> <span class="n">gcd</span><span class="p">(</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">n</span><span class="p">);</span> <span class="n">g</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="n">g</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Note that we also set an upper limit on the number of iterations so that the algorithm finishes in a reasonable amount of time and returns <code>1</code> if $n$ turns out to be a prime.</p>
+<p>It actually does <em>not</em> improve performance and even makes the algorithm ~1.5x <em>slower</em>, which probably has something to do with the fact that $x$ is stale. It spends most of the time computing the GCD and not advancing the iterator — in fact, the time requirement of this algorithm is currently $O(\sqrt[4]{n} \log n)$ because of it.</p>
+<p>Instead of <a href="../gcd">optimizing the GCD itself</a>, we will optimize the number of its invocations. We can use the fact that if one of $a$ and $b$ contains factor $p$, then $a \cdot b \bmod n$ will also contain it, so instead of computing $\gcd(a, n)$ and $\gcd(b, n)$, we can compute $\gcd(a \cdot b \bmod n, n)$. This way, we can group the calculations of GCP in groups of $M = O(\log n)$ we remove $\log n$ out of the asymptotic:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">int</span> <span class="n">M</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">find_factor</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">u64</span> <span class="n">x</span> <span class="o">=</span> <span class="n">SEED</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="n">M</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">20</span><span class="p">);</span> <span class="n">l</span> <span class="o">*=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">u64</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">l</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="n">M</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">M</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">y</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="n">u128</span><span class="p">)</span> <span class="n">p</span> <span class="o">*</span> <span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">u64</span> <span class="n">g</span> <span class="o">=</span> <span class="n">gcd</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span> <span class="n">g</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="n">g</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Now it performs 425 factorizations per second, bottlenecked by the speed of modulo.</p>
+<span class='anchor' id="optimizing-the-modulo"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#optimizing-the-modulo">#</a>Optimizing the Modulo</h3><p>The final step is to apply <a href="https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/">Montgomery multiplication</a>. Since the modulo is constant, we can perform all computations — advancing the iterator, multiplication, and even computing the GCD — in the Montgomery space where reduction is cheap:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Montgomery</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">u64</span> <span class="n">n</span><span class="p">,</span> <span class="n">nr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">Montgomery</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">)</span> <span class="o">:</span> <span class="n">n</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">nr</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nr</span> <span class="o">*=</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">n</span> <span class="o">*</span> <span class="n">nr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">u64</span> <span class="nf">reduce</span><span class="p">(</span><span class="n">u128</span> <span class="n">x</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">u64</span> <span class="n">q</span> <span class="o">=</span> <span class="n">u64</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">nr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">u64</span> <span class="n">m</span> <span class="o">=</span> <span class="p">((</span><span class="n">u128</span><span class="p">)</span> <span class="n">q</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">64</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">64</span><span class="p">)</span> <span class="o">+</span> <span class="n">n</span> <span class="o">-</span> <span class="n">m</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">u64</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">u64</span> <span class="n">x</span><span class="p">,</span> <span class="n">u64</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">reduce</span><span class="p">((</span><span class="n">u128</span><span class="p">)</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">f</span><span class="p">(</span><span class="n">u64</span> <span class="n">x</span><span class="p">,</span> <span class="n">u64</span> <span class="n">a</span><span class="p">,</span> <span class="n">Montgomery</span> <span class="n">m</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">m</span><span class="p">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">int</span> <span class="n">M</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">u64</span> <span class="nf">find_factor</span><span class="p">(</span><span class="n">u64</span> <span class="n">n</span><span class="p">,</span> <span class="n">u64</span> <span class="n">x0</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">u64</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Montgomery</span> <span class="n">m</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">u64</span> <span class="n">x</span> <span class="o">=</span> <span class="n">SEED</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="n">M</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">20</span><span class="p">);</span> <span class="n">l</span> <span class="o">*=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">u64</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">l</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="n">M</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">M</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">p</span> <span class="o">=</span> <span class="n">m</span><span class="p">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">u64</span> <span class="n">g</span> <span class="o">=</span> <span class="n">gcd</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span> <span class="n">g</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="n">g</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>This implementation can processes around 3k 60-bit integers per second, which is ~3x faster than what <a href="https://pari.math.u-bordeaux.fr/">PARI</a> / <a href="https://doc.sagemath.org/html/en/reference/structure/sage/structure/factorization.html">SageMath&rsquo;s <code>factor</code></a> / <code>cat semiprimes.txt | time factor</code> measures.</p>
+<span class='anchor' id="further-improvements"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/#further-improvements">#</a>Further Improvements</h3><p><strong>Optimizations.</strong> There is still a lot of potential for optimization in our implementation of the Pollard&rsquo;s algorithm:</p>
+<ul>
+<li>We could probably use a better cycle-finding algorithm, exploiting the fact that the graph is random. For example, there is little chance that we enter the loop in within the first few iterations (the length of the cycle and the path we walk before entering it should be equal in expectation since before we loop around, we choose the vertex of the path we&rsquo;ve walked independently), so we may just advance the iterator for some time before starting the trials with the GCD trick.</li>
+<li>Our current approach is bottlenecked by advancing the iterator (the latency of Montgomery multiplication is much higher than its reciprocal throughput), and while we are waiting for it to complete, we could perform more than just one trial using the previous values.</li>
+<li>If we run $p$ independent instances of the algorithm with different seeds in parallel and stop when one of them finds the answer, it would finish $\sqrt p$ times faster (the reasoning is similar to the Birthday paradox; try to prove it yourself). We don&rsquo;t have to use multiple cores for that: there is a lot of untapped <a href="https://anpaure.github.io/algorithmica-beta/hpc/pipelining/">instruction-level parallelism</a>, so we could concurrently run two or three of the same operations on the same thread, or use <a href="https://anpaure.github.io/algorithmica-beta/hpc/simd">SIMD</a> instructions to perform 4 or 8 multiplications in parallel.</li>
+</ul>
+<p>I would not be surprised to see another 3x improvement and throughput of ~10k/sec. If you <a href="https://github.com/sslotin/amh-code/tree/main/factor">implement</a> some of these ideas, please <a href="http://sereja.me/">let me know</a>.</p>
+<!-- Another observation: the length of the "tail" and the cycle is equal in expectation, since when we loop around, we choose any vertex of the path we walked independently. How to optimize for the *average* case is unclear. -->
+<p><strong>Errors.</strong> Another aspect that we need to handle in a practical implementation is possible errors. Our current implementation has a 0.7% error rate for 60-bit integers, and it grows higher if the numbers are lower. These errors come from three main sources:</p>
+<ul>
+<li>A cycle simply not being found (the algorithm is inherently random, and there is no guarantee that it will be found). In this case, we need to perform a primality test and optionally start again.</li>
+<li>The <code>p</code> variable becoming zero (because both $p$ and $q$ can get into the product). It becomes increasingly more likely as we decrease size of the inputs or increase the constant <code>M</code>. In this case, we need to either restart the process or (better) roll back the last $M$ iterations and perform the trials one by one.</li>
+<li>Overflows in the Montgomery multiplication. Our current implementation is pretty loose with them, and if $n$ is large, we need to add more <code>x &gt; mod ? x - mod : x</code> kind of statements to deal with overflows.</li>
+</ul>
+<p><strong>Larger numbers.</strong> These issues become less important if we exclude small numbers and numbers with small prime factors using the algorithms we&rsquo;ve implemented before. In general, the optimal approach should depend on the size of the numbers:</p>
+<ul>
+<li>Smaller than $2^{16}$: use a lookup table;</li>
+<li>Smaller than $2^{32}$: use a list of precomputed primes with a fast divisibility check;</li>
+<li>Smaller than $2^{64}$ or so: use Pollard&rsquo;s rho algorithm with Montgomery multiplication;</li>
+<li>Smaller than $10^{50}$: switch to <a href="https://en.wikipedia.org/wiki/Lenstra_elliptic-curve_factorization">Lenstra elliptic curve factorization</a>;</li>
+<li>Smaller than $10^{100}$: switch to <a href="https://en.wikipedia.org/wiki/Quadratic_sieve">Quadratic Sieve</a>;</li>
+<li>Larger than $10^{100}$: switch to <a href="https://en.wikipedia.org/wiki/General_number_field_sieve">General Number Field Sieve</a>.</li>
+</ul>
+<!-- Requiring about 100KB of memory. 6542 * 8 -->
+<p>The last three approaches are very different from what we&rsquo;ve been doing and require much more advanced number theory, and they deserve an article (or a full-length university course) of their own.</p>
+
+      
+    
+  
+
+
+
+        </article>
+        <div class='nextprev'>
+  
+    
+      
+      
+
+      
+      
+      
+        
+      
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+
+      
+        <div class='left'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/' id='prev-article'>← Prime Number Sieves</a>
+        
+        </div>
+        <div class='right'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/' id='next-article'>Optimizing Logistic Regression →</a>
+        
+        </div>
+      
+    
+  
+</div>
+
+      </main>
+      <footer>
+  Copyright 2021–2022 Sergey Slotin
+  <br>
+   
+</footer>
+
+    </div>
+  </body>
+</html>

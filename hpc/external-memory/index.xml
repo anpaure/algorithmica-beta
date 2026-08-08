@@ -1,14 +1,122 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>External Memory on Algorithmica β</title><link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/</link><description>Recent content in External Memory on Algorithmica β</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/external-memory/index.xml" rel="self" type="application/rss+xml"/><item><title>Memory Hierarchy</title><link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/</guid><description>Modern computer memory is highly hierarchical. It consists of multiple cache layers of varying speed and size, where higher levels typically store most frequently accessed data from lower levels to reduce latency: each next level is usually an order of magnitude faster, but also smaller and/or more expensive.
-Abstractly, various memory devices can be described as modules that have a certain storage capacity $M$ and can read or write data in blocks of $B$ (not individual bytes!</description></item><item><title>Virtual Memory</title><link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/</guid><description>Early operating systems gave every process the freedom of reading and modifying any memory region they want, including those allocated for other processes. While this keeps things simple, it also poses some problems:
-What if one of the processes is buggy or outright malicious? How do we prevent it from modifying the memory allocated for other processes while still keeping inter-process communication through memory possible? How do we deal with memory fragmentation?</description></item><item><title>External Memory Model</title><link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/</guid><description>To reason about the performance of memory-bound algorithms, we need to develop a cost model that is more sensitive to expensive block I/O operations but is not too rigorous to still be useful.
-#Cache-Aware ModelIn the standard RAM model, we ignore the fact that primitive operations take unequal time to complete. Most importantly, it does not differentiate between operations on different types of memory, equating a read from RAM taking ~50ns in real-time with a read from HDD taking ~5ms, or about a $10^5$ times as much.</description></item><item><title>External Sorting</title><link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/</guid><description>Now, let&amp;rsquo;s try to design some actually useful algorithms for the new external memory model. Our goal in this section is to slowly build up more complex things and eventually get to external sorting and its interesting applications.
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>External Memory on Algorithmica β</title>
+    <link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/</link>
+    <description>Recent content in External Memory on Algorithmica β</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://anpaure.github.io/algorithmica-beta/hpc/external-memory/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Memory Hierarchy</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/</guid>
+      <description>Modern computer memory is highly hierarchical. It consists of multiple cache layers of varying speed and size, where higher levels typically store most frequently accessed data from lower levels to reduce latency: each next level is usually an order of magnitude faster, but also smaller and/or more expensive.
+   Abstractly, various memory devices can be described as modules that have a certain storage capacity $M$ and can read or write data in blocks of $B$ (not individual bytes!</description>
+    </item>
+    
+    <item>
+      <title>Virtual Memory</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/</guid>
+      <description>Early operating systems gave every process the freedom of reading and modifying any memory region they want, including those allocated for other processes. While this keeps things simple, it also poses some problems:
+ What if one of the processes is buggy or outright malicious? How do we prevent it from modifying the memory allocated for other processes while still keeping inter-process communication through memory possible? How do we deal with memory fragmentation?</description>
+    </item>
+    
+    <item>
+      <title>External Memory Model</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/</guid>
+      <description>To reason about the performance of memory-bound algorithms, we need to develop a cost model that is more sensitive to expensive block I/O operations but is not too rigorous to still be useful.
+ #Cache-Aware ModelIn the standard RAM model, we ignore the fact that primitive operations take unequal time to complete. Most importantly, it does not differentiate between operations on different types of memory, equating a read from RAM taking ~50ns in real-time with a read from HDD taking ~5ms, or about a $10^5$ times as much.</description>
+    </item>
+    
+    <item>
+      <title>External Sorting</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/</guid>
+      <description>Now, let&amp;rsquo;s try to design some actually useful algorithms for the new external memory model. Our goal in this section is to slowly build up more complex things and eventually get to external sorting and its interesting applications.
 The algorithm will be based on the standard merge sorting algorithm, so we need to derive its main primitive first.
-#MergeProblem. Given two sorted arrays $a$ and $b$ of lengths $N$ and $M$, produce a single sorted array $c$ of length $N + M$ containing all of their elements.</description></item><item><title>List Ranking</title><link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/</guid><description>In this section, we will apply external sorting and joining to solve a problem that seems useless on the surface but is actually a key primitive used in a large number of external memory and parallel algorithms.
+ #MergeProblem. Given two sorted arrays $a$ and $b$ of lengths $N$ and $M$, produce a single sorted array $c$ of length $N + M$ containing all of their elements.</description>
+    </item>
+    
+    <item>
+      <title>List Ranking</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/</guid>
+      <description>In this section, we will apply external sorting and joining to solve a problem that seems useless on the surface but is actually a key primitive used in a large number of external memory and parallel algorithms.
 Problem. Given a singly-linked list, compute the rank of each element, equal to its distance from the last element.
-Example input and output for the list ranking problem This problem can be trivially solved in the RAM model: you just traverse the entire list with a counter.</description></item><item><title>Eviction Policies</title><link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/</guid><description>You can control the I/O operations of your program manually, but most of the time people just rely on automatic bufferization and caching, either due to laziness or because of the computing environment limitations.
-But automatic caching comes with its own challenges. When a program runs out of working memory to store its intermediate data, it needs to get rid of one block to make space for a new one. A concrete rule for deciding which data to retain in the cache in case of conflicts is called an eviction policy.</description></item><item><title>Cache-Oblivious Algorithms</title><link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/</guid><description>In the context of the external memory model, there are two types of efficient algorithms:
-Cache-aware algorithms that are efficient for known $B$ and $M$. Cache-oblivious algorithms that are efficient for any $B$ and $M$. For example, external merge sorting is a cache-aware, but not cache-oblivious algorithm: we need to know the memory characteristics of the system, namely the ratio of available memory to the block size, to find the right $k$ to perform $k$-way merge sort.</description></item><item><title>Spatial and Temporal Locality</title><link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/</guid><description>To precisely assess the performance of an algorithm in terms of its memory operations, we need to take into account multiple characteristics of the cache system: the number of cache layers, the memory and block sizes of each layer, the exact strategy used for cache eviction by each layer, and sometimes even the details of the memory paging mechanism.
-Abstracting away from all these minor details helps a lot in the first stages of designing algorithms.</description></item><item><title>B-Trees</title><link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/</guid><description>A balanced binary search tree performs $O(\log_2 N)$ comparisons. This is optimal up to a constant factor if comparisons are what we pay for. It is quite bad if every node is stored on a different disk page: we read a whole block, use one key and two pointers from it, and then issue another random read.
-A B-tree uses the block we have already paid for. Each node stores many sorted keys and many children, so one block read makes much more progress down the tree.</description></item><item><title>Sublinear Algorithms</title><link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/</guid><description>To find the exact maximum of an arbitrary array, we have to inspect every element. If one position is left unread, an adversary can put a larger value there. The same argument applies to an exact sum, an exact number of distinct values, and many other basic statistics.
-There are only two ways around this lower bound: assume something about the input or ask for less than an exact answer.</description></item><item><title>Memory Management</title><link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/</guid><description>Allocating memory looks like one operation in C++:
-node *p = new node; It is not one operation in the machine. new asks a user-space allocator for storage and then constructs an object there. The allocator usually serves the request from memory it already owns; only occasionally does it ask the operating system for more virtual pages. The operating system may postpone assigning physical memory until the program first writes to those pages.</description></item></channel></rss>
+ Example input and output for the list ranking problem  This problem can be trivially solved in the RAM model: you just traverse the entire list with a counter.</description>
+    </item>
+    
+    <item>
+      <title>Eviction Policies</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/</guid>
+      <description>You can control the I/O operations of your program manually, but most of the time people just rely on automatic bufferization and caching, either due to laziness or because of the computing environment limitations.
+But automatic caching comes with its own challenges. When a program runs out of working memory to store its intermediate data, it needs to get rid of one block to make space for a new one. A concrete rule for deciding which data to retain in the cache in case of conflicts is called an eviction policy.</description>
+    </item>
+    
+    <item>
+      <title>Cache-Oblivious Algorithms</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/</guid>
+      <description>In the context of the external memory model, there are two types of efficient algorithms:
+ Cache-aware algorithms that are efficient for known $B$ and $M$. Cache-oblivious algorithms that are efficient for any $B$ and $M$.  For example, external merge sorting is a cache-aware, but not cache-oblivious algorithm: we need to know the memory characteristics of the system, namely the ratio of available memory to the block size, to find the right $k$ to perform $k$-way merge sort.</description>
+    </item>
+    
+    <item>
+      <title>Spatial and Temporal Locality</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/</guid>
+      <description>To precisely assess the performance of an algorithm in terms of its memory operations, we need to take into account multiple characteristics of the cache system: the number of cache layers, the memory and block sizes of each layer, the exact strategy used for cache eviction by each layer, and sometimes even the details of the memory paging mechanism.
+Abstracting away from all these minor details helps a lot in the first stages of designing algorithms.</description>
+    </item>
+    
+    <item>
+      <title>B-Trees</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/</guid>
+      <description>A balanced binary search tree performs $O(\log_2 N)$ comparisons. This is optimal up to a constant factor if comparisons are what we pay for. It is quite bad if every node is stored on a different disk page: we read a whole block, use one key and two pointers from it, and then issue another random read.
+A B-tree uses the block we have already paid for. Each node stores many sorted keys and many children, so one block read makes much more progress down the tree.</description>
+    </item>
+    
+    <item>
+      <title>Sublinear Algorithms</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/</guid>
+      <description>To find the exact maximum of an arbitrary array, we have to inspect every element. If one position is left unread, an adversary can put a larger value there. The same argument applies to an exact sum, an exact number of distinct values, and many other basic statistics.
+There are only two ways around this lower bound: assume something about the input or ask for less than an exact answer.</description>
+    </item>
+    
+    <item>
+      <title>Memory Management</title>
+      <link>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/</guid>
+      <description>Allocating memory looks like one operation in C++:
+node *p = new node; It is not one operation in the machine. new asks a user-space allocator for storage and then constructs an object there. The allocator usually serves the request from memory it already owns; only occasionally does it ask the operating system for more virtual pages. The operating system may postpone assigning physical memory until the program first writes to those pages.</description>
+    </item>
+    
+  </channel>
+</rss>

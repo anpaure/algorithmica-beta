@@ -1,111 +1,1023 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><link rel=icon href=https://anpaure.github.io/algorithmica-beta/favicon.ico><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/beta.css><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00="><link rel=stylesheet href=https://anpaure.github.io/algorithmica-beta/syntax.css id=syntax-theme><link rel=stylesheet type=text/css href=https://tikzjax.com/v1/fonts.css><script src=https://tikzjax.com/v1/tikzjax.js></script>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js></script>
-<script src=https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js></script>
-<link rel=stylesheet id=theme><script>function toggleSidebar(){console.log("Toggling sidebar visibility");var e=document.getElementById("sidebar"),t=document.getElementById("wrapper");(e.classList.contains("sidebar-toggled")||window.getComputedStyle(e).display=="block")&&(e.classList.toggle("sidebar-hidden"),t.classList.toggle("sidebar-hidden")),e.classList.add("sidebar-toggled"),t.classList.add("sidebar-toggled")}function switchTheme(e){console.log("Changing theme:",e),document.getElementById("theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css":"",document.getElementById("syntax-theme").href=e=="dark"?"https://anpaure.github.io/algorithmica-beta/syntax-dark.css":"https://anpaure.github.io/algorithmica-beta/syntax.css",localStorage.setItem("theme",e)}async function toggleSearch(){console.log("Toggling search");var e=document.getElementById("search");if(window.getComputedStyle(e).display=="none"?(e.style.display="block",window.scrollTo({top:0}),document.getElementById("search-bar").focus()):e.style.display="none",!index){console.log("Fetching index");const e=await fetch("https://anpaure.github.io/algorithmica-beta/searchindex.json"),t=await e.json();index=lunr(function(){this.use(lunr.multiLanguage("en","ru")),this.field("title",{boost:5}),this.field("content",{boost:1}),t.forEach(function(e){this.add(e),articles.push(e)},this)}),console.log("Ready to search")}}var articles=[],index=void 0;function search(){var e=document.getElementById("search-bar").value,n,s=document.getElementById("search-results"),o=document.getElementById("search-count");if(e==''){s.innerHTML='',o.innerHTML='';return}n=index.search(e),o.innerHTML="Found <b>"+n.length+"</b> pages";let t='';for(const a in n){const i=articles[n[a].ref];t+='<li><a href="'+i.path+'">'+i.title+"</a> <p>";const s=i.content,o=80;if(s.includes(e)){const n=s.indexOf(e);n>o&&(t+="…"),t+=s.substring(n-o,n)+"<b>"+e+"</b>"+s.substring(n+e.length,n+e.length+o)}else t+=s.substring(0,o*2);t+="…</p></li>"}s.innerHTML=t}localStorage.getItem("theme")=="dark"&&switchTheme("dark"),window.addEventListener("load",function(){var e=document.getElementById("active-element");e&&e.scrollIntoView({block:"center"})}),window.addEventListener("scroll",function(){var e=document.getElementById("menu");window.scrollY<120?e.classList.remove("scrolled"):e.classList.add("scrolled")}),window.addEventListener("keydown",function(e){if(e.altKey)return;if(document.activeElement.tagName=="INPUT")return;e.key=="ArrowLeft"?document.getElementById("prev-article").click():e.key=="ArrowRight"&&document.getElementById("next-article").click()})</script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin=anonymous></script>
-<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><title>Programming Languages - Algorithmica β</title></head><body><nav id=sidebar><div class=title><a href=https://anpaure.github.io/algorithmica-beta/>Algorithmica β</a>
-<span class=slash>/</span>
-<a href=https://anpaure.github.io/algorithmica-beta/hpc/ class=divisionAbbr>HPC</a></div><ul><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/preface/>Preface</a></li><li class=part>Performance Engineering</li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/>Complexity Models</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/>Modern Hardware</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/ id=active-element>Programming Languages</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/>Models of Computation</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/>When to Optimize</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/>Computer Architecture</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/>Instruction Set Architectures</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/>Assembly Language</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/>Loops and Conditionals</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/>Functions and Recursion</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/>Indirect Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/>Virtualization</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/>Interrupts and System Calls</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/>Machine Code Layout</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/>Instruction-Level Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/>Pipeline Hazards</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/>The Cost of Branching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/>Branchless Programming</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/>Instruction Tables</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/>Instruction Scheduling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/>Throughput Computing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/>Theoretical Performance Limits</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/>Compilation</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/>Stages of Compilation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/>Flags and Targets</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/>Situational Optimizations</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/>Contract Programming</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/>Non-Zero-Cost Abstractions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/>Precomputation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/>Arithmetic Optimizations</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/>What Compilers Can and Can't Do</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/>Profiling</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/>Instrumentation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/>Statistical Profiling</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/>Program Simulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/>Machine Code Analyzers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/>Benchmarking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/>Getting Accurate Results</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/>Arithmetic</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/>Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/>IEEE 754 Floats</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/>Rounding Errors</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/>Newton's Method</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/>Fast Inverse Square Root</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/>Integer Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/>Integer Division</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/>Bit Manipulation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/>Data Compression</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/>Number Theory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/>Modular Arithmetic</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/>Binary Exponentiation</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/>Extended Euclidean Algorithm</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/>Montgomery Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/>Finite Fields</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/>Error Correction</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/>Hashing</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/>Cryptography</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/>Random Number Generation</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/>External Memory</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/>Memory Hierarchy</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/>Virtual Memory</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/>External Memory Model</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/>External Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/>List Ranking</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/>Eviction Policies</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/>Cache-Oblivious Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/>Spatial and Temporal Locality</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/>B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/>Sublinear Algorithms</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/>Memory Management</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/>RAM & CPU Caches</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/>Memory Bandwidth</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/>Memory Latency</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/>Cache Lines</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/>Memory Sharing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/>Memory-Level Parallelism</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/>Prefetching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/>Alignment and Packing</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/>Pointer Alternatives</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/>Cache Associativity</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/>Memory Paging</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/>AoS and SoA</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/>SIMD Parallelism</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/>Intrinsics and Vector Types</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/>Moving Data</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/>Reductions</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/>Masking and Blending</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/>In-Register Shuffles</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/>Auto-Vectorization and SPMD</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/>Algorithms Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/>Binary GCD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/>Prime Number Sieves</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/>Integer Factorization</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/>Big Integers and Karatsuba Multiplication</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/>Optimizing Logistic Regression</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/>Fast Fourier Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/>Sorting</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/>Argmin with SIMD</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/>Number-Theoretic Transform</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/>Prefix Sum with SIMD</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/>Reading Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/>Writing Decimal Integers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/>Reading and Writing Floating-Point Numbers</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/>String Searching</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/>Matrix Multiplication</a></li></ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/>Data Structures Case Studies</a></li><ol><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/>Binary Search</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/>Static B-Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/>Search Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/>Segment Trees</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/>Tries</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/>Bitmaps</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/>Range Minimum Query</a></li><li class=draft><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/>Hash Tables</a></li><li><a href=https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/>Probabilistic Filters</a></li></ol><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/summary/>Summary</a></li><li class=part>Appendix</li><li class="draft ignore-indexing"><a href=https://anpaure.github.io/algorithmica-beta/hpc/stats/>Probability Theory Refresher</a></li></ul></nav><div id=wrapper><menu id=menu><div class=left><a><img src=https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg onclick=toggleSidebar() title="open table of contents"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg style=position:relative;top:-1px onclick='switchTheme(localStorage.getItem("theme")=="dark"?"light":"dark")' title="dark theme"></a>
-<a><img src=https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg onclick=toggleSearch() title=search></a></div><div class=title><span class=beta-brand>Algorithmica β</span>
-<span class=chapter-title>Programming Languages</span></div><div class=right><a onclick=window.print()><img src=https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg title=print></a>
-<a href=https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2fcomplexity%2flanguages.md><img src=https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg title=edit style=width:18px;position:relative;right:-2px;top:-1px></a>
-<a href=https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/complexity/languages.md class=github-main><img src=https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg title="view on github"></a></div></menu><main><div id=search><input id=search-bar type=search placeholder="Search this book…" oninput=search()><div id=search-count></div><div id=search-results></div></div><header><h1>Programming Languages</h1><div class=info></div></header><article><p>If you are reading this book, then somewhere on your computer science journey you had a moment when you first started to care about the efficiency of your code.</p><p>Mine was in high school, when I realized that making websites and doing <em>useful</em> programming won&rsquo;t get you into a university, and entered the exciting world of algorithmic programming olympiads. I was an okay programmer, especially for a highschooler, but I had never really wondered how much time it took for my code to execute before. But suddenly it started to matter: each problem now has a strict time limit. I started counting my operations. How many can you do in one second?</p><p>I didn&rsquo;t know much about computer architecture to answer this question. But I also didn&rsquo;t need the right answer — I needed a rule of thumb. My thought process was: &ldquo;2-3GHz means 2 to 3 billion instructions executed every second, and in a simple loop that does something with array elements, I also need to increment loop counter, check end-of-loop condition, do array indexing and stuff like that, so let&rsquo;s add room for 3-5 more instructions for every useful one&rdquo; and ended up with using $5 \cdot 10^8$ as an estimate. None of these statements are true, but counting how many operations my algorithm needed and dividing it by this number was a good rule of thumb for my use case.</p><p>The real answer, of course, is much more complicated and highly dependent on what kind of &ldquo;operation&rdquo; you have in mind. It can be as low as $10^7$ for things like <a href=https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency>pointer chasing</a> and as high as $10^{11}$ for <a href=https://anpaure.github.io/algorithmica-beta/hpc/simd>SIMD-accelerated</a> linear algebra. To demonstrate these striking differences, we will use the case study of matrix multiplication implemented in different languages — and dig deeper into how computers execute them.</p><span class=anchor id=types-of-languages></span><h2><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/#types-of-languages>#</a>Types of Languages</h2><p>On the lowest level, computers execute <em>machine code</em> consisting of binary-encoded <em>instructions</em> which are used to control the CPU. They are specific, quirky, and require a great deal of intellectual effort to work with, so one of the first things people did after creating computers was create <em>programming languages</em>, which abstract away some details of how computers operate to simplify the process of programming.</p><p>A programming language is fundamentally just an interface. Any program written in it is just a nicer higher-level representation which still at some point needs to be transformed into the machine code to be executed on the CPU — and there are several different means of doing that:</p><ul><li>From a programmer&rsquo;s perspective, there are two types of languages: <em>compiled</em>, which pre-process before executing, and <em>interpreted</em>, which are executed during runtime using a separate program called <em>an interpreter</em>.</li><li>From a computer&rsquo;s perspective, there are also two types of languages: <em>native</em>, which directly execute machine code, and <em>managed</em>, which rely on some sort of <em>runtime</em> to do it.</li></ul><p>Since running machine code in an interpreter doesn&rsquo;t make sense, this makes a total of three types of languages:</p><ul><li>Interpreted languages, such as Python, JavaScript, or Ruby.</li><li>Compiled languages with a runtime, such as Java, C#, or Erlang (and languages that work on their VMs, such as Scala, F#, or Elixir).</li><li>Compiled native languages, such as C, Go, or Rust.</li></ul><p>There is no &ldquo;right&rdquo; way of executing computer programs: each approach has its own gains and drawbacks. Interpreters and virtual machines provide flexibility and enable some nice high-level programming features such as dynamic typing, run time code alteration, and automatic memory management, but these come with some unavoidable performance trade-offs, which we will now talk about.</p><span class=anchor id=interpreted-languages></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/#interpreted-languages>#</a>Interpreted languages</h3><p>Here is an example of a by-definition $1024 \times 1024$ matrix multiplication in pure Python:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>time</span>
-</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>random</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>n</span> <span class=o>=</span> <span class=mi>1024</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>a</span> <span class=o>=</span> <span class=p>[[</span><span class=n>random</span><span class=o>.</span><span class=n>random</span><span class=p>()</span>
-</span></span><span class=line><span class=cl>      <span class=k>for</span> <span class=n>row</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>n</span><span class=p>)]</span>
-</span></span><span class=line><span class=cl>      <span class=k>for</span> <span class=n>col</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>n</span><span class=p>)]</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>b</span> <span class=o>=</span> <span class=p>[[</span><span class=n>random</span><span class=o>.</span><span class=n>random</span><span class=p>()</span>
-</span></span><span class=line><span class=cl>      <span class=k>for</span> <span class=n>row</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>n</span><span class=p>)]</span>
-</span></span><span class=line><span class=cl>      <span class=k>for</span> <span class=n>col</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>n</span><span class=p>)]</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>c</span> <span class=o>=</span> <span class=p>[[</span><span class=mi>0</span>
-</span></span><span class=line><span class=cl>      <span class=k>for</span> <span class=n>row</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>n</span><span class=p>)]</span>
-</span></span><span class=line><span class=cl>      <span class=k>for</span> <span class=n>col</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>n</span><span class=p>)]</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>start</span> <span class=o>=</span> <span class=n>time</span><span class=o>.</span><span class=n>time</span><span class=p>()</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>n</span><span class=p>):</span>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>j</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>n</span><span class=p>):</span>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=n>k</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>n</span><span class=p>):</span>
-</span></span><span class=line><span class=cl>            <span class=n>c</span><span class=p>[</span><span class=n>i</span><span class=p>][</span><span class=n>j</span><span class=p>]</span> <span class=o>+=</span> <span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>][</span><span class=n>k</span><span class=p>]</span> <span class=o>*</span> <span class=n>b</span><span class=p>[</span><span class=n>k</span><span class=p>][</span><span class=n>j</span><span class=p>]</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>duration</span> <span class=o>=</span> <span class=n>time</span><span class=o>.</span><span class=n>time</span><span class=p>()</span> <span class=o>-</span> <span class=n>start</span>
-</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=n>duration</span><span class=p>)</span>
-</span></span></code></pre></div><p>This code runs in 630 seconds. That&rsquo;s more than 10 minutes!</p><p>Let&rsquo;s try to put this number in perspective. The CPU that ran it has a clock frequency of 1.4GHz, meaning that it does $1.4 \cdot 10^9$ cycles per second, totaling to almost $10^{15}$ for the entire computation, and about 880 cycles per multiplication in the innermost loop.</p><p>This is not surprising if you consider the things that Python needs to do to figure out what the programmer meant:</p><ul><li>it parses the expression <code>c[i][j] += a[i][k] * b[k][j]</code>;</li><li>tries to figure out what <code>a</code>, <code>b</code>, and <code>c</code> are and looks up their names in a special hash table with type information;</li><li>understands that <code>a</code> is a list, fetches its <code>[]</code> operator, retrieves the pointer for <code>a[i]</code>, figures out it&rsquo;s also a list, fetches its <code>[]</code> operator again, gets the pointer for <code>a[i][k]</code>, and then the element itself;</li><li>looks up its type, figures out that it&rsquo;s a <code>float</code>, and fetches the method implementing <code>*</code> operator;</li><li>does the same things for <code>b</code> and <code>c</code> and finally add-assigns the result to <code>c[i][j]</code>.</li></ul><p>Granted, the interpreters of widely used languages such as Python are well-optimized, and they can skip through some of these steps on repeated execution of the same code. But still, some quite significant overhead is unavoidable due to the language design. If we get rid of all this type checking and pointer chasing, perhaps we can get cycles per multiplication ratio closer to 1, or whatever the &ldquo;cost&rdquo; of native multiplication is?</p><span class=anchor id=managed-languages></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/#managed-languages>#</a>Managed Languages</h3><p>The same matrix multiplication procedure, but implemented in Java:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kn>import</span> <span class=nn>java.util.Random</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Matmul</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=kd>static</span> <span class=kt>int</span> <span class=n>n</span> <span class=o>=</span> <span class=n>1024</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=kd>static</span> <span class=kt>double</span><span class=o>[][]</span> <span class=n>a</span> <span class=o>=</span> <span class=k>new</span> <span class=kt>double</span><span class=o>[</span><span class=n>n</span><span class=o>][</span><span class=n>n</span><span class=o>];</span>
-</span></span><span class=line><span class=cl>    <span class=kd>static</span> <span class=kt>double</span><span class=o>[][]</span> <span class=n>b</span> <span class=o>=</span> <span class=k>new</span> <span class=kt>double</span><span class=o>[</span><span class=n>n</span><span class=o>][</span><span class=n>n</span><span class=o>];</span>
-</span></span><span class=line><span class=cl>    <span class=kd>static</span> <span class=kt>double</span><span class=o>[][]</span> <span class=n>c</span> <span class=o>=</span> <span class=k>new</span> <span class=kt>double</span><span class=o>[</span><span class=n>n</span><span class=o>][</span><span class=n>n</span><span class=o>];</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>Random</span> <span class=n>rand</span> <span class=o>=</span> <span class=k>new</span> <span class=n>Random</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=o>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=n>0</span><span class=o>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=o>;</span> <span class=n>i</span><span class=o>++)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=o>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=n>0</span><span class=o>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>n</span><span class=o>;</span> <span class=n>j</span><span class=o>++)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>                <span class=n>a</span><span class=o>[</span><span class=n>i</span><span class=o>][</span><span class=n>j</span><span class=o>]</span> <span class=o>=</span> <span class=n>rand</span><span class=o>.</span><span class=na>nextDouble</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>                <span class=n>b</span><span class=o>[</span><span class=n>i</span><span class=o>][</span><span class=n>j</span><span class=o>]</span> <span class=o>=</span> <span class=n>rand</span><span class=o>.</span><span class=na>nextDouble</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>                <span class=n>c</span><span class=o>[</span><span class=n>i</span><span class=o>][</span><span class=n>j</span><span class=o>]</span> <span class=o>=</span> <span class=n>0</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>            <span class=o>}</span>
-</span></span><span class=line><span class=cl>        <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>        <span class=kt>long</span> <span class=n>start</span> <span class=o>=</span> <span class=n>System</span><span class=o>.</span><span class=na>nanoTime</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=o>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=n>0</span><span class=o>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=o>;</span> <span class=n>i</span><span class=o>++)</span>
-</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=o>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=n>0</span><span class=o>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>n</span><span class=o>;</span> <span class=n>j</span><span class=o>++)</span>
-</span></span><span class=line><span class=cl>                <span class=k>for</span> <span class=o>(</span><span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=n>0</span><span class=o>;</span> <span class=n>k</span> <span class=o>&lt;</span> <span class=n>n</span><span class=o>;</span> <span class=n>k</span><span class=o>++)</span>
-</span></span><span class=line><span class=cl>                    <span class=n>c</span><span class=o>[</span><span class=n>i</span><span class=o>][</span><span class=n>j</span><span class=o>]</span> <span class=o>+=</span> <span class=n>a</span><span class=o>[</span><span class=n>i</span><span class=o>][</span><span class=n>k</span><span class=o>]</span> <span class=o>*</span> <span class=n>b</span><span class=o>[</span><span class=n>k</span><span class=o>][</span><span class=n>j</span><span class=o>];</span>
-</span></span><span class=line><span class=cl>                
-</span></span><span class=line><span class=cl>        <span class=kt>double</span> <span class=n>diff</span> <span class=o>=</span> <span class=o>(</span><span class=n>System</span><span class=o>.</span><span class=na>nanoTime</span><span class=o>()</span> <span class=o>-</span> <span class=n>start</span><span class=o>)</span> <span class=o>*</span> <span class=n>1e</span><span class=o>-</span><span class=n>9</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>        <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=n>diff</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></div><p>It now runs in 10 seconds, which amounts to roughly 13 CPU cycles per multiplication — 63 times faster than Python. Considering that we need to read elements of <code>b</code> non-sequentially from the memory, the running time is roughly what it is supposed to be.</p><p>Java is a <em>compiled</em>, but not <em>native</em> language. The program first compiles to <em>bytecode</em>, which is then interpreted by a virtual machine (JVM). To achieve higher performance, frequently executed parts of the code, such as the innermost <code>for</code> loop, are compiled into the machine code during runtime and then executed with almost no overhead. This technique is called <em>just-in-time compilation</em>.</p><p>JIT compilation is not a feature of the language itself, but of its implementation. There is also a JIT-compiled version of Python called <a href=https://www.pypy.org/>PyPy</a>, which needs about 12 seconds to execute the code above without any changes to it.</p><span class=anchor id=compiled-languages></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/#compiled-languages>#</a>Compiled Languages</h3><p>Now it&rsquo;s turn for C:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdlib.h&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;time.h&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
-</span></span><span class=line><span class=cl><span class=cp>#define n 1024
-</span></span></span><span class=line><span class=cl><span class=cp></span><span class=kt>double</span> <span class=n>a</span><span class=p>[</span><span class=n>n</span><span class=p>][</span><span class=n>n</span><span class=p>],</span> <span class=n>b</span><span class=p>[</span><span class=n>n</span><span class=p>][</span><span class=n>n</span><span class=p>],</span> <span class=n>c</span><span class=p>[</span><span class=n>n</span><span class=p>][</span><span class=n>n</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>j</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>            <span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>][</span><span class=n>j</span><span class=p>]</span> <span class=o>=</span> <span class=p>(</span><span class=kt>double</span><span class=p>)</span> <span class=n>rand</span><span class=p>()</span> <span class=o>/</span> <span class=n>RAND_MAX</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=n>b</span><span class=p>[</span><span class=n>i</span><span class=p>][</span><span class=n>j</span><span class=p>]</span> <span class=o>=</span> <span class=p>(</span><span class=kt>double</span><span class=p>)</span> <span class=n>rand</span><span class=p>()</span> <span class=o>/</span> <span class=n>RAND_MAX</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=n>clock_t</span> <span class=n>start</span> <span class=o>=</span> <span class=n>clock</span><span class=p>();</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>j</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>j</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>j</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>k</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=n>k</span><span class=o>++</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>                <span class=n>c</span><span class=p>[</span><span class=n>i</span><span class=p>][</span><span class=n>j</span><span class=p>]</span> <span class=o>+=</span> <span class=n>a</span><span class=p>[</span><span class=n>i</span><span class=p>][</span><span class=n>k</span><span class=p>]</span> <span class=o>*</span> <span class=n>b</span><span class=p>[</span><span class=n>k</span><span class=p>][</span><span class=n>j</span><span class=p>];</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kt>float</span> <span class=n>seconds</span> <span class=o>=</span> <span class=p>(</span><span class=kt>float</span><span class=p>)</span> <span class=p>(</span><span class=n>clock</span><span class=p>()</span> <span class=o>-</span> <span class=n>start</span><span class=p>)</span> <span class=o>/</span> <span class=n>CLOCKS_PER_SEC</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;%.4f</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>seconds</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>It takes 9 seconds when you compile it with <code>gcc -O3</code>.</p><p>It doesn&rsquo;t seem like a huge improvement — the 1-3 second advantage over Java and PyPy can be attributed to the additional time of JIT-compilation — but we haven&rsquo;t yet taken advantage of a far better C compiler ecosystem. If we add <code>-march=native</code> and <code>-ffast-math</code> flags, time suddenly goes down to 0.6 seconds!</p><p>What happened here is we <a href=https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/>communicated to the compiler</a> the exact model of the CPU we are running (<code>-march=native</code>) and gave it the freedom to rearrange <a href=https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float>floating-point computations</a> (<code>-ffast-math</code>), and so it took advantage of it and used <a href=https://anpaure.github.io/algorithmica-beta/hpc/simd>vectorization</a> to achieve this speedup.</p><p>It&rsquo;s not like it is impossible to tune the JIT-compilers of PyPy and Java to achieve the same performance without significant changes to the source code, but it is certainly easier for languages that compile directly to native code.</p><span class=anchor id=blas></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/#blas>#</a>BLAS</h3><p>Finally, let&rsquo;s take a look at what an expert-optimized implementation is capable of. We will test a widely-used optimized linear algebra library called <a href=https://www.openblas.net/>OpenBLAS</a>. The easiest way to use it is to go back to Python and just call it from <code>numpy</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>time</span>
-</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>numpy</span> <span class=k>as</span> <span class=nn>np</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>n</span> <span class=o>=</span> <span class=mi>1024</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>a</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>random</span><span class=o>.</span><span class=n>rand</span><span class=p>(</span><span class=n>n</span><span class=p>,</span> <span class=n>n</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=n>b</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>random</span><span class=o>.</span><span class=n>rand</span><span class=p>(</span><span class=n>n</span><span class=p>,</span> <span class=n>n</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>start</span> <span class=o>=</span> <span class=n>time</span><span class=o>.</span><span class=n>time</span><span class=p>()</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>c</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>dot</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>duration</span> <span class=o>=</span> <span class=n>time</span><span class=o>.</span><span class=n>time</span><span class=p>()</span> <span class=o>-</span> <span class=n>start</span>
-</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=n>duration</span><span class=p>)</span>
-</span></span></code></pre></div><p>Now it takes ~0.12 seconds: a ~5x speedup over the auto-vectorized C version and ~5250x speedup over our initial Python implementation!</p><p>You don&rsquo;t typically see such dramatic improvements. For now, we are not ready to tell you exactly how this is achieved. Implementations of dense matrix multiplication in OpenBLAS are typically <a href=https://github.com/xianyi/OpenBLAS/blob/develop/kernel/x86_64/dgemm_kernel_16x2_haswell.S>5000 lines of handwritten assembly</a> tailored separately for <em>each</em> architecture. In later chapters, we will explain all the relevant techniques one by one, and then <a href=https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul>return</a> to this example and develop our own BLAS-level implementation using just under 40 lines of C.</p><span class=anchor id=takeaway></span><h3><a class=anchor-link href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/#takeaway>#</a>Takeaway</h3><p>The key lesson here is that using a native, low-level language doesn&rsquo;t necessarily give you performance; but it does give you <em>control</em> over performance.</p><p>Complementary to the &ldquo;N operations per second&rdquo; simplification, many programmers also have a misconception that using different programming languages has some sort of multiplier on that number. Thinking this way and <a href=https://benchmarksgame-team.pages.debian.net/benchmarksgame/index.html>comparing languages</a> in terms of performance doesn&rsquo;t make much sense: programming languages are fundamentally just tools that take away <em>some</em> control over performance in exchange for convenient abstractions. Regardless of the execution environment, it is still largely a programmer&rsquo;s job to use the opportunities that the hardware provides.</p></article><div class=nextprev><div class=left><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/ id=prev-article>← Modern Hardware</a></div><div class=right><a href=https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/ id=next-article>Models of Computation →</a></div></div></main><footer>Copyright 2021–2022 Sergey Slotin<br></footer></div></body></html>
+<!doctype html>
+<html lang='en-us'><head><meta charset="utf-8">
+  <link rel="icon" href="https://anpaure.github.io/algorithmica-beta/favicon.ico">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/beta.css">
+  
+
+  
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/style.min.cce658bcc82269eda6e393e46ec66f546448a54918289e248f031b4ac019434d.css" integrity="sha256-zOZYvMgiae2m45PkbsZvVGRIpUkYKJ4kjwMbSsAZQ00=">
+  <link rel="stylesheet" href="https://anpaure.github.io/algorithmica-beta/syntax.css" id="syntax-theme">
+
+  <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+  <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.stemmer.support.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.ru.min.js"></script>
+  <script src="https://anpaure.github.io/algorithmica-beta/scripts/lunr.multi.min.js"></script>
+
+  
+  <link rel="stylesheet" id="theme">
+
+  <script>
+    function toggleSidebar() {
+      console.log("Toggling sidebar visibility")
+      var sidebar = document.getElementById('sidebar')
+      var wrapper = document.getElementById('wrapper')
+      if (sidebar.classList.contains('sidebar-toggled') || window.getComputedStyle(sidebar).display == 'block') { 
+        sidebar.classList.toggle('sidebar-hidden')
+        wrapper.classList.toggle('sidebar-hidden')
+      }
+      sidebar.classList.add('sidebar-toggled')
+      wrapper.classList.add('sidebar-toggled')
+    }
+
+    function switchTheme(theme) {
+      console.log("Changing theme:", theme)
+      document.getElementById('theme').href = (theme == 'dark' ? "https:\/\/anpaure.github.io\/algorithmica-beta\/dark.min.17094404bae79eb9a40b3139611e6cfb3c5378b3bdecc55bd5977a8869daf65c.css" : "")
+      document.getElementById('syntax-theme').href = (theme == 'dark' ? 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax-dark.css' : 'https:\/\/anpaure.github.io\/algorithmica-beta\/syntax.css')
+      localStorage.setItem('theme', theme)
+    }
+
+    async function toggleSearch() {
+      console.log("Toggling search")
+      
+      var searchDiv = document.getElementById('search')
+      if (window.getComputedStyle(searchDiv).display == 'none') {
+        searchDiv.style.display = 'block'
+        window.scrollTo({ top: 0 });
+        document.getElementById('search-bar').focus()
+      } else {
+        searchDiv.style.display = 'none'  
+      }
+
+      if (!index) {
+        console.log("Fetching index")
+        const response = await fetch('https:\/\/anpaure.github.io\/algorithmica-beta\/searchindex.json')
+        const pages = await response.json()
+        index = lunr(function() {
+          this.use(lunr.multiLanguage('en', 'ru'))
+          this.field('title', {
+            boost: 5
+          })
+          this.field('content', {
+            boost: 1
+          })
+          pages.forEach(function(doc) {
+            this.add(doc)
+            articles.push(doc)
+          }, this)
+        })
+        console.log("Ready to search")
+      }
+    }
+
+    var articles = []
+    var index = undefined
+
+    function search() {
+      var query = document.getElementById('search-bar').value
+      var resultsDiv = document.getElementById('search-results')
+      var countDiv = document.getElementById('search-count')
+      
+      if (query == '') {
+        resultsDiv.innerHTML = ''
+        countDiv.innerHTML = ''
+        return
+      }
+      
+      var results = index.search(query)
+
+      countDiv.innerHTML = 'Found <b>' + results.length + '</b> pages'
+
+      let resultList = ''
+
+      for (const n in results) {
+        const item = articles[results[n].ref]
+        resultList += '<li><a href="' + item.path + '">' + item.title + '</a> <p>'
+        const text = item.content
+
+        const contextLimit = 80
+
+        if (text.includes(query)) {
+          const start = text.indexOf(query)
+          if (start > contextLimit)
+            resultList += '…'
+          resultList += text.substring(start - contextLimit, start)
+                      + '<b>' + query + '</b>' + text.substring(start + query.length, start + query.length + contextLimit)
+
+        } else {
+          resultList += text.substring(0, contextLimit * 2)
+        }
+        resultList += '…</p></li>'
+      }
+
+      resultsDiv.innerHTML = resultList
+    }
+
+    if (localStorage.getItem('theme') == 'dark') {
+      switchTheme('dark')
+    }
+
+    window.addEventListener('load', function() {
+      var el = document.getElementById("active-element")
+      
+      if (el) {
+        el.scrollIntoView({block: "center"})
+      }
+      
+
+    })
+
+    window.addEventListener('scroll', function() {
+      var menu = document.getElementById('menu')
+      if (window.scrollY < 120) {
+        
+        menu.classList.remove('scrolled')
+      } else {
+        
+        menu.classList.add('scrolled')
+      }
+    })
+
+    window.addEventListener('keydown', function(e) {
+      if (e.altKey) { return }
+      if (document.activeElement.tagName == 'INPUT') { return }
+      if (e.key == 'ArrowLeft') {
+        document.getElementById('prev-article').click()
+      } else if (e.key == 'ArrowRight') {
+        document.getElementById('next-article').click()
+      }
+    })
+  </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false}
+    ]
+  })"></script>
+
+  
+  <title>Programming Languages - Algorithmica β</title>
+</head>
+<body><nav id='sidebar' >
+  
+  
+  <div class='title'>
+    <a href='https://anpaure.github.io/algorithmica-beta/'>Algorithmica β</a>
+    
+      
+        
+        <span class='slash'>/</span>
+        <a href='https://anpaure.github.io/algorithmica-beta/hpc/' class='divisionAbbr'
+           >
+          HPC
+        </a>
+      
+    
+  </div>
+  <ul>
+    
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/preface/'
+          
+          >Preface</a></li>
+        
+      
+        
+          <li class='part'>Performance Engineering</li>
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/'
+          
+          >Complexity Models</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/'
+                
+                >Modern Hardware</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/'
+                id='active-element'
+                >Programming Languages</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/'
+                
+                >Models of Computation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/levels/'
+                
+                >When to Optimize</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/'
+          
+          >Computer Architecture</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/isa/'
+                
+                >Instruction Set Architectures</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/assembly/'
+                
+                >Assembly Language</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/loops/'
+                
+                >Loops and Conditionals</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/functions/'
+                
+                >Functions and Recursion</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/indirect/'
+                
+                >Indirect Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/layout/'
+                
+                >Machine Code Layout</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/interaction/'
+                
+                >Interrupts and System Calls</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/architecture/virtualization/'
+                
+                >Virtualization</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/'
+          
+          >Instruction-Level Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/hazards/'
+                
+                >Pipeline Hazards</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branching/'
+                
+                >The Cost of Branching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/branchless/'
+                
+                >Branchless Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/tables/'
+                
+                >Instruction Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/scheduling/'
+                
+                >Instruction Scheduling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/throughput/'
+                
+                >Throughput Computing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/pipelining/limits/'
+                
+                >Theoretical Performance Limits</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/'
+          
+          >Compilation</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/stages/'
+                
+                >Stages of Compilation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/'
+                
+                >Flags and Targets</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/situational/'
+                
+                >Situational Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/contracts/'
+                
+                >Contract Programming</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/abstractions/'
+                
+                >Non-Zero-Cost Abstractions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/precalc/'
+                
+                >Precomputation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/arithmetic/'
+                
+                >Arithmetic Optimizations</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/compilation/limitations/'
+                
+                >What Compilers Can and Can&#39;t Do</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/'
+          
+          >Profiling</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/instrumentation/'
+                
+                >Instrumentation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/events/'
+                
+                >Statistical Profiling</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/simulation/'
+                
+                >Program Simulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/mca/'
+                
+                >Machine Code Analyzers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/benchmarking/'
+                
+                >Benchmarking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/profiling/noise/'
+                
+                >Getting Accurate Results</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/'
+          
+          >Arithmetic</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float/'
+                
+                >Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/ieee-754/'
+                
+                >IEEE 754 Floats</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/errors/'
+                
+                >Rounding Errors</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/newton/'
+                
+                >Newton&#39;s Method</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/rsqrt/'
+                
+                >Fast Inverse Square Root</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/integer/'
+                
+                >Integer Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/division/'
+                
+                >Integer Division</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/bit-hacks/'
+                
+                >Bit Manipulation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/compression/'
+                
+                >Data Compression</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/'
+          
+          >Number Theory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/modular/'
+                
+                >Modular Arithmetic</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/exponentiation/'
+                
+                >Binary Exponentiation</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/euclid-extended/'
+                
+                >Extended Euclidean Algorithm</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/montgomery/'
+                
+                >Montgomery Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/finite/'
+                
+                >Finite Fields</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/error-correction/'
+                
+                >Error Correction</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/cryptography/'
+                
+                >Cryptography</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/hashing/'
+                
+                >Hashing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/number-theory/rng/'
+                
+                >Random Number Generation</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/'
+          
+          >External Memory</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/hierarchy/'
+                
+                >Memory Hierarchy</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/virtual/'
+                
+                >Virtual Memory</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/model/'
+                
+                >External Memory Model</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sorting/'
+                
+                >External Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/list-ranking/'
+                
+                >List Ranking</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/policies/'
+                
+                >Eviction Policies</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/oblivious/'
+                
+                >Cache-Oblivious Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/locality/'
+                
+                >Spatial and Temporal Locality</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/b-tree/'
+                
+                >B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/sublinear/'
+                
+                >Sublinear Algorithms</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/external-memory/management/'
+                
+                >Memory Management</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/'
+          
+          >RAM &amp; CPU Caches</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/bandwidth/'
+                
+                >Memory Bandwidth</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency/'
+                
+                >Memory Latency</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/cache-lines/'
+                
+                >Cache Lines</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/sharing/'
+                
+                >Memory Sharing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/mlp/'
+                
+                >Memory-Level Parallelism</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/prefetching/'
+                
+                >Prefetching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/alignment/'
+                
+                >Alignment and Packing</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/pointers/'
+                
+                >Pointer Alternatives</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/associativity/'
+                
+                >Cache Associativity</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/paging/'
+                
+                >Memory Paging</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/aos-soa/'
+                
+                >AoS and SoA</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/'
+          
+          >SIMD Parallelism</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/intrinsics/'
+                
+                >Intrinsics and Vector Types</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/moving/'
+                
+                >Moving Data</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/reduction/'
+                
+                >Reductions</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/masking/'
+                
+                >Masking and Blending</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/shuffling/'
+                
+                >In-Register Shuffles</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/simd/auto-vectorization/'
+                
+                >Auto-Vectorization and SPMD</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/'
+          
+          >Algorithms Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/gcd/'
+                
+                >Binary GCD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prime-sieves/'
+                
+                >Prime Number Sieves</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/factorization/'
+                
+                >Integer Factorization</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/logistic/'
+                
+                >Optimizing Logistic Regression</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/big-integers/'
+                
+                >Big Integers and Karatsuba Multiplication</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/fft/'
+                
+                >Fast Fourier Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/ntt/'
+                
+                >Number-Theoretic Transform</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/argmin/'
+                
+                >Argmin with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/prefix/'
+                
+                >Prefix Sum with SIMD</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/reading-integers/'
+                
+                >Reading Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/writing-integers/'
+                
+                >Writing Decimal Integers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/float-io/'
+                
+                >Reading and Writing Floating-Point Numbers</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/string-searching/'
+                
+                >String Searching</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/sorting/'
+                
+                >Sorting</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul/'
+                
+                >Matrix Multiplication</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' '><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/'
+          
+          >Data Structures Case Studies</a></li>
+        
+          <ol>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/binary-search/'
+                
+                >Binary Search</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/s-tree/'
+                
+                >Static B-Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/b-tree/'
+                
+                >Search Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/segment-trees/'
+                
+                >Segment Trees</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/tries/'
+                
+                >Tries</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/rmq/'
+                
+                >Range Minimum Query</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/hash-tables/'
+                
+                >Hash Tables</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/bitset/'
+                
+                >Bitmaps</a></li>
+            
+              <li ><a href='https://anpaure.github.io/algorithmica-beta/hpc/data-structures/filters/'
+                
+                >Probabilistic Filters</a></li>
+            
+          </ol>
+        
+      
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/summary/'
+          
+          >Summary</a></li>
+        
+      
+        
+          <li class='part'>Appendix</li>
+        
+        <li class=' ignore-indexing'><a href='https://anpaure.github.io/algorithmica-beta/hpc/stats/'
+          
+          >Probability Theory Refresher</a></li>
+        
+      
+    
+  </ul>
+</nav>
+<div id='wrapper' ><menu id='menu'>
+  
+  
+  
+  
+  <div class='left'>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/bars-solid.svg'
+           onclick='toggleSidebar()'
+           title='open table of contents'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/adjust-solid.svg'
+           style='position: relative; top: -1px'
+           onclick='switchTheme(localStorage.getItem("theme") == "dark" ? "light" : "dark")'
+           title='dark theme'>
+    </a>
+    <a>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/search-solid.svg'
+           onclick='toggleSearch()'
+           title='search'>
+    </a>
+  </div>
+  <div class='title'>
+    
+      <span class='beta-brand'>Algorithmica β</span>
+      <span class='chapter-title'>Programming Languages</span>
+    
+  </div>
+  <div class='right'>
+    <a onClick='window.print()'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/print-solid.svg' title='print'>
+    </a>
+    <a href='https://prose.io/#anpaure%2falgorithmica-beta/edit/source/content%2fenglish/hpc%2fcomplexity%2flanguages.md'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/edit-solid.svg'
+           title='edit'
+           style='width: 18px; position: relative; right: -2px; top: -1px'>
+    </a>
+    <a href='https://github.com/anpaure/algorithmica-beta/blob/source/content/english/hpc/complexity/languages.md' class='github-main'>
+      <img src='https://anpaure.github.io/algorithmica-beta/icons/github-brands.svg' title='view on github'>
+    </a>
+  </div>
+</menu>
+<main>
+        <div id="search">
+    <input id="search-bar" type="search" placeholder='Search this book…' oninput="search()">
+    <div id="search-count"></div>
+    <div id="search-results">
+    </div>
+</div>
+<header>
+  
+  <h1>Programming Languages</h1>
+  
+    <div class='info'></div>
+  
+</header>
+<article>
+  
+
+
+  
+    
+    
+      
+        <p>If you are reading this book, then somewhere on your computer science journey you had a moment when you first started to care about the efficiency of your code.</p>
+<p>Mine was in high school, when I realized that making websites and doing <em>useful</em> programming won&rsquo;t get you into a university, and entered the exciting world of algorithmic programming olympiads. I was an okay programmer, especially for a highschooler, but I had never really wondered how much time it took for my code to execute before. But suddenly it started to matter: each problem now has a strict time limit. I started counting my operations. How many can you do in one second?</p>
+<p>I didn&rsquo;t know much about computer architecture to answer this question. But I also didn&rsquo;t need the right answer — I needed a rule of thumb. My thought process was: &ldquo;2-3GHz means 2 to 3 billion instructions executed every second, and in a simple loop that does something with array elements, I also need to increment loop counter, check end-of-loop condition, do array indexing and stuff like that, so let&rsquo;s add room for 3-5 more instructions for every useful one&rdquo; and ended up with using $5 \cdot 10^8$ as an estimate. None of these statements are true, but counting how many operations my algorithm needed and dividing it by this number was a good rule of thumb for my use case.</p>
+<p>The real answer, of course, is much more complicated and highly dependent on what kind of &ldquo;operation&rdquo; you have in mind. It can be as low as $10^7$ for things like <a href="https://anpaure.github.io/algorithmica-beta/hpc/cpu-cache/latency">pointer chasing</a> and as high as $10^{11}$ for <a href="https://anpaure.github.io/algorithmica-beta/hpc/simd">SIMD-accelerated</a> linear algebra. To demonstrate these striking differences, we will use the case study of matrix multiplication implemented in different languages — and dig deeper into how computers execute them.</p>
+<!--
+
+Because of this logic, and also because of the [computation model](../) postulated in CS 101, many programmers have a misconception that computers can execute a certain number of "operations" per second, and that using different programming languages has some sort of [multiplier effect](https://benchmarksgame-team.pages.debian.net/benchmarksgame/index.html) on that number:
+
+- "you can execute about $5 \cdot 10^8$ operations per second on this machine,"
+- "C is 2 times faster than Java,"
+- "Python is 100x slower than C++."
+
+-->
+<span class='anchor' id="types-of-languages"></span>
+<h2><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/#types-of-languages">#</a>Types of Languages</h2><!--
+
+Processors can be thought of as *state machines*. They keep their *state* in several fixed-length *registers*, one of which, the instruction pointer, indicates a memory location of the next instruction to be read and executed. This instruction somehow modifies the registers and moves the instruction pointer to the next instruction to be executed, and so on.
+
+These instructions — called *machine code* — are binary encoded, quirky and very difficult to work with, so no sane person writes them directly nowadays. Instead, we use higher-level programming languages and employ alternative means to feed instructions to the processor.
+
+-->
+<p>On the lowest level, computers execute <em>machine code</em> consisting of binary-encoded <em>instructions</em> which are used to control the CPU. They are specific, quirky, and require a great deal of intellectual effort to work with, so one of the first things people did after creating computers was create <em>programming languages</em>, which abstract away some details of how computers operate to simplify the process of programming.</p>
+<p>A programming language is fundamentally just an interface. Any program written in it is just a nicer higher-level representation which still at some point needs to be transformed into the machine code to be executed on the CPU — and there are several different means of doing that:</p>
+<ul>
+<li>From a programmer&rsquo;s perspective, there are two types of languages: <em>compiled</em>, which pre-process before executing, and <em>interpreted</em>, which are executed during runtime using a separate program called <em>an interpreter</em>.</li>
+<li>From a computer&rsquo;s perspective, there are also two types of languages: <em>native</em>, which directly execute machine code, and <em>managed</em>, which rely on some sort of <em>runtime</em> to do it.</li>
+</ul>
+<p>Since running machine code in an interpreter doesn&rsquo;t make sense, this makes a total of three types of languages:</p>
+<ul>
+<li>Interpreted languages, such as Python, JavaScript, or Ruby.</li>
+<li>Compiled languages with a runtime, such as Java, C#, or Erlang (and languages that work on their VMs, such as Scala, F#, or Elixir).</li>
+<li>Compiled native languages, such as C, Go, or Rust.</li>
+</ul>
+<p>There is no &ldquo;right&rdquo; way of executing computer programs: each approach has its own gains and drawbacks. Interpreters and virtual machines provide flexibility and enable some nice high-level programming features such as dynamic typing, run time code alteration, and automatic memory management, but these come with some unavoidable performance trade-offs, which we will now talk about.</p>
+<span class='anchor' id="interpreted-languages"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/#interpreted-languages">#</a>Interpreted languages</h3><p>Here is an example of a by-definition $1024 \times 1024$ matrix multiplication in pure Python:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">time</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">random</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">n</span> <span class="o">=</span> <span class="mi">1024</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">a</span> <span class="o">=</span> <span class="p">[[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="p">[[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">c</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+</span></span></code></pre></div><p>This code runs in 630 seconds. That&rsquo;s more than 10 minutes!</p>
+<p>Let&rsquo;s try to put this number in perspective. The CPU that ran it has a clock frequency of 1.4GHz, meaning that it does $1.4 \cdot 10^9$ cycles per second, totaling to almost $10^{15}$ for the entire computation, and about 880 cycles per multiplication in the innermost loop.</p>
+<p>This is not surprising if you consider the things that Python needs to do to figure out what the programmer meant:</p>
+<ul>
+<li>it parses the expression <code>c[i][j] += a[i][k] * b[k][j]</code>;</li>
+<li>tries to figure out what <code>a</code>, <code>b</code>, and <code>c</code> are and looks up their names in a special hash table with type information;</li>
+<li>understands that <code>a</code> is a list, fetches its <code>[]</code> operator, retrieves the pointer for <code>a[i]</code>, figures out it&rsquo;s also a list, fetches its <code>[]</code> operator again, gets the pointer for <code>a[i][k]</code>, and then the element itself;</li>
+<li>looks up its type, figures out that it&rsquo;s a <code>float</code>, and fetches the method implementing <code>*</code> operator;</li>
+<li>does the same things for <code>b</code> and <code>c</code> and finally add-assigns the result to <code>c[i][j]</code>.</li>
+</ul>
+<p>Granted, the interpreters of widely used languages such as Python are well-optimized, and they can skip through some of these steps on repeated execution of the same code. But still, some quite significant overhead is unavoidable due to the language design. If we get rid of all this type checking and pointer chasing, perhaps we can get cycles per multiplication ratio closer to 1, or whatever the &ldquo;cost&rdquo; of native multiplication is?</p>
+<span class='anchor' id="managed-languages"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/#managed-languages">#</a>Managed Languages</h3><p>The same matrix multiplication procedure, but implemented in Java:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.util.Random</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Matmul</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">static</span> <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">1024</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">static</span> <span class="kt">double</span><span class="o">[][]</span> <span class="n">a</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="o">[</span><span class="n">n</span><span class="o">][</span><span class="n">n</span><span class="o">];</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">static</span> <span class="kt">double</span><span class="o">[][]</span> <span class="n">b</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="o">[</span><span class="n">n</span><span class="o">][</span><span class="n">n</span><span class="o">];</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">static</span> <span class="kt">double</span><span class="o">[][]</span> <span class="n">c</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="o">[</span><span class="n">n</span><span class="o">][</span><span class="n">n</span><span class="o">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Random</span> <span class="n">rand</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Random</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="o">;</span> <span class="n">j</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">a</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span> <span class="o">=</span> <span class="n">rand</span><span class="o">.</span><span class="na">nextDouble</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="n">b</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span> <span class="o">=</span> <span class="n">rand</span><span class="o">.</span><span class="na">nextDouble</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="n">c</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">long</span> <span class="n">start</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="o">;</span> <span class="n">j</span><span class="o">++)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">n</span><span class="o">;</span> <span class="n">k</span><span class="o">++)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">c</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span> <span class="o">+=</span> <span class="n">a</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">k</span><span class="o">]</span> <span class="o">*</span> <span class="n">b</span><span class="o">[</span><span class="n">k</span><span class="o">][</span><span class="n">j</span><span class="o">];</span>
+</span></span><span class="line"><span class="cl">                
+</span></span><span class="line"><span class="cl">        <span class="kt">double</span> <span class="n">diff</span> <span class="o">=</span> <span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">()</span> <span class="o">-</span> <span class="n">start</span><span class="o">)</span> <span class="o">*</span> <span class="n">1e</span><span class="o">-</span><span class="n">9</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">diff</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>It now runs in 10 seconds, which amounts to roughly 13 CPU cycles per multiplication — 63 times faster than Python. Considering that we need to read elements of <code>b</code> non-sequentially from the memory, the running time is roughly what it is supposed to be.</p>
+<p>Java is a <em>compiled</em>, but not <em>native</em> language. The program first compiles to <em>bytecode</em>, which is then interpreted by a virtual machine (JVM). To achieve higher performance, frequently executed parts of the code, such as the innermost <code>for</code> loop, are compiled into the machine code during runtime and then executed with almost no overhead. This technique is called <em>just-in-time compilation</em>.</p>
+<p>JIT compilation is not a feature of the language itself, but of its implementation. There is also a JIT-compiled version of Python called <a href="https://www.pypy.org/">PyPy</a>, which needs about 12 seconds to execute the code above without any changes to it.</p>
+<span class='anchor' id="compiled-languages"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/#compiled-languages">#</a>Compiled Languages</h3><p>Now it&rsquo;s turn for C:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;time.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define n 1024
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">double</span> <span class="n">a</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">n</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">n</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">n</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span> <span class="n">rand</span><span class="p">()</span> <span class="o">/</span> <span class="n">RAND_MAX</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span> <span class="n">rand</span><span class="p">()</span> <span class="o">/</span> <span class="n">RAND_MAX</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">clock_t</span> <span class="n">start</span> <span class="o">=</span> <span class="n">clock</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">float</span> <span class="n">seconds</span> <span class="o">=</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span> <span class="p">(</span><span class="n">clock</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">/</span> <span class="n">CLOCKS_PER_SEC</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%.4f</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">seconds</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>It takes 9 seconds when you compile it with <code>gcc -O3</code>.</p>
+<p>It doesn&rsquo;t seem like a huge improvement — the 1-3 second advantage over Java and PyPy can be attributed to the additional time of JIT-compilation — but we haven&rsquo;t yet taken advantage of a far better C compiler ecosystem. If we add <code>-march=native</code> and <code>-ffast-math</code> flags, time suddenly goes down to 0.6 seconds!</p>
+<p>What happened here is we <a href="https://anpaure.github.io/algorithmica-beta/hpc/compilation/flags/">communicated to the compiler</a> the exact model of the CPU we are running (<code>-march=native</code>) and gave it the freedom to rearrange <a href="https://anpaure.github.io/algorithmica-beta/hpc/arithmetic/float">floating-point computations</a> (<code>-ffast-math</code>), and so it took advantage of it and used <a href="https://anpaure.github.io/algorithmica-beta/hpc/simd">vectorization</a> to achieve this speedup.</p>
+<p>It&rsquo;s not like it is impossible to tune the JIT-compilers of PyPy and Java to achieve the same performance without significant changes to the source code, but it is certainly easier for languages that compile directly to native code.</p>
+<span class='anchor' id="blas"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/#blas">#</a>BLAS</h3><p>Finally, let&rsquo;s take a look at what an expert-optimized implementation is capable of. We will test a widely-used optimized linear algebra library called <a href="https://www.openblas.net/">OpenBLAS</a>. The easiest way to use it is to go back to Python and just call it from <code>numpy</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">time</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">n</span> <span class="o">=</span> <span class="mi">1024</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+</span></span></code></pre></div><p>Now it takes ~0.12 seconds: a ~5x speedup over the auto-vectorized C version and ~5250x speedup over our initial Python implementation!</p>
+<p>You don&rsquo;t typically see such dramatic improvements. For now, we are not ready to tell you exactly how this is achieved. Implementations of dense matrix multiplication in OpenBLAS are typically <a href="https://github.com/xianyi/OpenBLAS/blob/develop/kernel/x86_64/dgemm_kernel_16x2_haswell.S">5000 lines of handwritten assembly</a> tailored separately for <em>each</em> architecture. In later chapters, we will explain all the relevant techniques one by one, and then <a href="https://anpaure.github.io/algorithmica-beta/hpc/algorithms/matmul">return</a> to this example and develop our own BLAS-level implementation using just under 40 lines of C.</p>
+<span class='anchor' id="takeaway"></span>
+<h3><a class="anchor-link" href="https://anpaure.github.io/algorithmica-beta/hpc/complexity/languages/#takeaway">#</a>Takeaway</h3><p>The key lesson here is that using a native, low-level language doesn&rsquo;t necessarily give you performance; but it does give you <em>control</em> over performance.</p>
+<p>Complementary to the &ldquo;N operations per second&rdquo; simplification, many programmers also have a misconception that using different programming languages has some sort of multiplier on that number. Thinking this way and <a href="https://benchmarksgame-team.pages.debian.net/benchmarksgame/index.html">comparing languages</a> in terms of performance doesn&rsquo;t make much sense: programming languages are fundamentally just tools that take away <em>some</em> control over performance in exchange for convenient abstractions.  Regardless of the execution environment, it is still largely a programmer&rsquo;s job to use the opportunities that the hardware provides.</p>
+
+      
+    
+  
+
+
+
+        </article>
+        <div class='nextprev'>
+  
+    
+      
+      
+
+      
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+
+      
+        <div class='left'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/hardware/' id='prev-article'>← Modern Hardware</a>
+        
+        </div>
+        <div class='right'>
+        
+          <a href='https://anpaure.github.io/algorithmica-beta/hpc/complexity/models/' id='next-article'>Models of Computation →</a>
+        
+        </div>
+      
+    
+  
+</div>
+
+      </main>
+      <footer>
+  Copyright 2021–2022 Sergey Slotin
+  <br>
+   
+</footer>
+
+    </div>
+  </body>
+</html>
