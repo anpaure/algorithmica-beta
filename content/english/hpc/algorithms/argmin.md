@@ -1,6 +1,6 @@
 ---
 title: Argmin with SIMD
-weight: 7
+weight: 8
 ---
 
 Computing the *minimum* of an array is [easily vectorizable](/hpc/simd/reduction), as it is not different from any other reduction: in AVX2, you just need to use a convenient `_mm256_min_epi32` intrinsic as the inner operation. It computes the minimum of two 8-element vectors in one cycle — even faster than in the scalar case, which requires at least a comparison and a conditional move.

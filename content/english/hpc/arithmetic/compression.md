@@ -17,7 +17,7 @@ Real data gives us plenty of opportunities. Source code repeats identifiers, log
 
 ## Information
 
-If an event has probability $p$, its information content is defined as
+If an event has probability $0 < p \le 1$, its information content is defined as
 
 $$
 I(p)=-\log_2p.
@@ -28,6 +28,8 @@ An event that occurs half the time carries one bit of information. An event with
 $$
 H=-\sum_i p_i\log_2p_i.
 $$
+
+The terms with $p_i=0$ contribute zero, following the limiting convention $0\log 0=0$.
 
 This is a lower bound on the average number of bits needed under the assumed model, not a promise that every particular file becomes smaller. The model matters: if we assign short codes to events that rarely occur in the actual data, we have merely compressed the wrong distribution.
 
@@ -85,7 +87,7 @@ const unsigned char *decode_varint(const unsigned char *p,
 
 Numbers below $2^7$ use one byte, numbers below $2^{14}$ use two, and so on. Uniformly random 64-bit integers usually become larger, while deltas, lengths, and small identifiers often shrink considerably.
 
-The decoder above is the small trusted-input kernel: it assumes that a complete canonical 64-bit varint is available. A decoder for files or network data also needs an end pointer, a ten-byte limit, and a check that the last byte does not contain overflowing payload bits. Keeping validation outside a proven-valid block can be faster, but omitting it entirely is not an optimization.
+The decoder above is the small trusted-input kernel: it assumes that a complete canonical 64-bit varint is available. A decoder for files or network data also needs an end pointer, a ten-byte limit, a check that the last byte does not contain overflowing payload bits, and — when the format requires canonical encodings — rejection of an overlong encoding whose final payload group is zero. Keeping validation outside a proven-valid block can be faster, but omitting it entirely is not an optimization.
 
 Signed residuals are usually mapped to unsigned numbers by interleaving them as
 

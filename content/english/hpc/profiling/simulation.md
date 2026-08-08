@@ -48,7 +48,7 @@ Mispredicts:    19,922,564  (19,921,919 cond +        645 ind)
 Mispred rate:         22.0% (      22.5%     +        0.0%   )
 ```
 
-We've fed Cachegrind exactly the same example code as in [the previous section](../events): we create an array of a million random integers, sort it, and then perform a million binary searches on it. Cachegrind shows roughly the same numbers as perf does, except that that perf's measured numbers of memory reads and branches are slightly inflated due to [speculative execution](/hpc/pipelining): they really happen in hardware and thus increment hardware counters, but are discarded and don't affect actual performance, and thus ignored in the simulation.
+We've fed Cachegrind exactly the same example code as in [the previous section](../events): we create an array of a million random integers, sort it, and then perform a million binary searches on it. Cachegrind shows roughly the same numbers as perf does, except that perf's measured numbers of memory reads and branches are slightly inflated due to [speculative execution](/hpc/pipelining): they really happen in hardware and thus increment hardware counters, but are discarded and don't affect actual performance, and thus ignored in the simulation.
 
 Cachegrind only models the first (`D1` for data, `I1` for instructions) and the last (`LL`, unified) levels of cache, the characteristics of which are inferred from the system. It doesn't limit you in any way as you can also set them from the command line, e g., to model the L2 cache: `--LL=<size>,<associativity>,<line size>`.
 

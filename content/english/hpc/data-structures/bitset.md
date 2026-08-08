@@ -1,6 +1,6 @@
 ---
 title: Bitmaps
-weight: 6
+weight: 9
 ---
 
 Suppose we need to store a subset of the integers $0,1,\ldots,N-1$. A hash table stores the elements that are present; a *bitmap* stores one bit for every possible element:

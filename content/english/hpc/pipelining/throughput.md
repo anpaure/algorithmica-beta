@@ -38,7 +38,7 @@ But we can go higher than that. The *throughput* of `add`[^throughput] is 2 on m
 
 [^throughput]: The throughput of register-register `add` is 4, but since we are reading its second operand from memory, it is bottlenecked by the throughput of memory `mov`, which is 2 on Zen 2.
 
-The solution is to use *two* accumulators and just sum up odd and and even elements separately:
+The solution is to use *two* accumulators and just sum up odd and even elements separately:
 
 ```c++
 int s0 = 0, s1 = 0;
@@ -72,7 +72,7 @@ Compilers don't always produce the optimal code.
 
 This only applies to the variables that you have to preserve between iterations. You can "fire and forget" instructions that compute temporary values as much as you want.
 
-Memory operations may have [very high latencies](/hpc/cpu-cache/latency), but you don't need hundreds or registers for them because  because they are bottlenecked for different reasons.
+Memory operations may have [very high latencies](/hpc/cpu-cache/latency), but you don't need hundreds of registers for them because they are bottlenecked for different reasons.
 
 But they are bottlenecked for different reasons.
 

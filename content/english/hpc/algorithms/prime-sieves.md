@@ -10,12 +10,12 @@ The sieve of Eratosthenes does it the other way around. It starts by assuming th
 ```c++
 vector<char> sieve(int n) {
     // Assume n >= 2.
-    vector<char> is_prime(n + 1, true);
+    vector<char> is_prime(size_t(n) + 1, true);
     is_prime[0] = is_prime[1] = false;
 
     for (int p = 2; p <= n / p; p++)
         if (is_prime[p])
-            for (int k = p * p; k <= n; k += p)
+            for (long long k = 1LL * p * p; k <= n; k += p)
                 is_prime[k] = false;
 
     return is_prime;
@@ -50,17 +50,19 @@ and their indices in the compressed array differ by $p$:
 
 ```c++
 vector<int> primes(int n) {
-    vector<char> composite(n / 2 + 1, false);
     vector<int> result;
 
-    if (n >= 2)
-        result.push_back(2);
+    if (n < 2)
+        return result;
 
-    for (int p = 3; p <= n; p += 2) {
+    vector<char> composite(n / 2 + 1, false);
+    result.push_back(2);
+
+    for (long long p = 3; p <= n; p += 2) {
         if (composite[p / 2])
             continue;
 
-        result.push_back(p);
+        result.push_back((int) p);
 
         if (p <= n / p)
             for (long long k = 1LL * p * p; k <= n; k += 2 * p)

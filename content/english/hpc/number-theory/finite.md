@@ -1,32 +1,43 @@
 ---
 title: Finite Fields
 weight: 5
-draft: true
 ---
 
-There are other mathematical objects that behave the same way as remainders modulo a prime numbers. Based on what properties these sets of objects retain they are called *groups*, *rings* and *fields*.
+Residues modulo a prime are not the only mathematical objects that support the familiar arithmetic operations. Depending on which laws are preserved, these objects form *groups*, *rings*, and *fields*.
 
-### Permutations
+The terminology may seem needlessly abstract, but it lets us reuse algorithms. [Binary exponentiation](../exponentiation/) does not really need integers; it only needs an associative multiplication and an identity element. Gaussian elimination does not really need real numbers; it needs addition, multiplication, and division by non-zero elements. Once we identify the required structure, the same algorithm works on every instance of it.
 
-We can definie product of permutations as application of one permutation to another.
+## Algebraic Structures
 
-This operation is associative, so we can use binary exponentiation to compute $n$-th power in $O(n \log n)$ time.
+### Groups
+
+A *group* is a set with one closed operation that is associative, has an identity element, and gives every element an inverse.
+
+Permutations are a useful non-numeric example. We define the product of two permutations as applying one after the other. Composition is associative, the permutation that changes nothing is the identity, and every permutation can be undone.
+
+This means we can use binary exponentiation to compute the $n$-th power of a permutation in $O(\log n)$ compositions:
 
 ![](../../arithmetic/img/permutation.png)
 
-In general, this is called *permutation group*, and *groups* are sets of element that have an operation defined on them.
+The order of the operands still matters: permutation composition is generally not commutative. Binary exponentiation never required commutativity, so the algorithm remains valid without it.
 
-### Roots of unity
+### Rings and Fields
 
-Complex numbers are numbers of form $a + bi$, where $a$ and $b$ are real numbers and $i$ is called imaginary one: it is the number for which $i^2 = -1$.
+A *ring* has addition and multiplication. Addition forms a commutative group, multiplication is associative, and multiplication distributes over addition. The integers and the residues modulo any positive $m$ are rings.
 
-Complex numbers are useful in algebra to work with roots of negative numbers, as $i$ in some sense is equal to $\sqrt{-1}$. Similar to negative numbers, they don't really exist in the real world, but only in the minds of mathematicians.
+A *field* is a commutative ring in which every non-zero element has a multiplicative inverse. The real and complex numbers are fields. The residues modulo $m$ form a field exactly when $m$ is prime: modulo $6$, for example, $2 \cdot 3 = 0$ even though neither factor is zero, so neither 2 nor 3 can have an inverse.
+
+The distinction tells us which algorithms are legal. We can add and multiply matrices over any ring, but ordinary Gaussian elimination needs a field because it divides by pivots.
+
+## Roots of Unity
+
+Complex numbers are numbers of the form $a+bi$, where $a$ and $b$ are real and $i^2=-1$.
 
 It is most convenient to think about complex numbers geometrically.
 
-*Modulus* of a complex number as the real number $r = \sqrt{a^2 + b^2}$. Geometrically, this is the length of vector $(a, b)$.
+The *modulus* of a complex number is the real number $r = \sqrt{a^2+b^2}$. Geometrically, this is the length of the vector $(a,b)$.
 
-*Argument* of a complex number is the real number $\phi \in (-\pi, \pi]$, for which $\tan \phi = \frac{b}{a}$. Geometrically, this is the angle between vectors $(a, 0)$ и $(a, b)$.
+For a non-zero complex number, the *argument* is the angle $\phi$ of that vector. It is normally computed as $\operatorname{atan2}(b,a)$ rather than from $\tan \phi=b/a$, because the tangent alone cannot distinguish opposite quadrants and is undefined when $a=0$.
 
 This way we can represent a complex number using polar coordinates:
 
@@ -36,7 +47,7 @@ $$
 
 ![](../../arithmetic/img/complex-plane.png)
 
-The reason this representation is useful is because if we need to multiply two complex numbers it can be shown with high school trigonometry that instead of doing binomial expansion we just need to multiply their moduli and add their arguments:
+The reason this representation is useful is that if we need to multiply two complex numbers, it can be shown with high school trigonometry that instead of doing binomial expansion we just need to multiply their moduli and add their arguments:
 
 $$
 \begin{aligned}
@@ -47,78 +58,159 @@ $$
 \end{aligned}
 $$
 
-Now, let's **define** Euler's number $e$ as the number for which
+Euler's formula gives a compact notation for points on the unit circle:
 
 $$
-e^{i\phi} = \cos \phi + i \sin \phi
+e^{i\phi}=\cos \phi+i\sin \phi.
 $$
 
-that is, let's just introduce such notation for $(\cos \phi + i \sin \phi)$ without thinking too much about what raising a number to a complex exponent really means. Geometrically, all such points will live on a unitary circle.
+It behaves exactly as the exponential notation suggests: multiplying two unit complex numbers adds their angles.
 
-Such notation is useful, because we can treat $e^{i\phi}$ as a normal exponent. If we want to multiply two numbers complex on a unit circle with arguments $a$ and $b$, then we just write
-
-$$
-(\cos a + i \sin a) \cdot (\cos b + i \sin b) = e^{i (a+b)}
-$$
-
-Now, what does all that have to do with finite rings you may ask. The thing is that when we multiply complex numbers that live on a unit circle they wrap around the same way integer remainders do. There are still infinitely many of them, so the resemblence is not clear, but consider this: how many $n$-th *roots* of one there can be? These are the points that when raised to $n$-th power arrive at 1.
-
-It turns out that there are exactly $n$ of them, and they will be equally spaced. Precisely, these will be numbers of form
+An $n$-th *root of unity* is a complex number $w$ satisfying $w^n=1$. It turns out that there are exactly $n$ of them, and they are equally spaced. Precisely, these are the numbers
 
 $$
-w_k = e^{i \tau \frac{k}{n}}
+w_k=e^{i\tau\frac{k}{n}}, \qquad 0 \le k < n,
 $$
 
-where $\tau$ means $2 \pi$ (a [modern notation](https://tauday.com/tau-manifesto)).
+where $\tau$ means $2\pi$ (a [modern notation](https://tauday.com/tau-manifesto)).
 
 ![](../../arithmetic/img/roots.png)
 
-The first root $w_1$ (the second root, to be more precise, because $1$ is also a root) is called generating root of unity. Raising it to 1st, 2nd and so on powers will generate a sequence of roots that will cycle after $n$ iterations.
+To see why the list is complete, write an arbitrary complex number as $r e^{i\phi}$. If its $n$-th power is 1, then $r^n=1$, so $r=1$, and $n\phi$ must be an integer multiple of $\tau$. This gives precisely the angles above.
+
+The root $w_1$ is a *primitive* $n$-th root of unity. Its powers generate all the others and return to the identity after exactly $n$ steps:
 
 $$
-w_n = e^{i \tau \frac{n}{n}} = e^{i \tau} = e^{i \cdot 0} = w_0 = 1
+w_1^k=w_k \quad (0\le k<n),
+\qquad
+w_1^n=e^{i\tau}=1=w_0.
 $$
 
-Everything not on unit circle will have moduli too large or too low. And everything with argument not divided by $w_1$ will have argument too off.
+The roots of unity form a finite cyclic **group** under multiplication. They do not form a ring: addition is not closed, since the sum of two roots is usually not another root. This group structure is what makes the [fast Fourier transform](/hpc/algorithms/fft/) work. The [number-theoretic transform](/hpc/algorithms/ntt/) uses analogous roots inside a finite field.
 
-Structures like these are called *rings*, or, more precisely, *finite rings*.
+## Finite Fields
 
-### Galois Fields
+Finite fields are fields with finitely many elements. The residues modulo a prime $p$ form the simplest one, denoted $\mathbb F_p$ or $GF(p)$.
 
-Remainders are *finite rings*. What makes remainders modulo a prime different is that there will always exist an inverse operation for multiplication, in which case it is called a *finite fields*. But prime numbers are not the only set sizes that can house a finite field.
+It turns out that you can also construct fields of size $p^k$ for any prime $p$ and positive integer $k$, and there are no finite fields of any other size. This is particularly useful for computers: choosing $p=2$ and $k=8$ produces a field with exactly 256 elements, one for every byte value.
 
-The problem with having finite fields of prime numbers is that they are wasteful when dealing with computers, that have power-of-two data.
+### Polynomial Representation
 
-It turns out that you can also construct fields of size $p^k$, for any prime $p$. This is particulary useful for computers, because you can set $p=2$ and $k=8$, and one byte will perfectly fit for members of this set.
+To construct $GF(p^k)$, we choose an irreducible polynomial $P(x)$ of degree $k$ over $\mathbb F_p$. The field elements are polynomials of degree less than $k$; we add and multiply them normally and reduce the result modulo $P(x)$.
 
-For non-prime fields, you move away from the idea of using integers, and instead you encode information as a special type of polynomial. First, you pick an *irriducible polynomial*. For example, for GF(8), that $p(x) = x3 + x + 1$ is the one: it can't be factored into a product.
+For a byte field, the coefficients are bits. The byte
 
-You define a member of the set by the coefficient of the polynomial. Since every coefficient is either 0 or 1, there will be exactly 256 of them.
+```text
+10110010
+```
 
-You define addition as xor-ing its elements, and multiplication as multiplying the polynomials and reducing them by that irreducible polynomial (which can be done in a manner similar to GCD).
+represents the polynomial
 
-Xor-ing is okay computationally, but instead of doing this weird multiplication we can just exploit the fact that there are not that many of them and just precompute a lookup table of 256 one-byte entries.
+$$
+x^7+x^5+x^4+x.
+$$
 
-This sounds complicated, but it is all done to have efficient implementations:
+Because coefficients are reduced modulo 2, addition and subtraction are both XOR. Multiplication is carryless polynomial multiplication followed by reduction.
+
+AES uses $GF(2^8)$ with the irreducible polynomial
+
+$$
+P(x)=x^8+x^4+x^3+x+1,
+$$
+
+represented as `0x11b`. When a left shift produces an $x^8$ term, reducing by $P$ means XORing the remaining low terms, `0x1b`:
 
 ```c++
-char log[256], ilog[256];
-
-char add(char x, char y) {
-    return x ^ y;
+uint8_t add(uint8_t a, uint8_t b) {
+    return a ^ b;
 }
 
-char sub(char x, char y) {
-    return x ^ y;
+uint8_t sub(uint8_t a, uint8_t b) {
+    return a ^ b;
 }
 
-char mul(char x, char y) {
-    return ilog[log[x] + log[y]];
-}
-
-char div(char x, char y) {
-    return ilog[log[x] - log[y]];
+uint8_t mul(uint8_t a, uint8_t b) {
+    uint8_t r = 0;
+    for (int i = 0; i < 8; i++) {
+        if (b & 1)
+            r ^= a;
+        bool high = a & 0x80;
+        a <<= 1;
+        if (high)
+            a ^= 0x1b;
+        b >>= 1;
+    }
+    return r;
 }
 ```
 
-This exact field is a foundation of many cryptographic and data compression. In fact, when you loaded this page, your computer did a transform of everything that was communicated into this form.
+The loop is just eight steps, but we can still use field structure to implement division. The 255 non-zero elements form a multiplicative group, so $a^{255}=1$ and $a^{-1}=a^{254}$:
+
+```c++
+uint8_t power(uint8_t a, unsigned n) {
+    uint8_t r = 1;
+    while (n) {
+        if (n & 1)
+            r = mul(r, a);
+        a = mul(a, a);
+        n >>= 1;
+    }
+    return r;
+}
+
+uint8_t inverse(uint8_t a) {
+    assert(a != 0);
+    return power(a, 254);
+}
+```
+
+Zero has no multiplicative inverse. This is not an implementation corner case but part of the field definition, and every division routine needs to handle it explicitly.
+
+### Logarithm Tables
+
+The multiplicative group of a finite field is cyclic. If $g$ is a primitive element, every non-zero value has the form $g^i$, and multiplication turns into addition of exponents:
+
+$$
+g^i \cdot g^j=g^{i+j \bmod 255}.
+$$
+
+For the AES polynomial, `0x03` is a primitive element. We can enumerate its powers once and build logarithm and exponential tables:
+
+```c++
+uint8_t logarithm[256];
+uint8_t exponential[510];
+
+void init_tables() {
+    uint8_t x = 1;
+    for (int i = 0; i < 255; i++) {
+        exponential[i] = x;
+        logarithm[x] = (uint8_t) i;
+        x = mul(x, 3);
+    }
+    for (int i = 255; i < 510; i++)
+        exponential[i] = exponential[i - 255];
+}
+
+uint8_t multiply(uint8_t a, uint8_t b) {
+    if (a == 0 || b == 0)
+        return 0;
+    return exponential[logarithm[a] + logarithm[b]];
+}
+
+uint8_t divide(uint8_t a, uint8_t b) {
+    assert(b != 0);
+    if (a == 0)
+        return 0;
+    return exponential[logarithm[a] + 255 - logarithm[b]];
+}
+```
+
+Duplicating the exponential table removes a remainder operation from the hot path. The arrays use unsigned bytes: a plain `char` may be signed, and then values above 127 and negative table indices silently break the implementation. The explicit zero checks are equally important because $\log 0$ is undefined.
+
+Table lookup is not automatically the fastest approach. The direct loop has a dependency chain, while tables add data loads; for bulk work, bitslicing, carryless multiplication, GFNI, or SIMD over independent field elements may be better. The right implementation depends on how much parallel work is available and whether the tables stay hot in cache.
+
+Finite-field arithmetic appears in the AES substitution layer, [Reed–Solomon error correction](../error-correction/#reedsolomon-codes), polynomial hashes, and many cryptographic protocols. It is not a special encoding applied to all internet traffic: it is one small algebraic tool reused in many otherwise unrelated algorithms.
+
+### Acknowledgements
+
+The byte-field representation and AES polynomial follow the [Advanced Encryption Standard](https://csrc.nist.gov/pubs/fips/197/final). The standard also gives a direct `XTIME` formulation equivalent to the multiplication loop above.

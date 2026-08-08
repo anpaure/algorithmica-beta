@@ -86,9 +86,9 @@ before:       [ 1  3  5  7  9 ]
 
 insert 6:     [ 1  3  5  6  7  9 ]
 
-after split:  [ 1  3  5 ]  [ 6  7  9 ]
+after split:  [ 1  3  5 ]  [ 7  9 ]
                          ^
-                 separator copied to parent
+                   6 moves to parent
 ```
 
 Only the nodes on one root-to-leaf path can split, so insertion performs $O(\log_B N)$ I/O operations in the worst case. Most insertions modify just one leaf.

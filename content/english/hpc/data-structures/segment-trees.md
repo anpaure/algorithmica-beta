@@ -43,7 +43,7 @@ The main idea behind segment trees is this:
 
 These computed subsegment sums can be logically represented as a binary tree — which is what we call a *segment tree*:
 
-![A segment tree with with the nodes relevant for the sum(11) and add(10) queries highlighted](../img/segtree-path.png)
+![A segment tree with the nodes relevant for the sum(11) and add(10) queries highlighted](../img/segtree-path.png)
 
 Segment trees have some nice properties:
 
@@ -444,7 +444,7 @@ For any node $p$, its sum $s_p$ equals to the sum $(s_l + s_r)$ stored in its ch
 *The Fenwick tree* (also called *binary indexed tree* — soon you'll understand why) is a type of segment tree that uses this consideration and gets rid of all *right* children, essentially removing every second node in each layer and making the total node count the same as the underlying array.
 
 ```c++
-int t[N + 1]; // +1 because we use use one-based indexing
+int t[N + 1]; // +1 because we use one-based indexing
 ```
 
 To store these segment sums compactly, the Fenwick tree ditches the Eytzinger layout: instead, in place of every element $k$ that would be a leaf in the last layer of a segment tree, it stores the sum of its first non-removed ancestor. For example:

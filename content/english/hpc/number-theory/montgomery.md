@@ -37,7 +37,7 @@ int faster_sum(int *a, int n) {
 }
 ```
 
-However, sometimes you only have a chain of modular multiplications, and there is no good way to eel out of computing the remainder of the division — other than with the [integer division tricks](../../arithmetic/division/) requiring a constant modulo and some precomputation.
+However, sometimes you only have a chain of modular multiplications, and there is no good way to avoid computing the remainder of the division — other than with the [integer division tricks](../../arithmetic/division/) requiring a constant modulo and some precomputation.
 
 But there is another technique designed specifically for modular arithmetic, called *Montgomery multiplication*.
 
@@ -168,7 +168,7 @@ $$
 m = x \cdot n^\prime \cdot n \equiv x \pmod r
 $$
 
-But why would we voluntarily choose to perfom two right-shifts instead of just one? This is beneficial because for `((u64) q * n) >> 32` we need to do a 32-by-32 multiplication and take the upper 32 bits of the result (which the x86 `mul` instruction [already writes](../../arithmetic/integer/#128-bit-integers) in a separate register, so it doesn't cost anything), and the other right-shift `x >> 32` is not on the critical path.
+But why would we voluntarily choose to perform two right-shifts instead of just one? This is beneficial because for `((u64) q * n) >> 32` we need to do a 32-by-32 multiplication and take the upper 32 bits of the result (which the x86 `mul` instruction [already writes](../../arithmetic/integer/#128-bit-integers) in a separate register, so it doesn't cost anything), and the other right-shift `x >> 32` is not on the critical path.
 
 ```c++
 u32 reduce(u64 x) {

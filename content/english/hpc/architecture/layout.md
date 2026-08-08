@@ -1,6 +1,6 @@
 ---
 title: Machine Code Layout
-weight: 10
+weight: 5
 published: true
 ---
 
@@ -12,11 +12,11 @@ But sometimes the reverse can happen when the front-end doesn't feed instruction
 
 Before the machine code gets transformed into instructions, and the CPU understands what the programmer wants, it first needs to go through two important stages that we are interested in: *fetch* and *decode*.
 
-During the **fetch** stage, the CPU simply loads a fixed-size chunk of bytes from the main memory, which contains the binary encodings of some number of instructions. This block size is typically 32 bytes on x86, although it may vary on different machines. An important nuance is that this block has to be [aligned](/hpc/cpu-cache/cache-lines): the address of the chunk must be multiple of its size (32B, in our case).
+During the **fetch** stage, the CPU simply loads a fixed-size chunk of bytes from the main memory, which contains the binary encodings of some number of instructions. This block size is typically 32 bytes on x86, although it may vary on different machines. An important nuance is that this block has to be [aligned](/hpc/cpu-cache/cache-lines): the address of the chunk must be a multiple of its size (32B, in our case).
 
-<!-- todo: what happens when an instruction crosses the boundary? -->
+An x86 instruction is allowed to cross a fetch-block or cache-line boundary. The front-end then has to obtain bytes from both blocks before it can decode the instruction. Sequential fetching and instruction queues often hide this in a long straight-line stream, but a taken branch that lands near the end of a block may expose it, and crossing a page boundary is worse if the second page is not already translated and cached. Alignment is therefore most useful for hot branch targets and loop entries, not for preventing every instruction from straddling a boundary.
 
-Next comes the **decode** stage: the CPU looks at this chunk of bytes, discards everything that comes before the instruction pointer, and splits the rest of them into instructions. Machine instructions are encoded using a variable number of bytes: something simple and very common like `inc rax` takes one byte, while some obscure instruction with encoded constants and behavior-modifying prefixes may take up to 15. So, from a 32-byte block, a variable number of instructions may be decoded, but no more than a certain machine-dependent limit called the *decode width*. On my CPU (a [Zen 2](https://en.wikichip.org/wiki/amd/microarchitectures/zen_2)), the decode width is 4, which means that on each cycle, up to 4 instructions can be decoded and passed to the next stage.
+Next comes the **decode** stage: the CPU looks at this chunk of bytes, discards everything that comes before the instruction pointer, and splits the rest of them into instructions. Machine instructions are encoded using a variable number of bytes: something simple and very common like `ret` takes one byte, while some obscure instruction with encoded constants and behavior-modifying prefixes may take up to 15. So, from a 32-byte block, a variable number of instructions may be decoded, but no more than a certain machine-dependent limit called the *decode width*. On my CPU (a [Zen 2](https://en.wikichip.org/wiki/amd/microarchitectures/zen_2)), the decode width is 4, which means that on each cycle, up to 4 instructions can be decoded and passed to the next stage.
 
 The stages work in a pipelined fashion: if the CPU can tell (or [predict](/hpc/pipelining/branching/)) which instruction block it needs next, then the fetch stage doesn't wait for the last instruction in the current block to be decoded and loads the next one right away.
 
@@ -30,13 +30,13 @@ Loop Stream Detector (LSD)
 
 ### Code Alignment
 
-Other things being equal, compilers typically prefer instructions with shorter machine code, because this way more instructions can fit in a single 32B fetch block, and also because it reduces the size of the binary. But sometimes the reverse is prefereable, due to the fact that the fetched instructions' blocks must be aligned.
+Other things being equal, compilers typically prefer instructions with shorter machine code, because this way more instructions can fit in a single 32B fetch block, and also because it reduces the size of the binary. But sometimes the reverse is preferable, due to the fact that the fetched instructions' blocks must be aligned.
 
 Imagine that you need to execute an instruction sequence that starts on the last byte of a 32B-aligned block. You may be able to execute the first instruction without additional delay, but for the subsequent ones, you have to wait for one additional cycle to do another instruction fetch. If the code block was aligned on a 32B boundary, then up to 4 instructions could be decoded and then executed concurrently (unless they are extra long or interdependent).
 
 Having this in mind, compilers often do a seemingly harmful optimization: they sometimes prefer instructions with longer machine codes, and even insert dummy instructions that do nothing[^nop] in order to get key jump locations aligned on a suitable power-of-two boundary.
 
-[^nop]: Such instructions are called no-op, or NOP instructions. On x86, the "official way" of doing nothing is `xchg rax, rax` (swap a register with itself): the CPU recognizes it and doesn't spend extra cycles executing it, except for the decode stage. The `nop` shorthand maps to the same machine code.
+[^nop]: Such instructions are called no-op, or NOP instructions. The one-byte x86 encoding `0x90` is historically the encoding of `xchg eax, eax` and is now defined as `nop`; x86 also provides longer NOP encodings specifically for padding. They still occupy front-end bandwidth even though they do not perform useful back-end work.
 
 In GCC, you can use `-falign-labels=n` flag to specify a particular alignment policy, [replacing](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html) `-labels` with `-function`, `-loops`, or `-jumps` if you want to be more selective. On `-O2` and `-O3` levels of optimization, it is enabled by default — without setting a particular alignment, in which case it uses a (usually reasonable) machine-dependent default value.
 
@@ -130,7 +130,7 @@ swap:
     jmp normal
 ```
 
-This technique is quite handy when handling exceptions cases in general, and in high-level code, you can give the compiler a [hint](/hpc/compilation/situational) that a certain branch is more likely than the other:
+This technique is quite handy when handling exceptional cases in general, and in high-level code, you can give the compiler a [hint](/hpc/compilation/situational) that a certain branch is more likely than the other:
 
 ```c++
 int length(int x, int y) {

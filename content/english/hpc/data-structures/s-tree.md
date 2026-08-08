@@ -37,7 +37,7 @@ B-trees generalize the concept of binary search trees by allowing nodes to have 
 
 ![A B-tree of order 4](../img/b-tree.jpg)
 
-The main advantage of this approach is that it reduces the tree height by $\frac{\log_2 n}{\log_k n} = \frac{\log k}{\log 2} = \log_2 k$ times, while fetching each node still takes roughly the same time — as long it fits into a single [memory block](/hpc/external-memory/hierarchy/).
+The main advantage of this approach is that it reduces the tree height by $\frac{\log_2 n}{\log_k n} = \frac{\log k}{\log 2} = \log_2 k$ times, while fetching each node still takes roughly the same time — as long as it fits into a single [memory block](/hpc/external-memory/hierarchy/).
 
 B-trees were primarily developed for the purpose of managing on-disk databases, where the latency of randomly fetching a single byte is comparable with the time it takes to read the next 1MB of data sequentially. For our use case, we will be using the block size of $B = 16$ elements — or $64$ bytes, the size of the cache line — which makes the tree height and the total number of cache line fetches per query $\log_2 17 \approx 4$ times smaller compared to the binary search.
 
@@ -61,9 +61,7 @@ int btree[nblocks][B];
 int go(int k, int i) { return k * (B + 1) + i + 1; }
 ```
 
-<!-- todo: exact height -->
-
-This numeration automatically makes the B-tree complete or almost complete with the height of $\Theta(\log_{B + 1} n)$. If the length of the initial array is not a multiple of $B$, the last block is padded with the largest value of its data type.
+This numeration automatically makes the B-tree complete or almost complete. Writing $q=B+1$, a complete tree with $h$ nonempty levels contains $(q^h-1)/(q-1)$ nodes, so `nblocks` nodes require $h=\lceil\log_q((q-1)\cdot\mathtt{nblocks}+1)\rceil$ levels. Thus the height is $\Theta(\log_{B+1}n)$. If the length of the initial array is not a multiple of $B$, the last block is padded with the largest value of its data type.
 
 ### Construction
 
@@ -189,15 +187,13 @@ Ideally, we'd also need to enable hugepages for all [previous implementations](.
 
 With that settled, let's begin real optimization. First of all, we'd want to use compile-time constants instead of variables as much as possible because it lets the compiler embed them in the machine code, unroll loops, optimize arithmetic, and do all sorts of other nice stuff for us for free. Specifically, we want to know the tree height in advance:
 
-<!-- todo: maybe this can be computed simpler? -->
-
 ```c++
 constexpr int height(int n) {
-    // grow the tree until its size exceeds n elements
-    int s = 0, // total size so far
-        l = B, // size of the next layer
-        h = 0; // height so far
-    while (s + l - B < n) {
+    // grow the tree until it has room for n elements
+    long long s = 0, // total size so far
+              l = B; // size of the next layer
+    int h = 0;       // height so far
+    while (s < n) {
         s += l;
         l *= (B + 1);
         h++;
@@ -207,6 +203,8 @@ constexpr int height(int n) {
 
 const int H = height(N);
 ```
+
+A logarithm would make the formula shorter, but it would also introduce floating-point rounding at the exact powers where the answer changes. The integer loop runs only once during compilation and takes $O(\log_{B+1}N)$ iterations, so the direct calculation is both safer and effectively free.
 
 <!--
 
@@ -247,9 +245,9 @@ unsigned rank(reg x, int* y) {
 }
 ```
 
-This instruction converts 32-bit integers stored in two registers to 16-bit integers stored in one register — in our case, effectively joining the vector masks into one. Note that we've swapped the order of comparison — this lets us not invert the mask in the end, but we have to subtract[^float] one from the search key once in the beginning to make it correct (otherwise, it works as `upper_bound`).
+This instruction converts 32-bit integers stored in two registers to 16-bit integers stored in one register — in our case, effectively joining the vector masks into one. Note that we've swapped the order of comparison — this lets us not invert the mask in the end, but we have to subtract[^float] one from the search key once in the beginning to make it correct (otherwise, it works as `upper_bound`). With signed integer keys, this shortcut assumes `_x > INT_MIN`; otherwise the subtraction overflows.
 
-[^float]: If you need to work with [floating-point](/hpc/arithmetic/float) keys, consider whether `upper_bound` will suffice — because if you need `lower_bound` specifically, then subtracting one or the machine epsilon from the search key doesn't work: you need to [get the previous representable number](https://stackoverflow.com/questions/10160079/how-to-find-nearest-next-previous-double-value-numeric-limitsepsilon-for-give) instead. Aside from some corner cases, this essentially means reinterpreting its bits as an integer, subtracting one, and reinterpreting it back as a float (which magically works because of how [IEEE-754 floating-point numbers](/hpc/arithmetic/ieee-754) are stored in memory).
+[^float]: If you need to work with [floating-point](/hpc/arithmetic/float) keys, consider whether `upper_bound` will suffice — because if you need `lower_bound` specifically, then subtracting one or the machine epsilon from the search key doesn't work: you need to [get the previous representable number](https://stackoverflow.com/questions/10160079/how-to-find-nearest-next-previous-double-value-numeric-limitsepsilon-for-give) instead. The portable way to do this is `std::nextafter(x, -INFINITY)`. A bit-level implementation has to account for the sign and handle zeros, infinities, and NaNs separately.
 
 The problem is, it does this weird interleaving where the result is written in the `a1 b1 a2 b2` order instead of `a1 a2 b1 b2` that we want — many AVX2 instructions tend to do that. To correct this, we need to [permute](/hpc/simd/shuffling) the resulting vector, but instead of doing it during the query time, we can just permute every node during preprocessing:
 
@@ -263,7 +261,7 @@ void permute(int *node) {
 }
 ```
 
-Now we just call `permute(&btree[k])` right after we are done building the node. There are probably faster ways to swap the middle elements, but we will leave it here as the preprocessing time is not that important for now.
+Now we just call `permute(btree[k])` right after we are done building the node. There are probably faster ways to swap the middle elements, but we will leave it here as the preprocessing time is not that important for now.
 
 This new SIMD routine is significantly faster because the extra `movemask` is slow, and also blending the two masks takes quite a few instructions. Unfortunately, we now can't just do the `res = btree[k][i]` update anymore because the elements are permuted. We can solve this problem with some bit-level trickery in terms of `i`, but indexing a small lookup table turns out to be faster and also doesn't require a new branch:
 
@@ -291,14 +289,14 @@ int lower_bound(int _x) {
     int k = 0, res = INT_MAX;
     reg x = _mm256_set1_epi32(_x - 1);
     for (int h = 0; h < H - 1; h++) {
-        unsigned i = rank(x, &btree[k]);
-        update(res, &btree[k], i);
+        unsigned i = rank(x, btree[k]);
+        update(res, btree[k], i);
         k = go(k, i);
     }
     // the last branch:
     if (k < nblocks) {
         unsigned i = rank(x, btree[k]);
-        update(res, &btree[k], i);
+        update(res, btree[k], i);
     }
     return res;
 }
@@ -331,13 +329,13 @@ The advantages of this approach include faster search time (as the internal node
 Back to our use case, this layout can help us solve our two problems:
 
 - Either the last node we descend into has the local lower bound, or it is the first key of the next leaf node, so we don't need to call `update` on each iteration.
-- The depth of all leaves is constant because B+ trees grow at the root and not at the leaves, which removes the need for branching. <!-- todo: elaborate on that -->
+- The depth of all leaves is constant because B+ trees split upward and create a new root when their height grows. In the static layout, every query therefore traverses exactly the same number of internal layers before reaching the separate data layer, removing the termination branch needed when values can occur at several depths.
 
 The disadvantage is that this layout is not *succinct*: we need some additional memory to store the internal nodes — about $\frac{1}{16}$-th of the original array size, to be exact — but the performance improvement will be more than worth it.
 
 ### Implicit B+ Tree
 
-To be more explicit with pointer arithmetic, we will store the entire tree in a single one-dimensional array. To minimize index computations during run time, we will store each layer sequentially in this array and use compile time computed offsets to address them: the keys of the node number `k` on layer `h` start with `btree[offset(h) + k * B]`, and its `i`-th child will at `btree[offset(h - 1) + (k * (B + 1) + i) * B]`.
+To be more explicit with pointer arithmetic, we will store the entire tree in a single one-dimensional array. To minimize index computations during run time, we will store each layer sequentially in this array and use compile time computed offsets to address them: the keys of the node number `k` on layer `h` start with `btree[offset(h) + k * B]`, and its `i`-th child will be at `btree[offset(h - 1) + (k * (B + 1) + i) * B]`.
 
 To implement all that, we need slightly more `constexpr` functions:
 
@@ -377,7 +375,7 @@ Note that we store the layers in reverse order, but the nodes within a layer and
 
 ### Construction
 
-To construct the tree from a sorted array `a`, we first need to copy it into the zeroth layer and pad it with infinities:
+To make the last search branch-free, the sorted array must end with `INT_MAX`, and this sentinel has to be included in `N`. It represents the past-the-end result and ensures that every query has a lower bound. We then copy the array into the zeroth layer and pad it with infinities:
 
 ```c++
 memcpy(btree, a, 4 * N);
@@ -386,7 +384,7 @@ for (int i = N; i < S; i++)
     btree[i] = INT_MAX;
 ```
 
-Now we build the internal nodes, layer by layer. For each key, we need to descend to the right of it in, always go left until we reach a leaf node, and then take its first key — it will be the smallest on the subtree:
+Now we build the internal nodes, layer by layer. For each key, we need to descend to the right of it and then always go left until we reach a leaf node, and then take its first key — it will be the smallest on the subtree:
 
 ```c++
 for (int h = 1; h < H; h++) {
@@ -551,7 +549,7 @@ Ideas that I have not yet managed to implement but consider highly perspective a
   I know how to do it with code generation, but I went for a generic solution and tried to [implement](
 https://github.com/sslotin/amh-code/blob/main/binsearch/bplus-adaptive.cc) it with the facilities of modern C++, but the compiler can't produce optimal code this way.
 - Group nodes with one or two generations of its descendants (~300 nodes / ~5k keys) so that they are close in memory — in the spirit of what [FAST](http://kaldewey.com/pubs/FAST__SIGMOD10.pdf) calls hierarchical blocking. This reduces the severity of TLB misses and also may improve the latency as the memory controller may choose to keep the [RAM row buffer](/hpc/cpu-cache/aos-soa/#ram-specific-timings) open, anticipating local reads.
-- Optionally use prefetching on some specific layers. Aside from to the $\frac{1}{17}$-th chance of it fetching the node we need, the hardware prefetcher may also get some of its neighbors for us if the data bus is not busy. It also has the same TLB and row buffer effects as with blocking.
+- Optionally use prefetching on some specific layers. Aside from the $\frac{1}{17}$-th chance of it fetching the node we need, the hardware prefetcher may also get some of its neighbors for us if the data bus is not busy. It also has the same TLB and row buffer effects as with blocking.
 
 Other possible minor optimizations include:
 
@@ -559,7 +557,7 @@ Other possible minor optimizations include:
 - Reversing the order in which the layers are stored to left-to-right so that the first few layers are on the same page.
 - Rewriting the whole thing in assembly, as the compiler seems to struggle with pointer arithmetic.
 - Using [blending](/hpc/simd/masking) instead of `packs`: you can odd-even shuffle node keys (`[1 3 5 7] [2 4 6 8]`), compare against the search key, and then blend the low 16 bits of the first register mask with the high 16 bits of the second. Blending is slightly faster on many architectures, and it may also help to alternate between packing and blending as they use different subsets of ports. (Thanks to Const-me from HackerNews for [suggesting](https://news.ycombinator.com/item?id=30381912) it.)
-- Using [popcount](/hpc/simd/shuffling/#shuffles-and-popcount) instead of `tzcnt`: the index `i` is equal to the number of keys less than `x`, so we can compare `x` against all keys, combine the vector mask any way we want, call `maskmov`, and then calculate the number of set bits with `popcnt`. This removes the need to store the keys in any particular order, which lets us skip the permutation step and also use this procedure on the last layer as well.
+- Using [popcount](/hpc/simd/shuffling/#shuffles-and-popcount) instead of `tzcnt`: the index `i` is equal to the number of keys less than `x`, so we can compare `x` against all keys, combine the vector mask any way we want, call `movemask`, and then calculate the number of set bits with `popcnt`. This removes the need to store the keys in any particular order, which lets us skip the permutation step and also use this procedure on the last layer as well.
 - Defining the key $i$ as the *maximum* key in the subtree of child $i$ instead of the *minimum* key in the subtree of child $(i + 1)$. The correctness doesn't change, but this guarantees that the result will be stored in the last node we access (and not in the first element of the next neighbor node), which lets us fetch slightly fewer cache lines.   
 
 Note that the current implementation is specific to AVX2 and may require some non-trivial changes to adapt to other platforms. It would be interesting to port it for Intel CPUs with AVX-512 and Arm CPUs with 128-bit NEON, which may require some [trickery](https://github.com/WebAssembly/simd/issues/131) to work.
@@ -618,5 +616,3 @@ This [StackOverflow answer](https://stackoverflow.com/questions/20616605/using-s
 I stole some pictures from blogs and I can't find the originals.
 
 -->
-
-

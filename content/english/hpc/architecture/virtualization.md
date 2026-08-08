@@ -1,6 +1,6 @@
 ---
 title: Virtualization
-weight: 8
+weight: 10
 ---
 
 An operating system kernel is written under the assumption that it controls the computer. A *virtual machine* lets several kernels keep this assumption at the same time.
@@ -13,7 +13,7 @@ The obvious way to implement a virtual machine is to interpret every guest instr
 
 CPUs already have [privilege levels](../interaction) that prevent normal processes from changing page tables, disabling interrupts, or talking to devices directly. It is tempting to run the guest kernel as an ordinary process and emulate every privileged instruction when it fails.
 
-Early x86 processors made this difficult because some sensitive instructions behaved differently outside the most privileged mode without necessarily causing a trap. Hypervisors had to rewrite guest machine code or modify the guest kernel, which is known as *paravirtualization*.
+Early x86 processors made this difficult because some sensitive instructions behaved differently outside the most privileged mode without necessarily causing a trap. Hypervisors had to rewrite guest machine code, or modify the guest kernel so it could cooperate with the hypervisor. The latter approach is known as *paravirtualization*.
 
 Modern x86 processors have a separate virtualization mode. Intel calls it VMX and AMD calls it SVM. We will use Intel's terminology, although the two designs have the same main idea.
 

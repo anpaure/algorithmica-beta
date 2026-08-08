@@ -13,7 +13,7 @@ $$
 
 Repeating this gives all digits in reverse order. This is why most integer formatting algorithms write backwards into a small temporary buffer and then copy the result to its final destination.
 
-In this section, we will focus on unsigned 32-bit integers. Signed integers only require writing a minus sign and taking the magnitude in the unsigned type; wider integers use exactly the same ideas but need a larger buffer.
+In this section, we will focus on unsigned 32-bit integers. Signed integers only require writing a minus sign and forming the magnitude in unsigned arithmetic — convert a negative value to the unsigned type first and subtract it from zero, because evaluating `-INT_MIN` in the signed type overflows. Wider integers use exactly the same ideas but need a larger buffer.
 
 ## Scalar Baseline
 

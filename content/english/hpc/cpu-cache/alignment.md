@@ -139,7 +139,7 @@ struct NodeG {
 
 If you know what you are doing, you can disable structure padding and pack your data as tight as possible.
 
-You have to ask the compiler to do it, as such functionality is not a part of neither C nor C++ standard yet. In GCC and Clang, this is done with the `packed` attribute:
+You have to ask the compiler to do it, as this functionality is not part of either the C or C++ standard. In GCC and Clang, this is done with the `packed` attribute:
 
 ```cpp
 struct __attribute__ ((packed)) Data {
@@ -148,7 +148,7 @@ struct __attribute__ ((packed)) Data {
 };
 ```
 
-This makes the instances of `Data` take just 9 bytes instead of the 16 required by alignment, at the cost of possibly fetching two cache lines to reads its elements.
+This makes the instances of `Data` take just 9 bytes instead of the 16 required by alignment, at the cost of possibly fetching two cache lines to read its elements.
 
 ### Bit fields
 
@@ -161,28 +161,30 @@ struct __attribute__ ((packed)) Data {
 };
 ```
 
-This structure takes 4 bytes when packed and 8 bytes when padded. The number of bits a member has doesn't have to be a multiple of 8, and neither does the total structure size. In an array of `Data`, the neighboring elements will be "merged" in the case of a non-whole number of bytes. It also allows you to set a width that exceeds the base type, which acts as padding — although it throws a warning in the process.
+On GCC and Clang targets where `int` is 32 bits, the packed structure above normally occupies 4 bytes. Its unpacked size is implementation-defined and is not necessarily 8: the compiler may place the 24-bit field in the three bytes following `a`. The allocation order and alignment of bit-fields are implementation-defined, and C also leaves the signedness of a plain `int` bit-field to the implementation, so bit-field layout should not be used as a portable file or network format.
 
-<!-- TODO: verify this -->
+A bit-field may have a width that is not a multiple of eight, but `sizeof(Data)` is always a whole number of bytes and neighboring elements of an array never overlap. Multiple fields *inside one object* may share the same allocation unit. C++ also permits a field width larger than the underlying type and treats the extra bits as padding, while C does not; either way, this is not a useful portable storage technique.
 
-This feature is not so widespread because CPUs don't have 3-byte arithmetic or things like that and has to do some inefficient byte-by-byte conversion during loading:
+CPUs do not have general 3-byte arithmetic, so accessing a 24-bit value requires some combination of loads, shifts, masks, and possibly sign extension. A safe decoder for a three-byte big-endian representation is:
 
 ```cpp
-int load(char *p) {
-    char x = p[0], y = p[1], z = p[2];
-    return (x << 16) + (y << 8) + z;
+uint32_t load24(const unsigned char *p) {
+    return (uint32_t(p[0]) << 16)
+         | (uint32_t(p[1]) << 8)
+         |  uint32_t(p[2]);
 }
 ```
 
-The overhead is even larger when there is a non-whole byte — it needs to be handled with a shift and an and-mask.
+The unsigned conversions matter: shifting a negative `char` would be undefined, and sign extension would corrupt bytes above 127. For a bit-field whose width is not a whole byte, the compiler additionally uses shifts and masks to extract the requested bits.
 
-This procedure can be optimized by loading a 4-byte `int` and then using a mask to discard its highest bits.
+If four bytes are known to be readable, a little-endian decoder can load them with `memcpy` and discard the high byte:
 
 ```cpp
-int load(int *p) {
-    int x = *p;
-    return x & ((1<<24) - 1);
+uint32_t load24_padded(const unsigned char *p) {
+    uint32_t x;
+    memcpy(&x, p, sizeof x);
+    return x & 0x00ffffffu;
 }
 ```
 
-Compilers usually don't do that because it's technically not legal: that 4th byte may be on a memory page that you don't own, so the operating system won't let you load it even if you are going to discard it right away.
+`memcpy` avoids alignment and strict-aliasing violations and is normally inlined into one load. It still requires a real fourth byte in the object. Reading beyond a three-byte allocation is undefined even when the address happens to be mapped, and it may fault when the allocation ends at a page boundary. A compiler can use the wider load for a declared object when its layout proves the bytes exist; it cannot invent that precondition for an arbitrary three-byte buffer.

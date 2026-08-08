@@ -1,6 +1,6 @@
 ---
 title: Sorting
-weight: 6
+weight: 14
 ---
 
 There is no fastest sorting algorithm in the same sense that there is no fastest vehicle.

@@ -170,7 +170,7 @@ vptest   ymm0, ymm0
 je       loop
 ```
 
-This doesn't improve performance much because both both `vptest` and `vmovmskps` have a throughput of one and will bottleneck the computation regardless of anything else we do in the loop.
+This doesn't improve performance much because both `vptest` and `vmovmskps` have a throughput of one and will bottleneck the computation regardless of anything else we do in the loop.
 
 To work around this limitation, we can iterate in blocks of 16 elements and combine the results of independent comparisons of two 256-bit AVX2 registers using a bitwise `or`:
 
@@ -299,7 +299,7 @@ int count(int needle) {
 }
 ```
 
-Both implementations yield ~15 GFLOPS: the compiler can vectorize the first one all by itself.
+Both implementations process ~15 billion elements per second: the compiler can vectorize the first one all by itself.
 
 But a trick that the compiler can't find is to notice that the mask of all ones is [minus one](/hpc/arithmetic/integer) when reinterpreted as an integer. So we can skip the and-the-lowest-bit part and use the mask itself, and then just negate the final result:
 
@@ -341,9 +341,64 @@ int count(int needle) {
 }
 ```
 
-It now gives ~22 GFLOPS of performance, which is as high as it can get.
+It now processes ~22 billion elements per second, which is as high as it can get.
 
-When adapting this code for shorter data types, keep in mind that the accumulator may overflow. To work around this, add another accumulator of larger size and regularly stop the loop to add the values in the local accumulator to it and then reset the local accumulator. For example, for 8-bit integers, this means creating another inner loop that does $\lfloor \frac{256-1}{8} \rfloor = 15$ iterations.
- 
-<!-- TODO: 8-bit example -->
-<!-- TODO: ILP first, -1 second -->
+### Counting 8-Bit Values
+
+When adapting this code for shorter data types, keep in mind that the accumulator may overflow. A byte comparison produces `0xff` for a match and zero otherwise. If we *subtract* that mask from a byte accumulator, each matching lane is incremented by one:
+
+```c++
+sum = _mm256_sub_epi8(sum, mask);
+```
+
+Each lane receives at most one increment per vector iteration. An unsigned byte can hold 255, so one accumulator may process 255 vectors before it has to be widened and reset; the 256th matching value in one lane would wrap it to zero. The vector has 32 lanes, but that does not divide the safe interval because the lanes accumulate independently.
+
+We can also use two independent byte accumulators to remove the loop-carried dependency. Each one still processes at most 255 vectors, so together they let us handle $2 \cdot 255 \cdot 32 = 16320$ input bytes between flushes. The function below expects a nonnegative length `n`:
+
+```c++
+uint64_t count8(const char *a, int n, char needle) {
+    reg target = _mm256_set1_epi8(needle);
+    reg zero = _mm256_setzero_si256();
+    reg total = _mm256_setzero_si256();
+    int i = 0;
+
+    while (i <= n - 32) {
+        int blocks = (n - i) / 32;
+        if (blocks > 510)
+            blocks = 510;
+
+        reg s0 = zero, s1 = zero;
+        int pairs = blocks / 2;
+
+        for (int j = 0; j < pairs; j++) {
+            reg x0 = _mm256_loadu_si256((const reg*) (a + i + 64 * j));
+            reg x1 = _mm256_loadu_si256((const reg*) (a + i + 64 * j + 32));
+            reg m0 = _mm256_cmpeq_epi8(x0, target);
+            reg m1 = _mm256_cmpeq_epi8(x1, target);
+            s0 = _mm256_sub_epi8(s0, m0);
+            s1 = _mm256_sub_epi8(s1, m1);
+        }
+
+        if (blocks & 1) {
+            reg x = _mm256_loadu_si256((const reg*) (a + i + 64 * pairs));
+            reg m = _mm256_cmpeq_epi8(x, target);
+            s0 = _mm256_sub_epi8(s0, m);
+        }
+
+        total = _mm256_add_epi64(total, _mm256_sad_epu8(s0, zero));
+        total = _mm256_add_epi64(total, _mm256_sad_epu8(s1, zero));
+        i += 32 * blocks;
+    }
+
+    alignas(32) uint64_t lane[4];
+    _mm256_store_si256((reg*) lane, total);
+    uint64_t result = lane[0] + lane[1] + lane[2] + lane[3];
+
+    for (; i < n; i++)
+        result += (a[i] == needle);
+
+    return result;
+}
+```
+
+The `_mm256_sad_epu8` instruction sums each group of eight unsigned byte counters into a 64-bit lane, widening them before the next chunk starts. Therefore no information is lost at a flush, and the only remaining overflow limit is that of the 64-bit result itself.

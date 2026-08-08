@@ -187,8 +187,6 @@ Note that this loop is not always equivalent to the standard binary search. Sinc
 
 As typical for predication, this trick is very fragile to compiler optimizations — depending on the compiler and how the function is invoked, it may still leave a branch or generate suboptimal code. It works fine on Clang 10, yielding a 2.5-3x improvement on small arrays:
 
-<!-- todo: update numbers -->
-
 ![](../img/search-branchless.svg)
 
 One interesting detail is that it performs worse on large arrays. It seems weird: the total delay is dominated by the RAM latency, and since it does roughly the same memory accesses as the standard binary search, it should be roughly the same or even slightly better.
@@ -210,8 +208,6 @@ int lower_bound(int x) {
     return *base;
 }
 ```
-
-<!-- todo: rerun this too -->
 
 With prefetching, the performance on large arrays becomes roughly the same:
 
@@ -548,8 +544,6 @@ s_n &= s_{n - 1} + \frac{2}{n - 1} \cdot s_{n - 1} + n
 \\  &= \frac{n + 1}{n - 1} \cdot s_{n - 1} + n
 \end{aligned}
 $$
-
-<!-- todo: can we simplify the proof and get rid of r? -->
 
 The next trick is more complicated. We define $r_n$ like this:
 

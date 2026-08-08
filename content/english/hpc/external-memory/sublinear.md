@@ -76,6 +76,8 @@ Reservoir sampling uses $O(K)$ memory, but it still reads all $n$ elements. Its 
 
 The `random(n)` operation in the example is assumed to be exactly uniform. Implementing it as `rand() % n` introduces modulo bias unless the generator's range happens to be divisible by $n$.
 
+The `seen` counter is bounded too: the example assumes the stream length fits in a positive `long long`. Letting the signed counter overflow would be undefined behavior rather than a valid continuation of the sampling algorithm.
+
 ## Count–Min Sketch
 
 Sampling is not ideal for estimating frequencies. An item occurring just below the sampling resolution may be absent from the sample entirely. A *Count–Min sketch* instead stores a small two-dimensional array of counters.
@@ -136,7 +138,7 @@ The sketch occupies $O(\varepsilon^{-1}\log(1/\delta))$ counters regardless of t
 
 Counting distinct values exactly requires remembering a set in the worst case. HyperLogLog uses a much smaller summary.
 
-Hash each item to a uniformly distributed bit string. Some leading hash bits select one of $R$ registers; the remaining bits are used to count the number of leading zeroes. Each register stores the largest count it has seen.
+Hash each item to a uniformly distributed bit string. Some leading hash bits select one of $R$ registers; in the remaining bits, record one plus the number of leading zeroes — equivalently, the position of the first one bit. An all-zero suffix gets one more than the suffix length. Each register stores the largest value it has seen.
 
 A prefix of $k$ zeroes appears with probability roughly $2^{-k}$. Seeing an unusually long zero prefix is therefore evidence that many distinct hashes have been observed. Combining the registers with a bias-corrected harmonic mean produces the cardinality estimate.
 

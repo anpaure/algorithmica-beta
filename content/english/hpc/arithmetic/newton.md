@@ -84,7 +84,7 @@ Looking carefully, we can see that the number of accurate digits approximately d
 To analyze convergence rate quantitatively, we need to consider a small relative error $\delta_i$ on the $i$-th iteration and determine how much smaller the error $\delta_{i+1}$ is on the next iteration:
 
 $$
-|\delta_i| = \frac{|x_n - x|}{x}
+|\delta_i| = \frac{|x_i - x|}{x}
 $$
 
 We can express $x_i$ as $x \cdot (1 + \delta_i)$. Plugging it into the Newton iteration formula and dividing both sides by $x$ we get
@@ -93,7 +93,7 @@ $$
 1 + \delta_{i+1} = \frac{1}{2} (1 + \delta_i + \frac{1}{1 + \delta_i}) = \frac{1}{2} (1 + \delta_i + 1 - \delta_i + \delta_i^2 + o(\delta_i^2)) = 1 + \frac{\delta_i^2}{2} + o(\delta_i^2)
 $$
 
-Here we have Taylor-expanded $(1 + \delta_i)^{-1}$ at $0$, using the assumption that the error $d_i$ is small (since the sequence converges, $d_i \ll 1$ for sufficiently large $n$).
+Here we have Taylor-expanded $(1 + \delta_i)^{-1}$ at $0$, using the assumption that the error $\delta_i$ is small (since the sequence converges, $|\delta_i| \ll 1$ for sufficiently large $i$).
 
 Rearranging for $\delta_{i+1}$, we obtain
 
@@ -101,16 +101,16 @@ $$
 \delta_{i+1} = \frac{\delta_i^2}{2} + o(\delta_i^2)
 $$
 
-which means that the error roughly squares (and halves) on each iteration once we are close to the solution. Since the logarithm $(- \log_{10} \delta_i)$ is roughly the number of accurate significant digits in the answer $x_i$, squaring the relative error corresponds precisely to doubling the number of significant
+which means that the error roughly squares (and halves) on each iteration once we are close to the solution. Since $-\log_{10}|\delta_i|$ is roughly the number of accurate significant digits in the answer $x_i$, squaring the relative error corresponds precisely to doubling the number of significant
 digits that we had observed.
 
-This is known as *quadratic convergence*, and in fact, this is not limited to finding square roots. With detailed proof being left as an exercise to the reader, it can be shown that, in general
+This is known as *quadratic convergence*, and it is not limited to finding square roots. Let $e_i=x_i-x$ be the absolute error for Newton's method applied to a function with root $x$. Taylor's theorem shows that, for some $\xi_i$ between $x_i$ and $x$,
 
 $$
-|\delta_{i+1}| = \frac{|f''(x_i)|}{2 \cdot |f'(x_n)|} \cdot \delta_i^2
+|e_{i+1}| = \frac{|f^{\prime\prime}(\xi_i)|}{2 \cdot |f^\prime(x_i)|} \cdot |e_i|^2.
 $$
 
-which results in at least quadratic convergence under a few additional assumptions, namely $f^\prime(x)$ not being equal to $0$ and $f^{\prime\prime}(x)$ being continuous.
+If $f^\prime(x) \ne 0$ and $f^{\prime\prime}$ is continuous near the root, the factor remains bounded as $x_i \to x$, which gives quadratic convergence for a sufficiently close starting point.
 
 ## Further Reading
 

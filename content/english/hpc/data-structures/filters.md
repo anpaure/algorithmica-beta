@@ -99,13 +99,15 @@ The formula favors several probes, but a large Bloom filter may turn each of the
 
 A common modification is a *blocked Bloom filter*. One part of the hash selects a small block — usually one cache line — and the remaining bits select all $k$ positions inside it. The probes become correlated, slightly worsening the false-positive rate for the same number of bits, but a query normally fetches only one cache line. This is often a worthwhile exchange because it replaces random memory latency with a little extra arithmetic.
 
-Queries should test the bits one at a time and return immediately on the first zero. Batched queries expose more [memory-level parallelism](/hpc/cpu-cache/latency/) by keeping several independent filter probes in flight.
+Queries should test the bits one at a time and return immediately on the first zero. Batched queries expose more [memory-level parallelism](/hpc/cpu-cache/mlp/) by keeping several independent filter probes in flight.
 
 ## Capacity and Correctness
 
 The false-positive rate depends on the actual number of inserted elements. Inserting twice the planned capacity does not create false negatives, but it may set almost the whole bitmap and make nearly every query positive. A practical filter needs a capacity estimate and a rebuild policy.
 
 The no-false-negative property also assumes that the filter and the real set are updated in the right order. If a key becomes visible in the database before its filter bits become visible, a concurrent query can incorrectly reject it. This is not a mathematical failure of the Bloom filter; it is an update protocol failure.
+
+The array implementation above is single-threaded. Concurrent inserts or queries also require atomic bit updates or external synchronization; otherwise C++ data races and lost read-modify-write updates can themselves create false negatives.
 
 There are other approximate membership structures. Cuckoo filters store short fingerprints in small candidate buckets and support deletion; quotient filters arrange fingerprints so that runs can be scanned sequentially. Their details differ, but the engineering question is the same: how much memory and query work should we spend to avoid one authoritative lookup?
 

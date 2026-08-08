@@ -131,28 +131,31 @@ This way you can make use of compile-time constants, which may be very beneficia
 
 ### Makefiles
 
-<!-- TODO -->
+Once implementations are split into separate files, repeatedly typing compiler commands becomes part of the benchmarking loop. A Makefile describes each generated *target*, the source files it depends on, and the command that rebuilds it. `make` runs that command only when the target is absent or one of its prerequisites is newer.
+
+The `%` in a pattern rule is the shared file-name stem. For example, when building `v1`, the rule `%: %.cc gcd.hh` substitutes `v1` for `%` and makes the executable depend on both `v1.cc` and `gcd.hh`. Inside a recipe, `$<` is the first prerequisite and `$@` is the target. Recipe lines must begin with a tab, not spaces.
 
 Splitting up source files allows you to speed up compilation using a caching build system such as [Make](https://en.wikipedia.org/wiki/Make_(software)).
 
 I usually carry a version of this Makefile across my projects:
 
-```c++
+```makefile
 compile = g++ -std=c++17 -O3 -march=native -Wall
 
 %: %.cc gcd.hh
-	$(compile) $< -o $@ 
+	$(compile) $< -o $@
 
 %.s: %.cc gcd.hh
 	$(compile) -S -fverbose-asm $< -o $@
 
-%.run: %
-	@./$<
+.PHONY: FORCE
+FORCE:
 
-.PHONY: %.run
+%.run: % FORCE
+	@./$<
 ```
 
-You can now compile `example.cc` with `make example`, and automatically run it with `make example.run`. 
+You can now compile `example.cc` with `make example`, and automatically run it with `make example.run`. The phony `FORCE` prerequisite makes the run recipe execute every time even though it does not create an `example.run` file.
 
 You can also add scripts for calculating statistics in the Makefile, or incorporate it with `perf stat` calls to make profiling automatic.
 

@@ -5,8 +5,6 @@ weight: 1
 
 <!--
 
-TODO: use it in binary exponentiation.
-
 In this section, we are going to discuss some preliminaries before discussing more advanced topics.
 
 we use the 1st of January, 1970 as the start of the "Unix era," and all time computations are usually done relative to that timestamp.

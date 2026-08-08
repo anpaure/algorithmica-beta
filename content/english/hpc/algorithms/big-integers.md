@@ -158,14 +158,65 @@ Strongly unbalanced operands are another bad case. Splitting a very long number 
 
 ## Removing the Allocations
 
-The simple recursive version is useful for checking the algebra, but it should not be the final benchmark. All temporary arrays needed by one recursion branch can share a workspace, because the other branches are evaluated sequentially. A fast interface looks more like this:
+The simple recursive version is useful for checking the algebra, but it should not be the final benchmark. All temporary arrays needed by one recursion branch can share a workspace, because the other branches are evaluated sequentially.
+
+The following version writes its $2n$ output coefficients to `c` and requires `scratch` to contain at least $4n$ elements. As before, $n$ is a power of two, both input arrays have length $n$, and the four buffers do not overlap:
 
 ```c++
+void schoolbook(const long long *a, const long long *b,
+                long long *c, int n) {
+    for (int i = 0; i < 2 * n; i++)
+        c[i] = 0;
+
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            c[i + j] += a[i] * b[j];
+}
+
 void karatsuba(const long long *a, const long long *b,
-               long long *c, long long *scratch, int n);
+               long long *c, long long *scratch, int n) {
+    if (n <= cutoff) {
+        schoolbook(a, b, c, n);
+        return;
+    }
+
+    int k = n / 2;
+
+    // Store the low and high products directly in their final ranges.
+    karatsuba(a,     b,     c,     scratch, k);
+    karatsuba(a + k, b + k, c + n, scratch, k);
+
+    // The first 2n workspace elements belong to this recursion level.
+    long long *as = scratch;
+    long long *bs = as + k;
+    long long *mid = bs + k;
+    long long *next = mid + n;
+
+    for (int i = 0; i < k; i++) {
+        as[i] = a[i] + a[k + i];
+        bs[i] = b[i] + b[k + i];
+    }
+
+    karatsuba(as, bs, mid, next, k);
+
+    for (int i = 0; i < n; i++)
+        mid[i] -= c[i] + c[n + i];
+    for (int i = 0; i < n; i++)
+        c[k + i] += mid[i];
+}
 ```
 
-The wrapper allocates `c` and `scratch` once. Each call divides both buffers among its three products and the two arrays of sums. This removes allocator traffic and also avoids copying the low and high halves: they are already contiguous subarrays of `a` and `b`.
+The low and high recursive calls reuse the same workspace. After they finish, the current call reserves $2n$ elements for the two half-size sums and the $n$-element middle product, leaving $2n=4(n/2)$ elements for its recursive call. This proves by induction that $4n$ scratch elements are sufficient.
+
+In the `multiply` wrapper, the allocating recursive call can now be replaced with two allocations made once at the top level:
+
+```c++
+vector<long long> c(2 * n);
+vector<long long> scratch(4 * n);
+karatsuba(x.data(), y.data(), c.data(), scratch.data(), n);
+```
+
+This removes allocator traffic and also avoids copying the low and high halves: they are already contiguous subarrays of `a` and `b`.
 
 The remaining linear loops — forming `a0 + a1`, forming `b0 + b1`, and combining the three products — are independent elementwise operations and are good candidates for SIMD. The schoolbook loop is harder: each product contributes to a shifted output range, and carry propagation is a dependency chain. Optimizing this base case often moves the Karatsuba crossover *up*, because the allegedly slow algorithm has just become faster.
 

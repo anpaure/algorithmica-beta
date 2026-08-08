@@ -12,14 +12,14 @@ There are multiple ways this may happen:
 * A *data hazard* happens when you have to wait for an operand to be computed from some previous step.
 * A *control hazard* happens when a CPU can't tell which instructions it needs to execute next.
 
-The only way to resolve a hazard is to have a *pipeline stall*: stop the progress of all previous steps until the cause of congestion is gone. This creates *bubbles* in the pipeline — analogous with air bubbles in fluid pipes — a time-propagating condition when execution units are idling and no useful work is done.
+When the hardware cannot avoid or hide a hazard, it causes a *pipeline stall*: younger instructions stop advancing until the cause of congestion is gone. This creates *bubbles* in the pipeline — analogous with air bubbles in fluid pipes — a time-propagating condition when execution units are idling and no useful work is done.
 
 ![Pipeline stall on the execution stage](../img/bubble.png)
 
 Different hazards have different penalties:
 
-- In structural hazards, you have to wait (usually one more cycle) until the execution unit is ready. They are fundamental bottlenecks on performance and can't be avoided — you have to engineer around them.
-- In data hazards, you have to wait for the required data to be computed (the latency of the *critical path*). Data hazards are solved by restructuring computations so that the critical path is shorter.
-- In control hazards, you generally have to flush the entire pipeline and start over, wasting a whole 15-20 cycles. They are solved by either removing branches completely, or making them predictable so that the CPU can effectively *speculate* on what is going to be executed next.
+- In structural hazards, you have to wait (usually one more cycle) until the required execution unit is ready. The amount of each hardware resource is a fundamental throughput limit, so you have to engineer around it.
+- In data hazards, you have to wait for the required data to be computed (the latency of the *critical path*) unless forwarding, register renaming, or out-of-order execution can hide the dependency. At the algorithm level, they are addressed by restructuring computations so that the critical path is shorter.
+- In control hazards, a misprediction generally forces the processor to discard the younger speculative work, often wasting 15–20 cycles on a modern desktop CPU. They are addressed by either removing branches completely or making them predictable so that the CPU can effectively *speculate* on what is going to be executed next.
 
 As they have very different impacts on performance, we are going to go in the reversed order and start with the more grave ones.

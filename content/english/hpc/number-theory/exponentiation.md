@@ -106,4 +106,4 @@ u64 inverse(u64 a) {
 
 This forces the compiler to generate only the instructions we need, shaving off another 10ns and making the total running time ~170ns.
 
-Note that the performance depends not only on the binary length of $n$, but also on the number of binary 1s. If $n$ is $2^{30}$, it takes around 20ns less as we don't have to to perform any off-path multiplications.
+Note that the performance depends not only on the binary length of $n$, but also on the number of binary 1s. If $n$ is $2^{30}$, it takes around 20ns less as we don't have to perform any off-path multiplications.

@@ -1,6 +1,6 @@
 ---
 title: Prefix Sum with SIMD
-weight: 8
+weight: 9
 ---
 
 The *prefix sum*, also known as *cumulative sum*, *inclusive scan*, or simply *scan*, is a sequence of numbers $b_i$ generated from another sequence $a_i$ using the following rule:

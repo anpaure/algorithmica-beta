@@ -70,7 +70,7 @@ int find(const char *s, int n, const char *p, int m) {
     int candidates = n - m + 1;
     int i = 0;
 
-    for (; i + 32 <= candidates; i += 32) {
+    for (; i <= candidates - 32; i += 32) {
         __m256i a = _mm256_loadu_si256((const __m256i*) (s + i));
         __m256i b = _mm256_loadu_si256((const __m256i*) (s + i + m - 1));
 

@@ -1,6 +1,6 @@
 ---
 title: Random Number Generation
-weight: 7
+weight: 9
 ---
 
 A computer is a deterministic machine: if we run the same instructions from the same state, we get the same result. Most programs therefore do not generate new randomness. They expand a small random *seed* into a long sequence that merely looks random for the problem at hand.
@@ -64,6 +64,8 @@ void seed(u64 value, u64 stream) {
 ```
 
 The state follows an LCG, while XOR, shifts, and rotation hide its most obvious linear structure. The increment is odd, which is required for the full-period transition; different increments select different streams.
+
+Only the low 63 bits of the `stream` argument survive `(stream << 1) | 1`, selecting one of $2^{63}$ odd increments. Two stream arguments that differ only in their highest bit select the same stream.
 
 Seeding is part of the algorithm. Two generators initialized with the same seed and stream deliberately produce the same sequence, making a failed randomized test reproducible. Changing the constants or skipping the two initialization steps produces a different generator, not a harmless variation of this one.
 
