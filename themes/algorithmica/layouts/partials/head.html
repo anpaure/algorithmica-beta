@@ -6,8 +6,10 @@
   <meta charset="utf-8">
   <link rel="icon" href="{{ "favicon.ico" | absURL }}">
   {{ with .Site.Params.EditionLabel }}
+  {{ $betaCSS := readFile "static-beta/beta.css" }}
+  {{ $betaURL := "beta.css" | absURL }}
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="{{ "beta.css" | absURL }}">
+  <link rel="stylesheet" href="{{ printf "%s?v=%s" $betaURL (md5 $betaCSS) }}">
   {{ end }}
 
   {{ $style := resources.Get "style.sass" | toCSS | minify | fingerprint }}
