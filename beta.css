@@ -11,6 +11,10 @@ menu .chapter-title {
   display: none;
 }
 
+article figure img {
+  display: block;
+}
+
 menu.scrolled .beta-brand {
   display: none;
 }
